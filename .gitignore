@@ -3,3 +3,5 @@
 .venv/
 .pycache/
 .direnv/
+.ruff_cache/
+*.exe
