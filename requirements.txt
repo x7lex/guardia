@@ -1,0 +1,5 @@
+lief
+yara-python
+capstone
+cryptography
+python-magic
