@@ -2,6 +2,71 @@
 
 Guardia is a free and open source project that conducts static analysis on applications, then uses LLM reasoning to classify malware, on-top of a point-based risk assessment.
 
+## Desktop app
+
+Guardia now opens in Electron. Scanning and CLI rescoring do **not** call Gemini.
+Use **Review with Gemini** in a report when you want an optional AI opinion.
+
+### Windows installer
+
+The [Windows desktop installer workflow](https://github.com/x7lex/hackthehill3/actions/workflows/windows-desktop.yml)
+builds on every push to `main`. Open a successful run and download the
+**Guardia-Windows-x64** artifact. Extract it and run
+`Guardia-Setup-0.1.0-x64.exe`. It installs a Start menu entry and desktop shortcut.
+The installer bundles Electron, the production frontend, and the Python scanner;
+users do not need Node.js or Python installed. Targets Windows 10/11 x64.
+The installer is currently unsigned, so Windows may show an unknown-publisher warning.
+
+To run from source on Windows, install Python 3.12 (with the `py` launcher) and
+Node.js 24 LTS. Double-click `setup-windows.cmd` once, then `run.cmd` to launch.
+Setup requires an internet connection to install dependencies.
+
+### macOS/Linux development
+
+With Python 3.12+ and Node.js 22.18+ installed, run from the repository root:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+npm ci --prefix hackthehill3-website-final/website/scanly
+./run.sh
+```
+
+Closing the desktop window stops its local services. Desktop uses loopback ports
+3765 and 8765; the source launcher supports `DESKTOP_PORT` and
+`DESKTOP_BACKEND_PORT` overrides. Reports persist in Electron's local profile.
+Uploaded files are analyzed statically, never executed, and temporary copies are removed.
+
+Browser development remains available with `.venv/bin/python scripts/dev.py` at
+`http://localhost:3000`. Optional Gemini credentials belong in the root `.env`
+for source development; packaged apps accept `API_TOKEN`/`GEMINI_API_KEY` through
+the environment. Credentials and developer `.env` files are excluded from the installer.
+
+### Build a Windows installer locally
+
+Build on Windows x64 (PyInstaller bundles the host platform's Python runtime):
+
+```bat
+py -3.12 -m venv .venv
+.venv\Scripts\python -m pip install -r requirements-build.txt
+npm ci --prefix hackthehill3-website-final\website\scanly
+cd hackthehill3-website-final\website\scanly
+npm run dist:win
+```
+
+The installer is written to `desktop-dist`. CI tests a real static scan inside
+the packaged application before uploading the installer. For local packaged testing:
+
+```bat
+set GUARDIA_TEST_EXECUTABLE=desktop-dist/win-unpacked/Guardia.exe
+npm run test:desktop
+```
+
+The bundled services write startup diagnostics to `services.log` in Electron's
+user-data directory (normally `%APPDATA%\Guardia`).
+
+## Risk assessment
+
 Because of a point-based system, Guardia has taken a different design philosophy, instead of classifying whether something is malware or not we have divided it into four groups:
 
 The static risk score is divided into four classifications:

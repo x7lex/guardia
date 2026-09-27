@@ -5,7 +5,7 @@ from backend.reputation import lookup_hash
 from backend.risk_score import calculate_risk
 
 
-async def build_report(analysis, *, review=True):
+async def build_report(analysis, *, review=False):
     reputation = await lookup_hash(analysis.get("file", {}).get("sha256"))
     report = {
         "analysis": analysis,

@@ -236,7 +236,7 @@ class ReputationTests(unittest.TestCase):
             os.environ,
             {"REPUTATION_PROVIDER": "disabled", "GEMINI_API_KEY": "", "API_TOKEN": ""},
         ):
-            report = asyncio.run(build_report({"file": {"sha256": HASH}}))
+            report = asyncio.run(build_report({"file": {"sha256": HASH}}, review=True))
         self.assertEqual(report["reputation"]["status"], "disabled")
         self.assertEqual(report["gemini_review"]["status"], "unavailable")
         self.assertIn("heuristic", report["risk_assessment"])
