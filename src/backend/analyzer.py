@@ -7,11 +7,28 @@ from pathlib import Path
 import capstone
 import lief
 
-
 SUSPICIOUS_INSTRUCTIONS = {
-    "in", "insb", "insd", "insw", "out", "outsb", "outsd", "outsw",
-    "int", "int1", "int3", "syscall", "sysenter", "rdmsr", "wrmsr",
-    "rdtsc", "rdtscp", "cpuid", "hlt", "cli", "sti",
+    "in",
+    "insb",
+    "insd",
+    "insw",
+    "out",
+    "outsb",
+    "outsd",
+    "outsw",
+    "int",
+    "int1",
+    "int3",
+    "syscall",
+    "sysenter",
+    "rdmsr",
+    "wrmsr",
+    "rdtsc",
+    "rdtscp",
+    "cpuid",
+    "hlt",
+    "cli",
+    "sti",
 }
 
 
@@ -28,20 +45,24 @@ def _analyze(target_file: Path) -> dict:
 
     binary = lief.PE.parse(str(path))
     if binary is None:
-        raise ValueError(f"Unsupported or invalid file: {path.name}. Expected a Windows PE executable or DLL.")
+        raise ValueError(
+            f"Unsupported or invalid file: {path.name}. Expected a Windows PE executable or DLL."
+        )
 
     sections = []
     for section in binary.sections:
-        sections.append({
-            "name": section.name,
-            "virtual_address": hex(section.virtual_address),
-            "virtual_size": section.virtual_size,
-            "raw_size": section.sizeof_raw_data,
-            "entropy": round(section.entropy, 2),
-            "executable": section.has_characteristic(
-                lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
-            ),
-        })
+        sections.append(
+            {
+                "name": section.name,
+                "virtual_address": hex(section.virtual_address),
+                "virtual_size": section.virtual_size,
+                "raw_size": section.sizeof_raw_data,
+                "entropy": round(section.entropy, 2),
+                "executable": section.has_characteristic(
+                    lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
+                ),
+            }
+        )
 
     libraries = [
         {

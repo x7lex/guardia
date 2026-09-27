@@ -1,8 +1,7 @@
 import argparse
-import json
 import asyncio
-
-from datetime import datetime
+import json
+from datetime import datetime, timezone
 from logging import Logger, getLogger
 from pathlib import Path
 
@@ -12,6 +11,7 @@ from logger import start_logger
 
 start_logger()
 logger: Logger = getLogger(name="Main")
+
 
 def get_reports_directory() -> Path:
     reports_dir = Path(__file__).resolve().parent / "reports"
@@ -23,10 +23,9 @@ def get_reports_directory() -> Path:
 
     return reports_dir
 
+
 def get_target() -> Path:
-    target = input(
-        "enter a file or directory to scan: "
-    ).strip()
+    target = input("enter a file or directory to scan: ").strip()
 
     # Allows paths copied with quotes
     target = target.strip('"').strip("'")
@@ -34,11 +33,10 @@ def get_target() -> Path:
     path = Path(target).expanduser().resolve()
 
     if not path.exists():
-        raise FileNotFoundError(
-            f"Path does not exist: {path}"
-        )
+        raise FileNotFoundError(f"Path does not exist: {path}")
 
     return path
+
 
 def save_report(
     report: dict,
@@ -49,18 +47,11 @@ def save_report(
         report_directory = get_reports_directory()
 
     if timestamp is None:
-        timestamp = datetime.now().strftime(
-            "%Y-%m-%d_%H-%M-%S"
-        )
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
 
-    file_name = Path(
-        report["analysis"]["file"]["file_name"]
-    ).stem
+    file_name = Path(report["analysis"]["file"]["file_name"]).stem
 
-    report_path = (
-        report_directory
-        / f"{file_name}_{timestamp}.json"
-    )
+    report_path = report_directory / f"{file_name}_{timestamp}.json"
 
     with report_path.open(
         "w",
@@ -78,6 +69,7 @@ def save_report(
     )
 
     return report_path
+
 
 async def scan_file(
     target_file: Path,
@@ -113,11 +105,7 @@ async def scan_file(
         # temp print stuff
         print(f"[+] Scanned: {target_file.name}")
 
-        print(
-            f"    Risk: "
-            f"{risk['risk']['percentage']}% "
-            f"({risk['risk']['level']})"
-        )
+        print(f"    Risk: {risk['risk']['percentage']}% ({risk['risk']['level']})")
 
         print(f"    Report: {report_path}")
 
@@ -127,36 +115,23 @@ async def scan_file(
             target_file,
         )
 
-        print(
-            f"[-] failed: {target_file.name}"
-            f" -> {error}"
-        )
+        print(f"[-] failed: {target_file.name} -> {error}")
+
 
 async def scan_directory(directory: Path) -> None:
-    files = [
-        path
-        for path in directory.iterdir()
-        if path.is_file()
-    ]
+    files = [path for path in directory.iterdir() if path.is_file()]
 
     if not files:
         print("no files found in directory")
         return
 
-    print(
-        f"\nfound {len(files)} file(s)\n"
-    )
+    print(f"\nfound {len(files)} file(s)\n")
 
-    timestamp = datetime.now().strftime(
-        "%Y-%m-%d_%H-%M-%S"
-    )
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
 
     reports_dir = get_reports_directory()
 
-    directory_report = (
-        reports_dir
-        / f"{directory.name}_{timestamp}"
-    )
+    directory_report = reports_dir / f"{directory.name}_{timestamp}"
 
     directory_report.mkdir(
         parents=True,
@@ -174,9 +149,14 @@ async def scan_directory(directory: Path) -> None:
         ]
     )
 
+
 async def main() -> None:
-    parser = argparse.ArgumentParser(description="Scan PE files or start the WebSocket server.")
-    parser.add_argument("--websocket", action="store_true", help="Start the WebSocket server")
+    parser = argparse.ArgumentParser(
+        description="Scan PE files or start the WebSocket server."
+    )
+    parser.add_argument(
+        "--websocket", action="store_true", help="Start the WebSocket server"
+    )
     args = parser.parse_args()
     if args.websocket:
         from backend.websocket import start_websocket
@@ -198,6 +178,7 @@ async def main() -> None:
 
     except Exception:
         logger.exception("error")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,3 +1,9 @@
+from fastapi.applications import FastAPI
+
+
+from uvicorn.config import Config
+
+
 from json import dumps
 from logging import Logger, getLogger
 from pathlib import Path
@@ -16,14 +22,14 @@ from constants import (
 
 logger: Logger = getLogger(name="Websocket")
 
-app = FastAPI()
+app: FastAPI = FastAPI()
 
 
 async def start_websocket() -> None:
     logger.info(
         f"Starting websocket on {BACKEND_WEBSOCKET_HOST}:{BACKEND_WEBSOCKET_PORT}"
     )
-    config = Config(
+    config: Config = Config(
         app,
         host=BACKEND_WEBSOCKET_HOST,
         port=BACKEND_WEBSOCKET_PORT,
