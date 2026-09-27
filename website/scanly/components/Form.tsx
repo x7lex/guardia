@@ -1,13 +1,14 @@
-import React from 'react'
+import React from "react"
 
-interface props {
-    children?: React.ReactNode
-}
-
-export default function Form({ children }: props) {
+export default function Form({ children }: { children?: React.ReactNode }) {
     return (
-        <div className='border-2 bg-[#ffebd7] w-100 h-120 mt-5 flex items-center justify-center'>
-            {children}
-        </div>
+        <section className="retro-panel mt-6 w-full">
+            <div className="mb-4">
+                <h1 className="retro-heading">New scan</h1>
+                <p className="mt-1 text-xs text-[#805775]">Choose your folders, then click Scan All.</p>
+            </div>
+            <div className="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">{children}</div>
+
+        </section>
     )
 }

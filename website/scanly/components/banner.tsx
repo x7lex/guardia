@@ -1,15 +1,14 @@
-import Link from "next/link";
+import Link from "next/link"
+import type { ReactNode } from "react"
 
-interface props {
-    className?: string
-}
-
-export default function Banner({ className }: props) {
+export default function Banner({ className = "", children }: { className?: string; children?: ReactNode }) {
     return (
-        <div className={`${className} flex items-center border w-full h-30 px-3 bg-[url('/checkers_bg.png')] bg-repeat bg-[length:200px_100px]`}>
-            <Link href="/" className="contents">
-                <img src="/banner.png" alt="scanly banner" className=" h-[80%] border-2 border-[color:#9D7E67] [border-style:inset]" />
+        <header className={`retro-banner flex w-full flex-wrap items-center justify-between gap-3 ${className}`}>
+            <Link href="/" aria-label="Guardia home" className="guardia-logo-frame">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/banner-guardia.png" alt="Guardia" />
             </Link>
-        </div>
+            <div>{children}</div>
+        </header>
     )
-}  
+}

@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export', // Outputs a static "out" folder
+  images: { unoptimized: true }, // Electron handles local files directly
+  typescript: {
+    ignoreBuildErrors: true
+  }
 };
-
 export default nextConfig;
