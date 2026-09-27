@@ -5,7 +5,7 @@ import os
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import httpx
@@ -27,6 +27,9 @@ AsyncClient = httpx.AsyncClient
 
 class GeminiReviewTests(unittest.TestCase):
     def setUp(self):
+        sleep = patch("backend.gemini_review.asyncio.sleep", new_callable=AsyncMock)
+        self.sleep = sleep.start()
+        self.addCleanup(sleep.stop)
         self.client = TestClient(app)
         self.env = patch.dict(
             os.environ,
@@ -126,6 +129,44 @@ class GeminiReviewTests(unittest.TestCase):
             )
             self.assertEqual(response.status_code, expected)
             self.assertNotIn("test-secret", response.text)
+
+    def test_transient_overload_recovers_without_changing_evidence(self):
+        attempts = []
+        def handler(request):
+            attempts.append(json.loads(request.content))
+            if len(attempts) < 3:
+                return httpx.Response(503, json={"error": {"message": "test-secret"}})
+            return httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": "Review recovered."}]}}]})
+        response = self.call(handler)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["review"], "Review recovered.")
+        self.assertEqual(len(attempts), 3)
+        self.assertTrue(all(body == attempts[0] for body in attempts))
+        self.assertEqual(self.sleep.await_count, 2)
+        delays = [call.args[0] for call in self.sleep.await_args_list]
+        self.assertTrue(1 <= delays[0] <= 1.5)
+        self.assertTrue(2 <= delays[1] <= 2.5)
+
+    def test_persistent_overload_returns_clear_503_after_bounded_retries(self):
+        calls = []
+        def handler(request):
+            calls.append(request)
+            return httpx.Response(503, json={"error": {"message": "test-secret"}})
+        response = self.call(handler)
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(len(calls), 3)
+        self.assertIn("Google Gemini", response.json()["detail"])
+        self.assertNotIn("test-secret", response.text)
+
+    def test_credentials_billing_quota_and_missing_model_are_not_retried(self):
+        for status in (400, 401, 402, 403, 404, 429):
+            calls = []
+            def handler(request):
+                calls.append(request)
+                return httpx.Response(status)
+            self.call(handler)
+            self.assertEqual(len(calls), 1)
+        self.sleep.assert_not_awaited()
 
     def test_blocked_and_truncated_responses_are_not_presented_as_complete(self):
         for data in (
