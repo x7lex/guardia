@@ -9,7 +9,13 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "desktop:prepare": "npm run build -- --webpack && node electron/prepare-web.mjs",
+    "desktop": "npm run desktop:prepare && electron .",
+    "desktop:scanner": "node electron/build-scanner.mjs",
+    "desktop:pack": "npm run desktop:scanner && npm run desktop:prepare && electron-builder --dir",
+    "desktop:dist": "npm run desktop:scanner && npm run desktop:prepare && electron-builder",
+    "test:desktop": "node electron/smoke-test.mjs"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
@@ -23,9 +29,13 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "main": "electron/main.mjs",
+  "description": "Guardia desktop static malware scanner"
 }
