@@ -37,8 +37,9 @@
               ps.capstone
               ps.lief
               ps.fastapi
-              ps.websockets
               ps.uvicorn
+              ps.httpx
+              ps.python-dotenv
             ]))
           ];
         };
