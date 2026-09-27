@@ -3,7 +3,6 @@ __pycache__/
 .pycache/
 .direnv/
 .ruff_cache/
-.reports/ 
 *.exe
 .DS_STORE
 .env
