@@ -1,10 +1,9 @@
-import os
-import json
 import hashlib
+import os
 from pathlib import Path
 
 import lief
-from capstone import Cs, CS_ARCH_X86, CS_MODE_32, CS_MODE_64
+from capstone import CS_ARCH_X86, CS_MODE_32, CS_MODE_64, Cs
 
 SUSPICIOUS_INSTRUCTIONS = {
     "syscall",
@@ -22,6 +21,7 @@ SUSPICIOUS_INSTRUCTIONS = {
 TARGET_FILE = Path("hrisitosense.exe")
 BINARY = lief.parse(str(TARGET_FILE))
 
+
 def get_sha256() -> str:
     sha256 = hashlib.sha256()
 
@@ -30,6 +30,7 @@ def get_sha256() -> str:
             sha256.update(chunk)
 
     return sha256.hexdigest()
+
 
 def get_imports() -> dict:
     libraries = []
@@ -47,10 +48,12 @@ def get_imports() -> dict:
 
         total_functions += len(functions)
 
-        libraries.append({
-            "name": imported_lib.name,
-            "functions": functions,
-        })
+        libraries.append(
+            {
+                "name": imported_lib.name,
+                "functions": functions,
+            }
+        )
 
     return {
         "library_count": len(libraries),
@@ -58,20 +61,23 @@ def get_imports() -> dict:
         "libraries": libraries,
     }
 
+
 def get_info() -> dict:
     sections = []
 
     for section in BINARY.sections:
-        sections.append({
-            "name": section.name,
-            "virtual_address": hex(section.virtual_address),
-            "virtual_size": section.virtual_size,
-            "raw_size": section.size,
-            "entropy": round(section.entropy, 2),
-            "executable": section.has_characteristic(
-                lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
-            ),
-        })
+        sections.append(
+            {
+                "name": section.name,
+                "virtual_address": hex(section.virtual_address),
+                "virtual_size": section.virtual_size,
+                "raw_size": section.size,
+                "entropy": round(section.entropy, 2),
+                "executable": section.has_characteristic(
+                    lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
+                ),
+            }
+        )
 
     return {
         "file_name": TARGET_FILE.name,
@@ -83,6 +89,7 @@ def get_info() -> dict:
         "section_count": len(BINARY.sections),
         "sections": sections,
     }
+
 
 def get_signatures() -> dict:
     known_issuers = [
@@ -123,10 +130,7 @@ def get_signatures() -> dict:
             integrity_valid = True
 
         for cert in signature.certificates:
-            if any(
-                ca.lower() in cert.issuer.lower()
-                for ca in known_issuers
-            ):
+            if any(ca.lower() in cert.issuer.lower() for ca in known_issuers):
                 known_ca_found = True
 
     return {
@@ -134,6 +138,7 @@ def get_signatures() -> dict:
         "integrity": "VALID" if integrity_valid else "INVALID",
         "known_ca": known_ca_found,
     }
+
 
 # ai generated
 def get_suspicious_instructions() -> dict:
@@ -148,17 +153,12 @@ def get_suspicious_instructions() -> dict:
     found = []
 
     for section in BINARY.sections:
-        if not section.has_characteristic(
-            lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
-        ):
+        if not section.has_characteristic(lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE):
             continue
 
         code = bytes(section.content)
 
-        for instruction in disassembler.disasm(
-            code,
-            section.virtual_address
-        ):
+        for instruction in disassembler.disasm(code, section.virtual_address):
             if instruction.mnemonic in SUSPICIOUS_INSTRUCTIONS:
                 found.append(instruction.mnemonic)
 
@@ -166,6 +166,7 @@ def get_suspicious_instructions() -> dict:
         "count": len(found),
         "instructions": sorted(set(found)),
     }
+
 
 def output() -> dict:
     report = {
