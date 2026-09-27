@@ -83,7 +83,7 @@ class UploadTests(unittest.TestCase):
         self.assertIn("score", result["report"]["risk_assessment"]["risk"])
         self.assertTrue(all(not path.exists() for path in paths))
 
-    def test_scan_attaches_second_opinion_without_overwriting_score(self):
+    def test_scan_never_requests_gemini_even_with_credentials(self):
         reviewer = AsyncMock(
             return_value={"review": "Possible false positive", "model": "test"}
         )
@@ -92,11 +92,17 @@ class UploadTests(unittest.TestCase):
             patch("backend.gemini_review.review_report", reviewer),
         ):
             result = self.upload(minimal_pe()).json()["report"]
-        reviewer.assert_awaited_once()
-        self.assertEqual(result["gemini_review"]["status"], "complete")
+        reviewer.assert_not_awaited()
+        self.assertNotIn("gemini_review", result)
         self.assertEqual(result["risk_assessment"]["risk"]["points"], 4.0)
-        self.assertEqual(reviewer.call_args.args[0]["analysis"], result["analysis"])
-        self.assertNotIn("gemini_review", reviewer.call_args.args[0])
+
+    def test_explicit_review_still_requests_gemini(self):
+        report = self.upload(minimal_pe()).json()["report"]
+        reviewer = AsyncMock(return_value={"review": "THIS IS PERFECTLY FINE", "model": "test"})
+        with patch("backend.api.review_report", reviewer):
+            response = self.client.post("/review", json=report)
+        self.assertEqual(response.status_code, 200)
+        reviewer.assert_awaited_once_with(report)
 
     def test_upload_applies_exact_hash_override_separately_from_heuristic(self):
         from backend.reputation import classify_response

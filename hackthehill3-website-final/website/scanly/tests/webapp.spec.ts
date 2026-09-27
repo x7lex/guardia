@@ -181,7 +181,7 @@ test("Gemini review sends report JSON, displays response, and reuses it when reo
   await page.getByLabel("Choose files", { exact: true }).setInputFiles(upload);
   await page.getByRole("button", { name: "Scan All (1)" }).click();
   await page.getByText("demo.exe", { exact: true }).click();
-  await page.getByRole("button", { name: "Retry review" }).click();
+  await page.getByRole("button", { name: "✦ Review with Gemini", exact: true }).click();
   await expect(
     page.getByText("No import table was available.", { exact: false }),
   ).toBeVisible();
@@ -211,7 +211,7 @@ test("Gemini quota errors offer retry without losing the scan", async ({
   await page.getByLabel("Choose files", { exact: true }).setInputFiles(upload);
   await page.getByRole("button", { name: "Scan All (1)" }).click();
   await page.getByText("demo.exe", { exact: true }).click();
-  await page.getByRole("button", { name: "Retry review" }).click();
+  await page.getByRole("button", { name: "✦ Review with Gemini", exact: true }).click();
   await expect(
     page.getByRole("alert").filter({ hasText: "quota was reached" }),
   ).toBeVisible();
@@ -237,7 +237,7 @@ test("Gemini depleted-credit errors link to billing", async ({ page }) => {
   await page.getByLabel("Choose files", { exact: true }).setInputFiles(upload);
   await page.getByRole("button", { name: "Scan All (1)" }).click();
   await page.getByText("demo.exe", { exact: true }).click();
-  await page.getByRole("button", { name: "Retry review" }).click();
+  await page.getByRole("button", { name: "✦ Review with Gemini", exact: true }).click();
   await expect(
     page.getByRole("alert").filter({ hasText: "credits are depleted" }),
   ).toBeVisible();

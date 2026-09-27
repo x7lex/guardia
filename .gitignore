@@ -9,5 +9,6 @@ __pycache__/
 .env.*
 !.env.example
 node_modules/
+.next-desktop/
 src/reports/
 .vscode/
