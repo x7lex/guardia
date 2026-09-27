@@ -11,7 +11,6 @@ class RiskPoints(IntEnum):
     UNSIGNED = 4
     SENSITIVE_METADATA = 5
 
-
 def get_risk_level(points: int) -> str:
     if points <= 3:
         return "Safe"
@@ -23,7 +22,6 @@ def get_risk_level(points: int) -> str:
         return "Unsafe"
 
     return "Dangerous"
-
 
 # points * 10 -> risk %
 def calculate_risk(
