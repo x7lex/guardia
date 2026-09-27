@@ -51,6 +51,7 @@ type Marker = Body & { id: string; report: Report; zone: Zone; scale: number };
 const reportZone = (report: Report): Zone =>
   riskZone(
     report.risk_assessment.risk.verdict ?? report.risk_assessment.risk.level,
+    report.risk_assessment.risk.points,
   );
 
 function createMarkers(

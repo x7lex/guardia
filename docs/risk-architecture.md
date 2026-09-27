@@ -46,8 +46,10 @@ policy, not a claim of OS trust-store chain validation or checked revocation.
 Each `reasons` entry gives evidence, nominal points, signature factor, category
 factor and final contribution. Deduplicated and informational entries explicitly
 contribute zero. `diagnostics.uncapped_score` and the final formula make the score
-reconstructable. Thresholds are Low Risk below 4, Suspicious below 6, High Risk
-below 8, and Dangerous at 8 or above.
+reconstructable. Thresholds are Low Risk below 3 (happy face), Suspicious below 5 (neutral face), High Risk
+below 8, and Dangerous at 8 or above (both frowny face). Decimal scores follow
+the same boundaries: 2.9 is happy, 3.0–4.9 neutral, and 5.0+ frowny. Saved browser
+reports are grouped by their numeric score so older labels do not retain old bands.
 
 Examples: unsigned crypto + network + process imports score 8.5; the same broad
 capabilities with trusted signing score 0.3. A complete injection chain remains at

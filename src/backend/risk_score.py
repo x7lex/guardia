@@ -16,7 +16,7 @@ LEGACY_SCRIPT_WEIGHTS = {"encoded_script_execution": 1.0, "concealed_script_exec
 
 
 def get_risk_level(points):
-    for ceiling, level in ((4, "Low Risk"), (6, "Suspicious"), (8, "High Risk")):
+    for ceiling, level in ((3, "Low Risk"), (5, "Suspicious"), (8, "High Risk")):
         if points < ceiling:
             return level
     return "Dangerous"

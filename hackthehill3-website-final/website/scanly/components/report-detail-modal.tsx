@@ -120,7 +120,7 @@ export default function ReportDetailModal({
   }, [maximized]);
   const { file, imports, signature, suspicious_instructions } = report.analysis;
   const { risk, reasons } = report.risk_assessment;
-  const appearance = riskAppearance(risk.verdict ?? risk.level);
+  const appearance = riskAppearance(risk.verdict ?? risk.level, risk.points);
   const levelColor = appearance.color;
 
   const capture = useCallback(async () => {
@@ -434,6 +434,7 @@ export default function ReportDetailModal({
               {plainLanguageSummary(
                 risk.verdict ?? risk.level,
                 signature.signed,
+                risk.points,
               )}
             </div>
 
@@ -717,8 +718,8 @@ export default function ReportDetailModal({
   );
 }
 
-function plainLanguageSummary(level: string, signed: boolean) {
-  const appearance = riskAppearance(level);
+function plainLanguageSummary(level: string, signed: boolean, points: number) {
+  const appearance = riskAppearance(level, points);
   if (appearance.label === "HIGH RISK") {
     return signed
       ? "Strong risk indicators were found despite an embedded signature."
