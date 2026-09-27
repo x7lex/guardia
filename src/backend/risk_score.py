@@ -1,6 +1,7 @@
 from enum import IntEnum
 from typing import Any
 
+
 class RiskPoints(IntEnum):
     GOOD_SIGNATURE = -3
     USER_ELEVATION = 1
@@ -39,62 +40,73 @@ def calculate_risk(
     if not signature.get("signed", False):
         points += RiskPoints.UNSIGNED
 
-        reasons.append({
-            "reason": "Unsigned executable",
-            "points": RiskPoints.UNSIGNED,
-        })
+        reasons.append(
+            {
+                "reason": "Unsigned executable",
+                "points": RiskPoints.UNSIGNED,
+            }
+        )
 
-    elif (
-        signature.get("integrity") == "VALID"
-        and signature.get("known_ca", False)
-    ):
+    elif signature.get("integrity") == "VALID" and signature.get("known_ca", False):
         points += RiskPoints.GOOD_SIGNATURE
 
-        reasons.append({
-            "reason": "Valid signature from known CA",
-            "points": RiskPoints.GOOD_SIGNATURE,
-        })
+        reasons.append(
+            {
+                "reason": "Valid signature from known CA",
+                "points": RiskPoints.GOOD_SIGNATURE,
+            }
+        )
 
     else:
         points += RiskPoints.BAD_SIGNATURE
 
-        reasons.append({
-            "reason": "Invalid or untrusted signature",
-            "points": RiskPoints.BAD_SIGNATURE,
-        })
+        reasons.append(
+            {
+                "reason": "Invalid or untrusted signature",
+                "points": RiskPoints.BAD_SIGNATURE,
+            }
+        )
 
     if user_elevation:
         points += RiskPoints.USER_ELEVATION
 
-        reasons.append({
-            "reason": "Requests user elevation",
-            "points": RiskPoints.USER_ELEVATION,
-        })
+        reasons.append(
+            {
+                "reason": "Requests user elevation",
+                "points": RiskPoints.USER_ELEVATION,
+            }
+        )
 
     if suspicious_import_sequence:
         points += RiskPoints.SUSPICIOUS_IMPORT_SEQUENCE
 
-        reasons.append({
-            "reason": "Suspicious import sequence detected",
-            "points": RiskPoints.SUSPICIOUS_IMPORT_SEQUENCE,
-        })
+        reasons.append(
+            {
+                "reason": "Suspicious import sequence detected",
+                "points": RiskPoints.SUSPICIOUS_IMPORT_SEQUENCE,
+            }
+        )
 
     if instructions.get("count", 0) > 0:
         points += RiskPoints.SUSPICIOUS_CPU_INSTRUCTIONS
 
-        reasons.append({
-            "reason": "Suspicious CPU instructions detected",
-            "points": RiskPoints.SUSPICIOUS_CPU_INSTRUCTIONS,
-            "instructions": instructions.get("instructions", []),
-        })
+        reasons.append(
+            {
+                "reason": "Suspicious CPU instructions detected",
+                "points": RiskPoints.SUSPICIOUS_CPU_INSTRUCTIONS,
+                "instructions": instructions.get("instructions", []),
+            }
+        )
 
     if sensitive_metadata:
         points += RiskPoints.SENSITIVE_METADATA
 
-        reasons.append({
-            "reason": "Sensitive folder or cookie access detected",
-            "points": RiskPoints.SENSITIVE_METADATA,
-        })
+        reasons.append(
+            {
+                "reason": "Sensitive folder or cookie access detected",
+                "points": RiskPoints.SENSITIVE_METADATA,
+            }
+        )
 
     points = max(0, min(int(points), 10))
 
