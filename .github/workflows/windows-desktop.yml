@@ -1,0 +1,58 @@
+name: Windows desktop installer
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      API_TOKEN: ""
+      GEMINI_API_KEY: ""
+      REPUTATION_PROVIDER: disabled
+      YARA_RULES_PATH: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: hackthehill3-website-final/website/scanly/package-lock.json
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          .venv/Scripts/python -m pip install -r requirements-build.txt
+      - name: Install Electron dependencies
+        run: npm ci --prefix hackthehill3-website-final/website/scanly
+      - name: Test scanner
+        run: .venv/Scripts/python -m unittest discover -s tests -v
+      - name: Check frontend
+        working-directory: hackthehill3-website-final/website/scanly
+        run: |
+          npm run lint
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm test
+      - name: Build Windows x64 installer
+        working-directory: hackthehill3-website-final/website/scanly
+        run: npm run dist:win
+      - name: Smoke test packaged Windows app
+        working-directory: hackthehill3-website-final/website/scanly
+        env:
+          GUARDIA_TEST_EXECUTABLE: desktop-dist/win-unpacked/Guardia.exe
+        run: npm run test:desktop
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Guardia-Windows-x64
+          path: hackthehill3-website-final/website/scanly/desktop-dist/Guardia-Setup-*.exe
+          if-no-files-found: error

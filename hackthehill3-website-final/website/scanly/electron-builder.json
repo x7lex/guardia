@@ -1,0 +1,23 @@
+{
+  "appId": "org.guardia.desktop",
+  "productName": "Guardia",
+  "asar": true,
+  "npmRebuild": false,
+  "directories": { "output": "desktop-dist" },
+  "files": ["electron/main.mjs", "electron/services.mjs", "package.json", "!node_modules/**/*"],
+  "extraResources": [
+    { "from": ".desktop-resources/backend", "to": "backend" },
+    { "from": ".desktop-resources/web", "to": "web" }
+  ],
+  "win": {
+    "target": [{ "target": "nsis", "arch": ["x64"] }],
+    "artifactName": "Guardia-Setup-${version}-${arch}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  }
+}

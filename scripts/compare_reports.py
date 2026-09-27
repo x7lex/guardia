@@ -51,8 +51,8 @@ async def main():
             )
             row.update(
                 fresh_risk=fresh["risk"],
-                gemini_status=fresh_report["gemini_review"]["status"],
-                gemini_verdict=fresh_report["gemini_review"].get("verdict"),
+                gemini_status=fresh_report.get("gemini_review", {}).get("status", "not_requested"),
+                gemini_verdict=fresh_report.get("gemini_review", {}).get("verdict"),
                 heuristic=fresh["heuristic"],
                 reputation=fresh_report["reputation"]["status"],
                 decision_source=fresh["decision"]["source"],
