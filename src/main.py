@@ -3,7 +3,7 @@
 import argparse
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from logging import getLogger
 from pathlib import Path
 
@@ -32,7 +32,7 @@ def get_target(value=None):
 def save_report(report, report_directory=None, timestamp=None):
     directory = report_directory or get_reports_directory()
     directory.mkdir(parents=True, exist_ok=True)
-    timestamp = timestamp or datetime.now().strftime("%Y-%m-%d_%H-%M-%S_%f")
+    timestamp = timestamp or datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S_%f")
     # Retain the extension so same-stem EXE/DLL inputs cannot overwrite each other.
     name = Path(report["analysis"]["file"]["file_name"]).name
     path = directory / f"{name}_{timestamp}.json"
@@ -64,7 +64,7 @@ async def scan_directory(directory):
     if not files:
         print("No regular files found in directory")
         return
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S_%f")
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S_%f")
     report_directory = get_reports_directory() / f"{directory.name}_{timestamp}"
     report_directory.mkdir(parents=True, exist_ok=True)
     # Serial parsing bounds peak memory for large installers.

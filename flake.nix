@@ -37,7 +37,7 @@
               ps.capstone
               ps.lief
               ps.fastapi
-              ps.httpx
+              ps.websockets
               ps.uvicorn
             ]))
           ];
