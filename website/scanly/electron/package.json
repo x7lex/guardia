@@ -1,0 +1,24 @@
+{
+  "name": "gaurdia",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "desktop:dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
+    "desktop:build": "next build && electron-builder"
+  },
+  "build": {
+    "productName": "Guardia",
+    "files": [
+      "electron/**/*",
+      "out/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

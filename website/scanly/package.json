@@ -1,15 +1,23 @@
 {
-  "name": "scanly",
+  "name": "gaurdia",
   "version": "0.1.0",
   "private": true,
+  "main": "electron/main.js",
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "desktop:dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
+    "desktop:build": "next build && electron-builder"
   },
   "dependencies": {
+    "electron-serve": "^3.0.1",
+    "html-to-image": "^1.11.13",
+    "install": "^0.13.0",
     "next": "16.3.6",
+    "npm": "^11.20.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -18,9 +26,24 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^9.1.0"
+  },
+  "build": {
+    "productName": "Guardia",
+    "files": [
+      "electron/**/*",
+      "out/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    }
   }
 }

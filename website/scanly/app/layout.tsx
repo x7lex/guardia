@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import localFont from 'next/font/local'
 import "./globals.css";
+import BackgroundMusic from "@/components/background-music";
 
 const tahoma = localFont({
   src: '../fonts/tahoma.ttf',
@@ -9,7 +9,7 @@ const tahoma = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "Scanly",
+  title: "Guardia",
   description: "A static analysis website",
 };
 
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`h-full antialiased`}
     >
-      <body className={`${tahoma.className} font-bold font-[#875F6B] min-h-full flex flex-col bg-[#fff9e6]`}>{children}</body>
+      <body className={`${tahoma.className} min-h-full flex flex-col`}><BackgroundMusic />{children}</body>
     </html>
   );
 }
