@@ -69,6 +69,8 @@ Gemini through the Python backend. It does not upload the original binary to Gem
 The response explains the evidence, uncertainty, and suggested next steps while
 preserving the original scanner score. The plain-text second opinion is saved as `gemini_review` and displayed in the
 report panel. It assesses score reasonableness and likely false positives/negatives.
+The prompt prohibits Markdown conventions, and the backend removes common Markdown
+presentation syntax before saving or displaying reviews.
 Missing credentials, oversized reports, or provider failures leave the deterministic
 report intact with an explicit review-unavailable reason. The panel supports retry.
 Configured reviews can add up to 90 seconds to each scan.
