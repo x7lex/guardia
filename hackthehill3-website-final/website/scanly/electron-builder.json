@@ -6,8 +6,7 @@
   "directories": { "output": "desktop-dist" },
   "files": ["electron/main.mjs", "electron/services.mjs", "package.json", "!node_modules/**/*"],
   "extraResources": [
-    { "from": ".desktop-resources/backend", "to": "backend" },
-    { "from": ".desktop-resources/web", "to": "web" }
+    { "from": ".desktop-resources", "to": ".", "filter": ["backend/**/*", "web/**/*"] }
   ],
   "win": {
     "target": [{ "target": "nsis", "arch": ["x64"] }],
