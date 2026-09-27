@@ -1,0 +1,1086 @@
+{
+    "analysis": {
+        "schema_version": "2.2",
+        "file": {
+            "file_name": "legacy_malware.exe",
+            "file_path": "/Users/hadi/Desktop/stuff/legacy_malware.exe",
+            "file_size": 13263731,
+            "sha256": "8b4d5221a7848dbc72b4b96bb566caaac12ec4338006bbf7e0b8b32f7f8187c6",
+            "format": "FORMATS.PE",
+            "machine": "MACHINE_TYPES.AMD64",
+            "entry_point": "0x1400410f0",
+            "section_count": 6,
+            "sections": [
+                {
+                    "name": ".text",
+                    "virtual_address": "0x1000",
+                    "virtual_size": 279638,
+                    "raw_size": 280064,
+                    "raw_offset": 1024,
+                    "entropy": 6.376,
+                    "executable": true,
+                    "writable": false,
+                    "raw_out_of_bounds": false
+                },
+                {
+                    "name": ".rdata",
+                    "virtual_address": "0x46000",
+                    "virtual_size": 120236,
+                    "raw_size": 120320,
+                    "raw_offset": 281088,
+                    "entropy": 6.652,
+                    "executable": false,
+                    "writable": false,
+                    "raw_out_of_bounds": false
+                },
+                {
+                    "name": ".data",
+                    "virtual_address": "0x64000",
+                    "virtual_size": 712,
+                    "raw_size": 512,
+                    "raw_offset": 401408,
+                    "entropy": 1.577,
+                    "executable": false,
+                    "writable": true,
+                    "raw_out_of_bounds": false
+                },
+                {
+                    "name": ".pdata",
+                    "virtual_address": "0x65000",
+                    "virtual_size": 8940,
+                    "raw_size": 9216,
+                    "raw_offset": 401920,
+                    "entropy": 5.759,
+                    "executable": false,
+                    "writable": false,
+                    "raw_out_of_bounds": false
+                },
+                {
+                    "name": ".tls",
+                    "virtual_address": "0x68000",
+                    "virtual_size": 113,
+                    "raw_size": 512,
+                    "raw_offset": 411136,
+                    "entropy": 0.073,
+                    "executable": false,
+                    "writable": true,
+                    "raw_out_of_bounds": false
+                },
+                {
+                    "name": ".reloc",
+                    "virtual_address": "0x69000",
+                    "virtual_size": 1236,
+                    "raw_size": 1536,
+                    "raw_offset": 411648,
+                    "entropy": 5.364,
+                    "executable": false,
+                    "writable": false,
+                    "raw_out_of_bounds": false
+                }
+            ],
+            "overlay": {
+                "offset": 413184,
+                "size": 12850547,
+                "certificate_bytes": 0,
+                "payload_bytes": 12850547,
+                "payload_fraction": 0.968848584157806,
+                "content_analysis": "BOUNDED_STATIC_CONTAINER_INSPECTION"
+            }
+        },
+        "imports": {
+            "libraries": [
+                {
+                    "name": "bcryptprimitives.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "ProcessPrng"
+                    ]
+                },
+                {
+                    "name": "api-ms-win-core-synch-l1-2-0.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "WaitOnAddress",
+                        "WakeByAddressAll",
+                        "WakeByAddressSingle"
+                    ]
+                },
+                {
+                    "name": "KERNEL32.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "AddVectoredExceptionHandler",
+                        "CloseHandle",
+                        "CompareStringOrdinal",
+                        "CreateDirectoryW",
+                        "CreateFileW",
+                        "CreateMutexA",
+                        "CreateProcessW",
+                        "CreateThread",
+                        "DuplicateHandle",
+                        "ExitProcess",
+                        "FindClose",
+                        "FindFirstFileExW",
+                        "FormatMessageW",
+                        "FreeEnvironmentStringsW",
+                        "GetCommandLineW",
+                        "GetConsoleMode",
+                        "GetConsoleOutputCP",
+                        "GetCurrentDirectoryW",
+                        "GetCurrentProcess",
+                        "GetCurrentProcessId",
+                        "GetCurrentThread",
+                        "GetCurrentThreadId",
+                        "GetEnvironmentStringsW",
+                        "GetEnvironmentVariableW",
+                        "GetExitCodeProcess",
+                        "GetFileAttributesW",
+                        "GetFileInformationByHandle",
+                        "GetFileInformationByHandleEx",
+                        "GetFullPathNameW",
+                        "GetLastError",
+                        "GetModuleFileNameW",
+                        "GetModuleHandleA",
+                        "GetModuleHandleW",
+                        "GetProcAddress",
+                        "GetProcessHeap",
+                        "GetStdHandle",
+                        "GetSystemDirectoryW",
+                        "GetSystemTimeAsFileTime",
+                        "GetSystemTimePreciseAsFileTime",
+                        "GetWindowsDirectoryW",
+                        "HeapAlloc",
+                        "HeapFree",
+                        "HeapReAlloc",
+                        "InitializeSListHead",
+                        "IsDebuggerPresent",
+                        "IsProcessorFeaturePresent",
+                        "LoadLibraryA",
+                        "MoveFileExW",
+                        "MultiByteToWideChar",
+                        "QueryPerformanceCounter",
+                        "ReadFileEx",
+                        "ReleaseMutex",
+                        "RtlCaptureContext",
+                        "RtlLookupFunctionEntry",
+                        "RtlVirtualUnwind",
+                        "SetFileInformationByHandle",
+                        "SetFilePointerEx",
+                        "SetFileTime",
+                        "SetLastError",
+                        "SetThreadStackGuarantee",
+                        "SetUnhandledExceptionFilter",
+                        "SleepEx",
+                        "SwitchToThread",
+                        "UnhandledExceptionFilter",
+                        "WaitForSingleObject",
+                        "WaitForSingleObjectEx",
+                        "WideCharToMultiByte",
+                        "WriteConsoleW",
+                        "WriteFileEx",
+                        "lstrlenW"
+                    ]
+                },
+                {
+                    "name": "ntdll.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "NtCreateNamedPipeFile",
+                        "NtOpenFile",
+                        "NtReadFile",
+                        "NtWriteFile",
+                        "RtlNtStatusToDosError"
+                    ]
+                },
+                {
+                    "name": "VCRUNTIME140.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "__C_specific_handler",
+                        "__CxxFrameHandler3",
+                        "__current_exception",
+                        "__current_exception_context",
+                        "memcmp",
+                        "memcpy",
+                        "memmove",
+                        "memset"
+                    ]
+                },
+                {
+                    "name": "api-ms-win-crt-runtime-l1-1-0.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "__p___argc",
+                        "__p___argv",
+                        "_c_exit",
+                        "_cexit",
+                        "_configure_narrow_argv",
+                        "_crt_atexit",
+                        "_exit",
+                        "_get_initial_narrow_environment",
+                        "_initialize_narrow_environment",
+                        "_initialize_onexit_table",
+                        "_initterm",
+                        "_initterm_e",
+                        "_register_onexit_function",
+                        "_register_thread_local_exe_atexit_callback",
+                        "_seh_filter_exe",
+                        "_set_app_type",
+                        "exit",
+                        "terminate"
+                    ]
+                },
+                {
+                    "name": "api-ms-win-crt-stdio-l1-1-0.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "__p__commode",
+                        "_set_fmode"
+                    ]
+                },
+                {
+                    "name": "api-ms-win-crt-math-l1-1-0.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "__setusermatherr"
+                    ]
+                },
+                {
+                    "name": "api-ms-win-crt-locale-l1-1-0.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "_configthreadlocale"
+                    ]
+                },
+                {
+                    "name": "api-ms-win-crt-heap-l1-1-0.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "_set_new_mode",
+                        "free"
+                    ]
+                },
+                {
+                    "name": "api-ms-win-crt-string-l1-1-0.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "strlen"
+                    ]
+                }
+            ],
+            "library_count": 11,
+            "function_count": 112
+        },
+        "strings": {
+            "matches": {
+                "browser_database": [
+                    "cookies"
+                ],
+                "browser_path": [],
+                "autorun": [],
+                "startup": [],
+                "scheduled_task": [],
+                "suspicious_shell": [],
+                "download_execute": [],
+                "vm_artifact": [],
+                "url": [],
+                "ipv4": [],
+                "domain": [
+                    "index.crates.io",
+                    "k.Cn"
+                ]
+            },
+            "match_counts": {
+                "browser_database": 1,
+                "browser_path": 0,
+                "autorun": 0,
+                "startup": 0,
+                "scheduled_task": 0,
+                "suspicious_shell": 0,
+                "download_execute": 0,
+                "vm_artifact": 0,
+                "url": 0,
+                "ipv4": 0,
+                "domain": 26
+            },
+            "limits": {
+                "examples_per_category": 20,
+                "printable_run_characters": 2048
+            },
+            "note": "ASCII and ASCII-range UTF-16LE only; text is untrusted data. URLs/domains/IP-like strings carry no risk by themselves.",
+            "bytes_scanned": 13263731,
+            "truncated": false
+        },
+        "signature": {
+            "signed": false,
+            "integrity": "UNSIGNED",
+            "chain_trust": "NOT_EVALUATED",
+            "revocation": "NOT_CHECKED",
+            "publisher_identity": "NOT_TRUST_VALIDATED",
+            "publishers": [],
+            "checks": [],
+            "known_ca": false
+        },
+        "disassembly": {
+            "supported": true,
+            "scored": false,
+            "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+            "bytes_decoded": 4095,
+            "instruction_count": 1142,
+            "mnemonic_counts": {
+                "sub": 32,
+                "call": 63,
+                "add": 47,
+                "jmp": 45,
+                "int3": 70,
+                "neg": 6,
+                "sbb": 2,
+                "dec": 2,
+                "ret": 35,
+                "push": 33,
+                "cmp": 83,
+                "mov": 291,
+                "jne": 48,
+                "lea": 82,
+                "xor": 48,
+                "test": 28,
+                "cmove": 2,
+                "pop": 32,
+                "movsxd": 2,
+                "movzx": 5,
+                "je": 28,
+                "jb": 5,
+                "jge": 1,
+                "lock cmpxchg": 1,
+                "xchg": 1,
+                "ja": 3,
+                "movdqa": 4,
+                "or": 14,
+                "movdqu": 4,
+                "movabs": 4,
+                "shl": 2,
+                "and": 23,
+                "not": 2,
+                "sete": 1,
+                "jbe": 5,
+                "setne": 2,
+                "int": 1,
+                "cpuid": 5,
+                "bt": 9,
+                "jae": 16,
+                "jl": 3,
+                "xgetbv": 1,
+                "btr": 2,
+                "shr": 6,
+                "nop": 5,
+                "jle": 1,
+                "jg": 1,
+                "inc": 17,
+                "cmovae": 3,
+                "xorps": 1,
+                "movsd": 2,
+                "cmovb": 2,
+                "cmovbe": 1,
+                "pxor": 1,
+                "pcmpgtb": 1,
+                "por": 1,
+                "jno": 1,
+                "pmovmskb": 3,
+                "bsf": 2,
+                "jns": 1
+            }
+        },
+        "payload_inspection": {
+            "bytes_inspected": 12850547,
+            "entropy_sample_bytes": 1048576,
+            "entropy": 7.998,
+            "container_candidates": [
+                {
+                    "format": "zip",
+                    "offset": 413184,
+                    "relative_offset": 0
+                },
+                {
+                    "format": "zip",
+                    "offset": 469926,
+                    "relative_offset": 56742
+                },
+                {
+                    "format": "zip",
+                    "offset": 524793,
+                    "relative_offset": 111609
+                },
+                {
+                    "format": "zip",
+                    "offset": 550891,
+                    "relative_offset": 137707
+                },
+                {
+                    "format": "zip",
+                    "offset": 612877,
+                    "relative_offset": 199693
+                },
+                {
+                    "format": "zip",
+                    "offset": 640345,
+                    "relative_offset": 227161
+                },
+                {
+                    "format": "zip",
+                    "offset": 651897,
+                    "relative_offset": 238713
+                },
+                {
+                    "format": "zip",
+                    "offset": 763901,
+                    "relative_offset": 350717
+                },
+                {
+                    "format": "gzip",
+                    "offset": 11800010,
+                    "relative_offset": 11386826
+                }
+            ],
+            "status": "partial",
+            "limitations": [
+                "Archive source inspected statically; native members, bytecode and unsupported dynamic layers can remain opaque"
+            ],
+            "limits": {
+                "members_per_archive": 512,
+                "source_bytes": 2097152,
+                "total_decompressed_bytes": 33554432,
+                "nested_archive_depth": 2
+            },
+            "archive": {
+                "source": "overlay",
+                "format": "zip",
+                "members": [
+                    {
+                        "name": "app/pyobfuscate_com.py",
+                        "size": 138443,
+                        "compressed_size": 91579,
+                        "status": "limited"
+                    },
+                    {
+                        "name": "python/LICENSE.txt",
+                        "size": 35407,
+                        "compressed_size": 11504,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_asyncio.pyd",
+                        "size": 78048,
+                        "compressed_size": 37753,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_bz2.pyd",
+                        "size": 87776,
+                        "compressed_size": 48158,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_ctypes.pyd",
+                        "size": 142560,
+                        "compressed_size": 71399,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_decimal.pyd",
+                        "size": 290528,
+                        "compressed_size": 144833,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_elementtree.pyd",
+                        "size": 138464,
+                        "compressed_size": 67078,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_hashlib.pyd",
+                        "size": 69344,
+                        "compressed_size": 32685,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_lzma.pyd",
+                        "size": 160992,
+                        "compressed_size": 91918,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_multiprocessing.pyd",
+                        "size": 38624,
+                        "compressed_size": 21453,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_overlapped.pyd",
+                        "size": 58080,
+                        "compressed_size": 30365,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_queue.pyd",
+                        "size": 36576,
+                        "compressed_size": 20700,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_remote_debugging.pyd",
+                        "size": 84704,
+                        "compressed_size": 41561,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_socket.pyd",
+                        "size": 87776,
+                        "compressed_size": 44314,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_sqlite3.pyd",
+                        "size": 132832,
+                        "compressed_size": 64992,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_ssl.pyd",
+                        "size": 190688,
+                        "compressed_size": 79978,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_uuid.pyd",
+                        "size": 28384,
+                        "compressed_size": 16543,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_wmi.pyd",
+                        "size": 40160,
+                        "compressed_size": 22579,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_zoneinfo.pyd",
+                        "size": 51936,
+                        "compressed_size": 28719,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/_zstd.pyd",
+                        "size": 503520,
+                        "compressed_size": 221070,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/libcrypto-3.dll",
+                        "size": 6242552,
+                        "compressed_size": 2318776,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/libffi-8.dll",
+                        "size": 39696,
+                        "compressed_size": 23942,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/libssl-3.dll",
+                        "size": 1329912,
+                        "compressed_size": 523487,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/pyexpat.pyd",
+                        "size": 222944,
+                        "compressed_size": 111956,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/python.cat",
+                        "size": 595524,
+                        "compressed_size": 194703,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/python.exe",
+                        "size": 106208,
+                        "compressed_size": 56695,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/python3.dll",
+                        "size": 73952,
+                        "compressed_size": 26050,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/python314._pth",
+                        "size": 52,
+                        "compressed_size": 49,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/python314.dll",
+                        "size": 6778592,
+                        "compressed_size": 2905662,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/python314.zip",
+                        "size": 4125572,
+                        "compressed_size": 4076247,
+                        "status": "nested_archive"
+                    },
+                    {
+                        "name": "python/pythonw.exe",
+                        "size": 104672,
+                        "compressed_size": 54819,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/select.pyd",
+                        "size": 33504,
+                        "compressed_size": 19223,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/sqlite3.dll",
+                        "size": 1584864,
+                        "compressed_size": 887703,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/unicodedata.pyd",
+                        "size": 759008,
+                        "compressed_size": 349691,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/vcruntime140.dll",
+                        "size": 120400,
+                        "compressed_size": 61933,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/vcruntime140_1.dll",
+                        "size": 49776,
+                        "compressed_size": 27413,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "python/winsound.pyd",
+                        "size": 32992,
+                        "compressed_size": 18575,
+                        "status": "not_analyzed"
+                    },
+                    {
+                        "name": "runcell.json",
+                        "size": 64,
+                        "compressed_size": 62,
+                        "status": "not_analyzed"
+                    }
+                ],
+                "scripts": [
+                    {
+                        "source": "overlay::app/pyobfuscate_com.py",
+                        "language": "python",
+                        "layer": 0,
+                        "status": "limited",
+                        "findings": [
+                            {
+                                "id": "obfuscated_runtime_resolution",
+                                "family": "packing",
+                                "strength": "weak",
+                                "reason": "Encoded built-in lookup combines with dynamically constructed module imports",
+                                "evidence": {
+                                    "source": "overlay::app/pyobfuscate_com.py",
+                                    "layer": 0,
+                                    "recovered_symbols": [
+                                        {
+                                            "alias": "IIlllI",
+                                            "symbol": "builtins.__dict__",
+                                            "line": 3,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "IIIlIlIlIIIl",
+                                            "symbol": "builtins.map",
+                                            "line": 4,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "lllIlIII",
+                                            "symbol": "builtins.chr",
+                                            "line": 5,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "lIIlllIllIIIIIll",
+                                            "symbol": "builtins.ord",
+                                            "line": 7,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "IIlIlIIIIlIIl",
+                                            "symbol": "builtins.globals",
+                                            "line": 8,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "IlIlIIIlIIl",
+                                            "symbol": "builtins.locals",
+                                            "line": 9,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "lIIlIllI",
+                                            "symbol": "builtins.getattr",
+                                            "line": 16,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "llIIIIIlIllll",
+                                            "symbol": "builtins.__import__",
+                                            "line": 17,
+                                            "encoded_name": true
+                                        },
+                                        {
+                                            "alias": "IIIllIl",
+                                            "symbol": "sys",
+                                            "line": 18,
+                                            "encoded_name": true
+                                        }
+                                    ],
+                                    "dynamic_import_lines": [
+                                        18,
+                                        32,
+                                        77,
+                                        302
+                                    ],
+                                    "limitation": "Indicates concealed capabilities, not a specific malicious behavior; code protectors can match."
+                                }
+                            }
+                        ],
+                        "decoded_layers": [],
+                        "limitations": [
+                            "Encoded runtime bindings and dynamic module names prevent complete capability recovery"
+                        ],
+                        "calls": [
+                            "<expression>",
+                            "<expression>.join",
+                            "IIIIlIIIIlIII",
+                            "IIIIll",
+                            "IIIIllIIlIllI",
+                            "IIIlllIlIlllll.append",
+                            "IIIllllIIlllIIl",
+                            "IIIllllllIIllIl",
+                            "IIlIIIlI",
+                            "IIlIlIIIlllIIIll",
+                            "IIlIllI",
+                            "IIlIllIIlI",
+                            "IIlIlllIllI.extend",
+                            "IIlllIIIllIlIIIl",
+                            "IIlllIlII",
+                            "IIllllIl",
+                            "__import__",
+                            "builtins.__import__",
+                            "builtins.getattr",
+                            "builtins.globals",
+                            "builtins.locals",
+                            "builtins.map",
+                            "builtins.ord",
+                            "getattr",
+                            "globals",
+                            "lIIIIIIIllI",
+                            "lIIlIIlllIlllIlI",
+                            "lIllIIIIIIIll",
+                            "lIllIlIlI",
+                            "lIllIlIlllllI",
+                            "lIllIlllI",
+                            "lIlllIIlllIIl",
+                            "llIlII",
+                            "llIllIIlIIIII",
+                            "llIlll",
+                            "llIlllI",
+                            "lllIlIlI",
+                            "lllIlIlII",
+                            "map",
+                            "range"
+                        ],
+                        "call_count": 364,
+                        "imports": [
+                            "IIIIllIIlIllI",
+                            "IIlIIIlI",
+                            "IIlIlIIIlllIIIll",
+                            "IIlIllI",
+                            "IIlIllIIlI",
+                            "IIllllIl",
+                            "builtins",
+                            "builtins.__dict__",
+                            "builtins.__import__",
+                            "builtins.chr",
+                            "builtins.getattr",
+                            "builtins.globals",
+                            "builtins.locals",
+                            "builtins.map",
+                            "builtins.ord",
+                            "lIllIIIIIIIll",
+                            "lIllIlIlllllI",
+                            "lIlllIIlllIIl",
+                            "llIlII",
+                            "sys"
+                        ],
+                        "recovered_symbols": [
+                            {
+                                "alias": "IIlllI",
+                                "symbol": "builtins.__dict__",
+                                "line": 3,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "IIIlIlIlIIIl",
+                                "symbol": "builtins.map",
+                                "line": 4,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "lllIlIII",
+                                "symbol": "builtins.chr",
+                                "line": 5,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "lIIlllIllIIIIIll",
+                                "symbol": "builtins.ord",
+                                "line": 7,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "IIlIlIIIIlIIl",
+                                "symbol": "builtins.globals",
+                                "line": 8,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "IlIlIIIlIIl",
+                                "symbol": "builtins.locals",
+                                "line": 9,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "lIIlIllI",
+                                "symbol": "builtins.getattr",
+                                "line": 16,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "llIIIIIlIllll",
+                                "symbol": "builtins.__import__",
+                                "line": 17,
+                                "encoded_name": true
+                            },
+                            {
+                                "alias": "IIIllIl",
+                                "symbol": "sys",
+                                "line": 18,
+                                "encoded_name": true
+                            }
+                        ]
+                    }
+                ],
+                "nested_archives": [
+                    {
+                        "source": "overlay::python/python314.zip",
+                        "format": "zip",
+                        "members": [],
+                        "scripts": [],
+                        "nested_archives": [],
+                        "limitations": [
+                            "ZIP exceeds directory limits, uses ZIP64/multiple disks, or is truncated"
+                        ],
+                        "status": "partial"
+                    }
+                ],
+                "limitations": [
+                    "Native binaries, bytecode and non-source members have not been semantically analyzed",
+                    "Some members exceeded limits, were encrypted, unsupported or failed inspection"
+                ],
+                "status": "partial",
+                "trailing_bytes": 16,
+                "member_count": 38,
+                "member_status_counts": {
+                    "limited": 1,
+                    "not_analyzed": 36,
+                    "nested_archive": 1
+                }
+            },
+            "decompressed_bytes": 4264015
+        },
+        "suspicious_instructions": {
+            "count": 0,
+            "instructions": [],
+            "scored": false,
+            "supported": true
+        },
+        "coverage": {
+            "static_only": true,
+            "limitations": [
+                "Archive source inspected statically; native members, bytecode and unsupported dynamic layers can remain opaque"
+            ],
+            "yara": "NOT_CONFIGURED",
+            "hash_reputation": "NOT_CONFIGURED",
+            "unpacking": "BOUNDED_ZIP_AND_LITERAL_SCRIPT_DECODING",
+            "control_flow": "NOT_ANALYZED"
+        }
+    },
+    "risk_assessment": {
+        "model_version": "2.2",
+        "file_name": "legacy_malware.exe",
+        "sha256": "8b4d5221a7848dbc72b4b96bb566caaac12ec4338006bbf7e0b8b32f7f8187c6",
+        "risk": {
+            "points": 1.5,
+            "score": "1.5/10.0",
+            "level": "Use at your own risk",
+            "coverage_limited": true
+        },
+        "reasons": [
+            {
+                "id": "obfuscated_runtime_resolution",
+                "family": "packing",
+                "strength": "weak",
+                "reason": "Encoded built-in lookup combines with dynamically constructed module imports",
+                "evidence": {
+                    "source": "overlay::app/pyobfuscate_com.py",
+                    "layer": 0,
+                    "recovered_symbols": [
+                        {
+                            "alias": "IIlllI",
+                            "symbol": "builtins.__dict__",
+                            "line": 3,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "IIIlIlIlIIIl",
+                            "symbol": "builtins.map",
+                            "line": 4,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "lllIlIII",
+                            "symbol": "builtins.chr",
+                            "line": 5,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "lIIlllIllIIIIIll",
+                            "symbol": "builtins.ord",
+                            "line": 7,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "IIlIlIIIIlIIl",
+                            "symbol": "builtins.globals",
+                            "line": 8,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "IlIlIIIlIIl",
+                            "symbol": "builtins.locals",
+                            "line": 9,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "lIIlIllI",
+                            "symbol": "builtins.getattr",
+                            "line": 16,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "llIIIIIlIllll",
+                            "symbol": "builtins.__import__",
+                            "line": 17,
+                            "encoded_name": true
+                        },
+                        {
+                            "alias": "IIIllIl",
+                            "symbol": "sys",
+                            "line": 18,
+                            "encoded_name": true
+                        }
+                    ],
+                    "dynamic_import_lines": [
+                        18,
+                        32,
+                        77,
+                        302
+                    ],
+                    "limitation": "Indicates concealed capabilities, not a specific malicious behavior; code protectors can match."
+                },
+                "nominal_points": 1.5,
+                "points": 1.5,
+                "scoring": "Strongest finding in family"
+            },
+            {
+                "id": "uninspected_payload",
+                "family": "coverage",
+                "strength": "informational",
+                "reason": "Substantial appended content has incomplete analysis coverage; outer PE capabilities cannot establish payload safety",
+                "evidence": {
+                    "offset": 413184,
+                    "size": 12850547,
+                    "certificate_bytes": 0,
+                    "payload_bytes": 12850547,
+                    "payload_fraction": 0.968848584157806,
+                    "content_analysis": "BOUNDED_STATIC_CONTAINER_INSPECTION"
+                },
+                "nominal_points": 0.0,
+                "points": 0.0,
+                "scoring": "Informational or covered by stronger finding in family"
+            },
+            {
+                "id": "dynamic_resolution",
+                "family": "packing",
+                "strength": "informational",
+                "reason": "Dynamic import resolution capability; common in legitimate software",
+                "evidence": {
+                    "imports": [
+                        "getprocaddress",
+                        "loadlibrarya"
+                    ]
+                },
+                "nominal_points": 0.0,
+                "points": 0.0,
+                "scoring": "Informational or covered by stronger finding in family"
+            }
+        ],
+        "diagnostics": {
+            "uncapped_score": 1.5,
+            "family_policy": "Maximum per family; packing and anti-analysis together capped at 2.5",
+            "signature_context": {
+                "signed": false,
+                "integrity": "UNSIGNED",
+                "chain_trust": "NOT_EVALUATED",
+                "revocation": "NOT_CHECKED",
+                "publisher_identity": "NOT_TRUST_VALIDATED",
+                "publishers": [],
+                "checks": [],
+                "known_ca": false
+            },
+            "signature_policy": "Valid integrity is legitimacy context; no deduction masks behavioral evidence. Chain trust is not inferred from issuer names.",
+            "unscored_context": {
+                "user_elevation": false,
+                "sensitive_metadata": false
+            },
+            "limitations": [
+                "Archive source inspected statically; native members, bytecode and unsupported dynamic layers can remain opaque",
+                "Substantial appended payload is only partially covered; inspect payload_inspection for recovered source and remaining limits.",
+                "Static capabilities are not observed behavior; absence of findings is not proof of safety."
+            ],
+            "assessment": "limited_visibility"
+        }
+    }
+}
