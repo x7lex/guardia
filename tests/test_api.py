@@ -1,11 +1,12 @@
 """Exercise the real static parser through the upload API, without running a PE."""
 
 import hashlib
+import os
+from pathlib import Path
 import struct
 import sys
 import unittest
-from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from fastapi.testclient import TestClient
@@ -36,6 +37,9 @@ def minimal_pe():
 
 class UploadTests(unittest.TestCase):
     def setUp(self):
+        env = patch.dict(os.environ, {"GEMINI_API_KEY": "", "API_TOKEN": ""})
+        env.start()
+        self.addCleanup(env.stop)
         self.client = TestClient(app)
 
     def upload(self, content, name="folder/demo.exe", headers=None):
@@ -70,6 +74,16 @@ class UploadTests(unittest.TestCase):
         )
         self.assertIn("score", result["report"]["risk_assessment"]["risk"])
         self.assertTrue(all(not path.exists() for path in paths))
+
+    def test_scan_attaches_second_opinion_without_overwriting_score(self):
+        reviewer = AsyncMock(return_value={"review": "Possible false positive", "model": "test"})
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"}), patch("backend.gemini_review.review_report", reviewer):
+            result = self.upload(minimal_pe()).json()["report"]
+        reviewer.assert_awaited_once()
+        self.assertEqual(result["gemini_review"]["status"], "complete")
+        self.assertEqual(result["risk_assessment"]["risk"]["points"], 4.0)
+        self.assertEqual(reviewer.call_args.args[0]["analysis"], result["analysis"])
+        self.assertNotIn("gemini_review", reviewer.call_args.args[0])
 
     def test_unsupported_and_empty_files_are_explicitly_skipped(self):
         for content in (b"", b"not an executable"):

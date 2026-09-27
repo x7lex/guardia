@@ -6,24 +6,25 @@ import RetroIcon from "@/components/retro-icon";
 import { useLayoutEffect, useRef } from "react";
 
 export interface Report {
-  analysis: {
-    file: {
-      file_name: string;
-      file_size: number;
-      sha256: string;
-      format: string;
-      machine: string;
-      entry_point: string;
-      section_count: number;
-      sections: {
-        name: string;
-        virtual_address: string;
-        virtual_size: number;
-        raw_size: number;
-        entropy: number;
-        executable: boolean;
-      }[];
-    };
+    gemini_review?: { status: string; review?: string; model?: string; reason?: string }
+    analysis: {
+        file: {
+            file_name: string
+            file_size: number
+            sha256: string
+            format: string
+            machine: string
+            entry_point: string
+            section_count: number
+            sections: {
+                name: string
+                virtual_address: string
+                virtual_size: number
+                raw_size: number
+                entropy: number
+                executable: boolean
+            }[]
+        }
 
     imports: {
       library_count: number;
@@ -46,10 +47,11 @@ export interface Report {
     };
   };
 
-  risk_assessment: {
-    model_version?: string;
-    file_name: string;
-    sha256: string;
+    risk_assessment: {
+        model_version?: string
+        signature_state?: string
+        file_name: string
+        sha256: string
 
     risk: {
       points: number;

@@ -1,0 +1,1104 @@
+{
+  "analysis": {
+    "schema_version": "2.2",
+    "file": {
+      "file_name": "ChromeSetup.exe",
+      "file_path": "/Users/hadi/Desktop/stuff/ChromeSetup.exe",
+      "file_size": 12411832,
+      "sha256": "7ea51634f8f9ece92eb581b3c8cca5a4dabd73a49e4759739b195c1599605960",
+      "format": "FORMATS.PE",
+      "machine": "MACHINE_TYPES.I386",
+      "entry_point": "0x621c10",
+      "section_count": 9,
+      "sections": [
+        {
+          "name": ".text",
+          "virtual_address": "0x1000",
+          "virtual_size": 3728860,
+          "raw_size": 3728896,
+          "raw_offset": 1024,
+          "entropy": 6.699,
+          "executable": true,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rdata",
+          "virtual_address": "0x390000",
+          "virtual_size": 549384,
+          "raw_size": 549888,
+          "raw_offset": 3729920,
+          "entropy": 6.081,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".data",
+          "virtual_address": "0x417000",
+          "virtual_size": 184468,
+          "raw_size": 21504,
+          "raw_offset": 4279808,
+          "entropy": 3.682,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".fptable",
+          "virtual_address": "0x445000",
+          "virtual_size": 128,
+          "raw_size": 512,
+          "raw_offset": 4301312,
+          "entropy": -0.0,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".tls",
+          "virtual_address": "0x446000",
+          "virtual_size": 437,
+          "raw_size": 512,
+          "raw_offset": 4301824,
+          "entropy": 0.412,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": "CPADinfo",
+          "virtual_address": "0x447000",
+          "virtual_size": 40,
+          "raw_size": 512,
+          "raw_offset": 4302336,
+          "entropy": 0.998,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": "malloc_h",
+          "virtual_address": "0x448000",
+          "virtual_size": 779,
+          "raw_size": 1024,
+          "raw_offset": 4302848,
+          "entropy": 6.018,
+          "executable": true,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rsrc",
+          "virtual_address": "0x449000",
+          "virtual_size": 7974076,
+          "raw_size": 7974400,
+          "raw_offset": 4303872,
+          "entropy": 6.601,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".reloc",
+          "virtual_address": "0xbe4000",
+          "virtual_size": 114180,
+          "raw_size": 114688,
+          "raw_offset": 12278272,
+          "entropy": 6.745,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        }
+      ],
+      "overlay": {
+        "offset": 12392960,
+        "size": 18872,
+        "certificate_bytes": 18872,
+        "payload_bytes": 0,
+        "payload_fraction": 0.0,
+        "content_analysis": "NOT_PRESENT"
+      }
+    },
+    "imports": {
+      "libraries": [
+        {
+          "name": "ADVAPI32.dll",
+          "kind": "normal",
+          "functions": [
+            "AddAce",
+            "AdjustTokenPrivileges",
+            "BuildTrusteeWithSidW",
+            "ChangeServiceConfig2W",
+            "ChangeServiceConfigW",
+            "CheckTokenMembership",
+            "CloseServiceHandle",
+            "ConvertSecurityDescriptorToStringSecurityDescriptorW",
+            "ConvertSidToStringSidW",
+            "ConvertStringSecurityDescriptorToSecurityDescriptorW",
+            "ConvertStringSidToSidW",
+            "CopySid",
+            "CreateProcessAsUserW",
+            "CreateProcessWithTokenW",
+            "CreateServiceW",
+            "DeleteService",
+            "DuplicateTokenEx",
+            "EqualSid",
+            "GetAce",
+            "GetAclInformation",
+            "GetLengthSid",
+            "GetNamedSecurityInfoW",
+            "GetSecurityDescriptorControl",
+            "GetSecurityDescriptorDacl",
+            "GetSecurityDescriptorGroup",
+            "GetSecurityDescriptorOwner",
+            "GetSecurityDescriptorSacl",
+            "GetSecurityInfo",
+            "GetSidIdentifierAuthority",
+            "GetSidLengthRequired",
+            "GetSidSubAuthority",
+            "GetSidSubAuthorityCount",
+            "GetTokenInformation",
+            "GetTraceEnableFlags",
+            "GetTraceEnableLevel",
+            "GetTraceLoggerHandle",
+            "ImpersonateLoggedOnUser",
+            "InitializeAcl",
+            "InitializeSid",
+            "IsValidAcl",
+            "IsValidSecurityDescriptor",
+            "IsValidSid",
+            "LookupAccountSidW",
+            "LookupPrivilegeValueW",
+            "OpenProcessToken",
+            "OpenSCManagerW",
+            "OpenServiceW",
+            "OpenThreadToken",
+            "QueryServiceConfigW",
+            "RegCloseKey",
+            "RegCreateKeyExW",
+            "RegDeleteKeyExW",
+            "RegDeleteValueW",
+            "RegEnumKeyExW",
+            "RegEnumValueW",
+            "RegOpenKeyExW",
+            "RegQueryInfoKeyW",
+            "RegQueryValueExW",
+            "RegSetValueExW",
+            "RegisterTraceGuidsW",
+            "RevertToSelf",
+            "SetEntriesInAclW",
+            "SetNamedSecurityInfoW",
+            "SetSecurityInfo",
+            "TraceEvent",
+            "UnregisterTraceGuids"
+          ]
+        },
+        {
+          "name": "dbghelp.dll",
+          "kind": "normal",
+          "functions": [
+            "SymCleanup",
+            "SymFromAddr",
+            "SymGetLineFromAddr64",
+            "SymGetModuleInfo64",
+            "SymGetSearchPathW",
+            "SymInitialize",
+            "SymSetOptions",
+            "SymSetSearchPathW"
+          ]
+        },
+        {
+          "name": "GDI32.dll",
+          "kind": "normal",
+          "functions": [
+            "CreateCompatibleDC",
+            "CreateDIBSection",
+            "DeleteDC",
+            "DeleteObject",
+            "GetObjectW",
+            "GetStockObject",
+            "SelectObject",
+            "SetBrushOrgEx",
+            "SetStretchBltMode",
+            "StretchBlt"
+          ]
+        },
+        {
+          "name": "OLEAUT32.dll",
+          "kind": "normal",
+          "functions": [
+            "ordinal:161",
+            "ordinal:23",
+            "ordinal:411",
+            "ordinal:16",
+            "ordinal:17",
+            "ordinal:20",
+            "ordinal:19",
+            "ordinal:77",
+            "ordinal:24",
+            "ordinal:2",
+            "ordinal:150",
+            "ordinal:4",
+            "ordinal:6",
+            "ordinal:184",
+            "ordinal:9"
+          ]
+        },
+        {
+          "name": "SHELL32.dll",
+          "kind": "normal",
+          "functions": [
+            "CommandLineToArgvW",
+            "ordinal:680",
+            "SHGetFolderPathW",
+            "SHGetKnownFolderPath",
+            "ShellExecuteExW"
+          ]
+        },
+        {
+          "name": "USER32.dll",
+          "kind": "normal",
+          "functions": [
+            "AllowSetForegroundWindow",
+            "BeginPaint",
+            "CharUpperW",
+            "CreateWindowExW",
+            "DefWindowProcW",
+            "DestroyIcon",
+            "DestroyWindow",
+            "DispatchMessageW",
+            "EndPaint",
+            "GetActiveWindow",
+            "GetClassInfoExW",
+            "GetClientRect",
+            "GetDesktopWindow",
+            "GetDpiForWindow",
+            "GetGuiResources",
+            "GetMessageW",
+            "GetQueueStatus",
+            "GetShellWindow",
+            "GetSystemMetrics",
+            "GetWindowLongW",
+            "GetWindowRect",
+            "GetWindowThreadProcessId",
+            "InvalidateRect",
+            "IsDialogMessageW",
+            "IsWindow",
+            "KillTimer",
+            "LoadImageW",
+            "LoadStringW",
+            "MessageBoxExW",
+            "MsgWaitForMultipleObjectsEx",
+            "PeekMessageW",
+            "PostMessageW",
+            "PostQuitMessage",
+            "RegisterClassExW",
+            "SendMessageW",
+            "SetForegroundWindow",
+            "SetTimer",
+            "SetWindowLongW",
+            "SetWindowPos",
+            "ShowWindow",
+            "SystemParametersInfoW",
+            "TranslateMessage",
+            "UnregisterClassW",
+            "UpdateWindow"
+          ]
+        },
+        {
+          "name": "KERNEL32.dll",
+          "kind": "normal",
+          "functions": [
+            "AcquireSRWLockExclusive",
+            "AcquireSRWLockShared",
+            "AssignProcessToJobObject",
+            "CancelIoEx",
+            "CloseHandle",
+            "CompareStringW",
+            "ConnectNamedPipe",
+            "CopyFileW",
+            "CreateDirectoryW",
+            "CreateEventW",
+            "CreateFileA",
+            "CreateFileMappingW",
+            "CreateFileW",
+            "CreateIoCompletionPort",
+            "CreateMutexW",
+            "CreateNamedPipeW",
+            "CreatePipe",
+            "CreateProcessW",
+            "CreateThread",
+            "CreateToolhelp32Snapshot",
+            "DecodePointer",
+            "DeleteCriticalSection",
+            "DeleteFileW",
+            "DeleteProcThreadAttributeList",
+            "DeviceIoControl",
+            "DuplicateHandle",
+            "EncodePointer",
+            "EnterCriticalSection",
+            "EnumResourceNamesW",
+            "EnumSystemLocalesW",
+            "ExitProcess",
+            "ExpandEnvironmentStringsW",
+            "FileTimeToLocalFileTime",
+            "FileTimeToSystemTime",
+            "FindClose",
+            "FindFirstFileExW",
+            "FindFirstFileW",
+            "FindNextFileW",
+            "FindResourceW",
+            "FlsAlloc",
+            "FlsFree",
+            "FlsGetValue",
+            "FlsSetValue",
+            "FlushFileBuffers",
+            "FormatMessageW",
+            "FreeEnvironmentStringsW",
+            "FreeLibrary",
+            "GetACP",
+            "GetCPInfo",
+            "GetCommandLineA",
+            "GetCommandLineW",
+            "GetConsoleMode",
+            "GetConsoleOutputCP",
+            "GetCurrentDirectoryW",
+            "GetCurrentProcess",
+            "GetCurrentProcessId",
+            "GetCurrentThread",
+            "GetCurrentThreadId",
+            "GetDateFormatW",
+            "GetDiskFreeSpaceExW",
+            "GetDriveTypeW",
+            "GetEnvironmentStringsW",
+            "GetEnvironmentVariableW",
+            "GetExitCodeProcess",
+            "GetFileAttributesExW",
+            "GetFileAttributesW",
+            "GetFileInformationByHandle",
+            "GetFileInformationByHandleEx",
+            "GetFileSize",
+            "GetFileSizeEx",
+            "GetFileType",
+            "GetFullPathNameW",
+            "GetLastError",
+            "GetLocalTime",
+            "GetLocaleInfoW",
+            "GetLogicalProcessorInformation",
+            "GetLogicalProcessorInformationEx",
+            "GetLongPathNameW",
+            "GetModuleFileNameW",
+            "GetModuleHandleA",
+            "GetModuleHandleExA",
+            "GetModuleHandleExW",
+            "GetModuleHandleW",
+            "GetNamedPipeClientProcessId",
+            "GetNamedPipeServerProcessId",
+            "GetNativeSystemInfo",
+            "GetOEMCP",
+            "GetOverlappedResult",
+            "GetProcAddress",
+            "GetProcessHeap",
+            "GetProcessId",
+            "GetProcessInformation",
+            "GetProcessMitigationPolicy",
+            "GetProcessTimes",
+            "GetProductInfo",
+            "GetQueuedCompletionStatus",
+            "GetStartupInfoW",
+            "GetStdHandle",
+            "GetStringTypeW",
+            "GetSystemDirectoryW",
+            "GetSystemInfo",
+            "GetSystemTimeAsFileTime",
+            "GetSystemTimePreciseAsFileTime",
+            "GetTempPathW",
+            "GetThreadId",
+            "GetThreadPreferredUILanguages",
+            "GetThreadPriority",
+            "GetTickCount",
+            "GetTimeFormatW",
+            "GetTimeZoneInformation",
+            "GetUserDefaultLCID",
+            "GetUserPreferredUILanguages",
+            "GetVersionExW",
+            "GetWindowsDirectoryW",
+            "GlobalAlloc",
+            "GlobalFree",
+            "GlobalMemoryStatusEx",
+            "HeapAlloc",
+            "HeapDestroy",
+            "HeapFree",
+            "HeapReAlloc",
+            "HeapSetInformation",
+            "HeapSize",
+            "InitOnceExecuteOnce",
+            "InitializeConditionVariable",
+            "InitializeCriticalSectionEx",
+            "InitializeProcThreadAttributeList",
+            "InitializeSListHead",
+            "InitializeSRWLock",
+            "InterlockedPushEntrySList",
+            "IsDebuggerPresent",
+            "IsProcessorFeaturePresent",
+            "IsValidCodePage",
+            "IsValidLocale",
+            "IsWow64Process",
+            "K32GetModuleInformation",
+            "K32GetProcessMemoryInfo",
+            "LCMapStringW",
+            "LeaveCriticalSection",
+            "LoadLibraryExA",
+            "LoadLibraryExW",
+            "LoadLibraryW",
+            "LoadResource",
+            "LocalFree",
+            "LockResource",
+            "MapViewOfFile",
+            "MoveFileExW",
+            "MoveFileW",
+            "MulDiv",
+            "MultiByteToWideChar",
+            "OpenProcess",
+            "OutputDebugStringA",
+            "OutputDebugStringW",
+            "PeekNamedPipe",
+            "PostQueuedCompletionStatus",
+            "Process32FirstW",
+            "Process32NextW",
+            "ProcessIdToSessionId",
+            "QueryFullProcessImageNameW",
+            "QueryPerformanceCounter",
+            "QueryPerformanceFrequency",
+            "QueryThreadCycleTime",
+            "RaiseException",
+            "ReadConsoleW",
+            "ReadFile",
+            "ReadProcessMemory",
+            "RegisterWaitForSingleObject",
+            "ReleaseMutex",
+            "ReleaseSRWLockExclusive",
+            "ReleaseSRWLockShared",
+            "RemoveDirectoryW",
+            "ReplaceFileW",
+            "ResetEvent",
+            "RtlCaptureStackBackTrace",
+            "RtlUnwind",
+            "SetCurrentDirectoryW",
+            "SetDefaultDllDirectories",
+            "SetEndOfFile",
+            "SetEnvironmentVariableW",
+            "SetEvent",
+            "SetFileAttributesW",
+            "SetFileInformationByHandle",
+            "SetFilePointer",
+            "SetFilePointerEx",
+            "SetFileTime",
+            "SetHandleInformation",
+            "SetInformationJobObject",
+            "SetLastError",
+            "SetPriorityClass",
+            "SetProcessInformation",
+            "SetProcessWorkingSetSize",
+            "SetStdHandle",
+            "SetThreadInformation",
+            "SetThreadPriority",
+            "SetUnhandledExceptionFilter",
+            "SizeofResource",
+            "Sleep",
+            "SleepConditionVariableSRW",
+            "SwitchToThread",
+            "SystemTimeToFileTime",
+            "SystemTimeToTzSpecificLocalTime",
+            "TerminateProcess",
+            "TlsAlloc",
+            "TlsFree",
+            "TlsGetValue",
+            "TlsSetValue",
+            "TryAcquireSRWLockExclusive",
+            "TzSpecificLocalTimeToSystemTime",
+            "UnhandledExceptionFilter",
+            "UnmapViewOfFile",
+            "UnregisterWaitEx",
+            "UpdateProcThreadAttribute",
+            "VerSetConditionMask",
+            "VerifyVersionInfoW",
+            "VirtualAlloc",
+            "VirtualFree",
+            "VirtualProtect",
+            "VirtualQuery",
+            "WTSGetActiveConsoleSessionId",
+            "WaitForMultipleObjects",
+            "WaitForSingleObject",
+            "WaitNamedPipeW",
+            "WakeAllConditionVariable",
+            "WakeConditionVariable",
+            "WideCharToMultiByte",
+            "WriteConsoleW",
+            "WriteFile",
+            "lstrcmpW",
+            "lstrcmpiW"
+          ]
+        },
+        {
+          "name": "ole32.dll",
+          "kind": "normal",
+          "functions": [
+            "CoAddRefServerProcess",
+            "CoCreateInstance",
+            "CoGetCallContext",
+            "CoInitializeEx",
+            "CoRegisterClassObject",
+            "CoRegisterInitializeSpy",
+            "CoReleaseServerProcess",
+            "CoResumeClassObjects",
+            "CoRevokeClassObject",
+            "CoRevokeInitializeSpy",
+            "CoTaskMemFree",
+            "CoUninitialize",
+            "IIDFromString",
+            "StringFromGUID2"
+          ]
+        },
+        {
+          "name": "ntdll.dll",
+          "kind": "normal",
+          "functions": [
+            "NtDeleteKey",
+            "NtQueryInformationProcess",
+            "NtQueryObject",
+            "RtlGetVersion"
+          ]
+        },
+        {
+          "name": "Secur32.dll",
+          "kind": "normal",
+          "functions": [
+            "GetUserNameExW"
+          ]
+        },
+        {
+          "name": "WTSAPI32.dll",
+          "kind": "normal",
+          "functions": [
+            "WTSEnumerateSessionsW",
+            "WTSFreeMemory",
+            "WTSQuerySessionInformationW"
+          ]
+        },
+        {
+          "name": "USERENV.dll",
+          "kind": "normal",
+          "functions": [
+            "CreateEnvironmentBlock",
+            "DestroyEnvironmentBlock",
+            "EnterCriticalPolicySection",
+            "LeaveCriticalPolicySection"
+          ]
+        },
+        {
+          "name": "WINHTTP.dll",
+          "kind": "normal",
+          "functions": [
+            "WinHttpAddRequestHeaders",
+            "WinHttpCloseHandle",
+            "WinHttpConnect",
+            "WinHttpGetProxyForUrl",
+            "WinHttpOpen",
+            "WinHttpOpenRequest",
+            "WinHttpQueryHeaders",
+            "WinHttpReadData",
+            "WinHttpReceiveResponse",
+            "WinHttpSendRequest",
+            "WinHttpSetOption",
+            "WinHttpSetStatusCallback"
+          ]
+        },
+        {
+          "name": "SHLWAPI.dll",
+          "kind": "normal",
+          "functions": [
+            "ordinal:437",
+            "PathMatchSpecW"
+          ]
+        },
+        {
+          "name": "WINMM.dll",
+          "kind": "normal",
+          "functions": [
+            "timeBeginPeriod",
+            "timeEndPeriod",
+            "timeGetTime"
+          ]
+        },
+        {
+          "name": "api-ms-win-core-synch-l1-2-0.dll",
+          "kind": "normal",
+          "functions": [
+            "WaitOnAddress",
+            "WakeByAddressAll",
+            "WakeByAddressSingle"
+          ]
+        },
+        {
+          "name": "api-ms-win-core-winrt-l1-1-0.dll",
+          "kind": "normal",
+          "functions": [
+            "RoInitialize",
+            "RoUninitialize"
+          ]
+        }
+      ],
+      "library_count": 17,
+      "function_count": 425
+    },
+    "strings": {
+      "matches": {
+        "browser_database": [
+          "CookieS",
+          "cookies"
+        ],
+        "browser_path": [],
+        "autorun": [
+          "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+        ],
+        "startup": [],
+        "scheduled_task": [],
+        "suspicious_shell": [],
+        "download_execute": [],
+        "vm_artifact": [],
+        "url": [
+          "https://clients2.google.com/cr/report",
+          "https://dl.google.com/update2/installers/icons/",
+          "https://play.googleapis.com/log",
+          "http://support.google.com/installer/",
+          "https://crashpad.chromium.org/",
+          "https://crashpad.chromium.org/bug/new",
+          "http://dictionaryperceptionrevolutionfoundationpx;height:successfulsupportersmillenniumhis",
+          "http://mathematicsmargin-top:eventually",
+          "http://Descriptionrelatively",
+          "http://applicationslink",
+          "http://navigation",
+          "http://www.years",
+          "http://interested",
+          "http://familiar",
+          "http://whether",
+          "http://interpreted",
+          "http://addEventListenerresponsible",
+          "http://.jpg|right|thumb|.js",
+          "http://according",
+          "http://www.interpretation"
+        ],
+        "ipv4": [
+          "0.0.0.0",
+          "1.3.2.1",
+          "127.0.0.1",
+          "6.0.0.0"
+        ],
+        "domain": [
+          "openssl.org",
+          "update.googleapis.com",
+          "clients2.google.com",
+          "dl.google.com",
+          "play.googleapis.com",
+          "support.google.com",
+          "crashpad.chromium.org",
+          "birthpopuptypesapplyImagebeinguppernoteseveryshowsmeansextramatchtrackknownearlybegansuperpapernorthlearngivennamedendedTermspartsGroupbrandusingwomanfalsereadyaudiotakeswhile.com",
+          "thing.org",
+          "genretrucklooksValueFrame.net",
+          "Log.com",
+          "tos.org",
+          "the.com",
+          "w3.org",
+          "www.w3.org",
+          "cacerts.digicert.com",
+          "crl3.digicert.com",
+          "www.digicert.com",
+          "crl4.digicert.com",
+          "proxy.cN"
+        ]
+      },
+      "match_counts": {
+        "browser_database": 2,
+        "browser_path": 0,
+        "autorun": 2,
+        "startup": 0,
+        "scheduled_task": 0,
+        "suspicious_shell": 0,
+        "download_execute": 0,
+        "vm_artifact": 0,
+        "url": 66,
+        "ipv4": 7,
+        "domain": 62
+      },
+      "limits": {
+        "examples_per_category": 20,
+        "printable_run_characters": 2048
+      },
+      "note": "ASCII and ASCII-range UTF-16LE only; text is untrusted data. URLs/domains/IP-like strings carry no risk by themselves.",
+      "bytes_scanned": 12411832,
+      "truncated": false
+    },
+    "signature": {
+      "signed": true,
+      "integrity": "VALID",
+      "chain_trust": "NOT_EVALUATED",
+      "revocation": "NOT_CHECKED",
+      "publisher_identity": "NOT_TRUST_VALIDATED",
+      "publishers": [
+        {
+          "subject": "JURISDICTION_OF_INCORPORATION_C=US, JURISDICTION_OF_INCORPORATION_SP=Delaware, BUSINESS_CATEGORY=Private Organization, serialNumber=3582691, C=US, ST=California, L=Mountain View, O=Google LLC, CN=Google LLC",
+          "issuer": "C=US, O=DigiCert\\, Inc., CN=DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+          "serial_number": "0b50cf246b263efd85a729315158f3ff"
+        }
+      ],
+      "checks": [
+        {
+          "full_verification": "VERIFICATION_FLAGS.OK",
+          "integrity_without_time": "VERIFICATION_FLAGS.OK",
+          "file_digest": "VERIFICATION_FLAGS.OK"
+        }
+      ],
+      "known_ca": false
+    },
+    "disassembly": {
+      "supported": true,
+      "scored": false,
+      "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+      "bytes_decoded": 4095,
+      "instruction_count": 1582,
+      "mnemonic_counts": {
+        "call": 100,
+        "jmp": 30,
+        "mov": 417,
+        "push": 194,
+        "cmp": 57,
+        "je": 94,
+        "test": 85,
+        "jne": 51,
+        "or": 10,
+        "shl": 3,
+        "not": 1,
+        "pop": 94,
+        "ret": 49,
+        "sub": 43,
+        "lea": 32,
+        "xorps": 1,
+        "movlpd": 1,
+        "xor": 51,
+        "leave": 10,
+        "int3": 103,
+        "add": 42,
+        "sete": 1,
+        "jae": 2,
+        "jb": 5,
+        "cmovne": 1,
+        "inc": 11,
+        "js": 4,
+        "jle": 3,
+        "dec": 3,
+        "imul": 1,
+        "jge": 1,
+        "jns": 1,
+        "ja": 2,
+        "nop": 5,
+        "and": 3,
+        "cld": 4,
+        "sbb": 1,
+        "lock cmpxchg": 1,
+        "jg": 1,
+        "shr": 1,
+        "movzx": 42,
+        "cmovg": 21
+      }
+    },
+    "payload_inspection": null,
+    "suspicious_instructions": {
+      "count": 0,
+      "instructions": [],
+      "scored": false,
+      "supported": true
+    },
+    "coverage": {
+      "static_only": true,
+      "limitations": [],
+      "yara": "NOT_CONFIGURED",
+      "hash_reputation": "NOT_CONFIGURED",
+      "unpacking": "NOT_PERFORMED",
+      "control_flow": "NOT_ANALYZED"
+    }
+  },
+  "risk_assessment": {
+    "model_version": "4.0",
+    "file_name": "ChromeSetup.exe",
+    "sha256": "7ea51634f8f9ece92eb581b3c8cca5a4dabd73a49e4759739b195c1599605960",
+    "risk": {
+      "points": 0.6,
+      "score": "0.6/10.0",
+      "level": "Low Risk",
+      "verdict": "Low Risk",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "signature_state": "trusted_signed",
+    "reasons": [
+      {
+        "id": "signature_baseline",
+        "family": "signature",
+        "strength": "baseline",
+        "reason": "Signature state: trusted_signed",
+        "nominal_points": 0.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "evidence": {
+          "signed": true,
+          "integrity": "VALID",
+          "chain_trust": "NOT_EVALUATED",
+          "revocation": "NOT_CHECKED",
+          "publisher_identity": "NOT_TRUST_VALIDATED",
+          "publishers": [
+            {
+              "subject": "JURISDICTION_OF_INCORPORATION_C=US, JURISDICTION_OF_INCORPORATION_SP=Delaware, BUSINESS_CATEGORY=Private Organization, serialNumber=3582691, C=US, ST=California, L=Mountain View, O=Google LLC, CN=Google LLC",
+              "issuer": "C=US, O=DigiCert\\, Inc., CN=DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+              "serial_number": "0b50cf246b263efd85a729315158f3ff"
+            }
+          ],
+          "checks": [
+            {
+              "full_verification": "VERIFICATION_FLAGS.OK",
+              "integrity_without_time": "VERIFICATION_FLAGS.OK",
+              "file_digest": "VERIFICATION_FLAGS.OK"
+            }
+          ],
+          "known_ca": false
+        }
+      },
+      {
+        "id": "autorun_write",
+        "family": "persistence",
+        "strength": "moderate",
+        "reason": "Autorun location and registry writing coexist; target linkage is unproven",
+        "base_points": 1.5,
+        "contextual": true,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "autorun": [
+              "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+            ],
+            "registry_write": [
+              "regsetvalueexw"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 1.5,
+        "signature_factor": 0.1,
+        "category_factor": 1.5,
+        "points": 0.225,
+        "scoring": "Strongest finding in family \u00d7 signature factor \u00d7 multiple-family factor"
+      },
+      {
+        "id": "service_creation",
+        "family": "persistence",
+        "strength": "informational",
+        "reason": "Service installation capability; expected in installers and system tools",
+        "base_points": 0.0,
+        "contextual": true,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "service_create": [
+              "createservicew"
+            ],
+            "service_manager": [
+              "openscmanagerw"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 0.1,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "download_launch",
+        "family": "execution",
+        "strength": "weak",
+        "reason": "Network retrieval, file creation/write and process execution coexist",
+        "base_points": 1.0,
+        "contextual": true,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "network_retrieve": [
+              "winhttpreaddata"
+            ],
+            "file_write": [
+              "copyfilew",
+              "writefile"
+            ],
+            "process_execute": [
+              "createprocessasuserw",
+              "createprocessw",
+              "shellexecuteexw"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 1.0,
+        "signature_factor": 0.1,
+        "category_factor": 1.5,
+        "points": 0.15,
+        "scoring": "Strongest finding in family \u00d7 signature factor \u00d7 multiple-family factor"
+      },
+      {
+        "id": "anti_debug_probe",
+        "family": "anti_analysis",
+        "strength": "informational",
+        "reason": "An isolated debugger API is not an evasion chain",
+        "base_points": 0.0,
+        "contextual": false,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "debug_check": [
+              "isdebuggerpresent"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 0.1,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "dynamic_resolution",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Dynamic API resolution is common in ordinary software",
+        "base_points": 0.0,
+        "evidence": {
+          "imports": [
+            "getprocaddress"
+          ]
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 0.1,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "import_combination",
+        "family": "import_combination",
+        "strength": "moderate",
+        "reason": "Multiple import categories coexist; crypto/credentials with networking and process APIs deserves extra review",
+        "base_points": 1.5,
+        "evidence": {
+          "source": "outer_pe",
+          "categories": {
+            "network": [
+              "winhttpconnect",
+              "winhttpreaddata",
+              "winhttpsendrequest"
+            ],
+            "system_process": [
+              "adjusttokenprivileges",
+              "createprocessasuserw",
+              "createprocessw",
+              "createservicew",
+              "createtoolhelp32snapshot",
+              "duplicatetokenex",
+              "openprocess",
+              "readprocessmemory",
+              "regsetvalueexw",
+              "shellexecuteexw"
+            ]
+          },
+          "category_factor": 1,
+          "limitation": "Imports establish capabilities, not execution or data flow."
+        },
+        "nominal_points": 1.5,
+        "signature_factor": 0.1,
+        "category_factor": 1.5,
+        "points": 0.225,
+        "scoring": "Strongest finding in family \u00d7 signature factor \u00d7 multiple-family factor"
+      },
+      {
+        "id": "cpu_instructions",
+        "family": "cpu",
+        "strength": "weak",
+        "reason": "0.25 per instruction group, capped at 0.75; repetition and ordinary instructions add nothing",
+        "nominal_points": 0.0,
+        "signature_factor": 0.1,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "evidence": {
+          "groups": {},
+          "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph"
+        }
+      }
+    ],
+    "diagnostics": {
+      "uncapped_score": 0.6,
+      "signature_policy": {
+        "unsigned": {
+          "baseline": 4.0,
+          "weak_multiplier": 1.5,
+          "strong_multiplier": 1.5
+        },
+        "invalid": {
+          "baseline": 5.0,
+          "weak_multiplier": 1.5,
+          "strong_multiplier": 1.5
+        },
+        "unknown": {
+          "baseline": 3.0,
+          "weak_multiplier": 1.0,
+          "strong_multiplier": 1.0
+        },
+        "valid_unrecognized": {
+          "baseline": 0.5,
+          "weak_multiplier": 0.8,
+          "strong_multiplier": 1.0
+        },
+        "trusted_signed": {
+          "baseline": 0.0,
+          "weak_multiplier": 0.1,
+          "strong_multiplier": 1.0
+        }
+      },
+      "active_families": [
+        "execution",
+        "import_combination",
+        "persistence"
+      ],
+      "category_factor": 1.5,
+      "final_score_formula": "round(min(10, max(0, sum(reasons.points))), 1)",
+      "limitations": [
+        "Static capabilities do not prove execution; hidden code can be missed.",
+        "Recognized issuer is a scoring policy, not OS chain or revocation validation.",
+        "Packing and extraction limitations are informational, not scored."
+      ],
+      "unscored_context": {
+        "user_elevation": false,
+        "sensitive_metadata": false
+      }
+    }
+  },
+  "gemini_review": {
+    "status": "complete",
+    "review": "The risk score of 0.6 out of 10.0 is reasonable and accurately reflects a low-risk profile. The binary possesses a valid digital signature from a recognized publisher, Google LLC, issued by DigiCert. In accordance with the model policy, this signature heavily discounts weak and moderate static heuristics. The broad spectrum of imports, including network retrieval via WinHttp, process manipulation, service management, and registry modification, aligns precisely with the expected functionality of an authentic web installer and updater.\n\nThe flagged indicators for persistence via autorun registry paths, service installation, and download-launch patterns represent likely false positives. While the co-occurrence of WinHttp functions, file-writing routines, and process creation triggers execution heuristics, these are standard operations for an installer fetching and executing application payloads. Similarly, strings referencing Run registry keys and service configuration APIs are standard for configuring background updates rather than indicating malicious persistence.\n\nA potential false negative could stem from the inherent limits of static evaluation. The analysis indicates unpacking was not performed and payload inspection is absent. Because web stubs download secondary executables at runtime, static inspection of the wrapper cannot verify the integrity or safety of future payloads retrieved over the network. Additionally, the analysis notes that full certificate chain trust and revocation status were not evaluated.\n\nRecommended next steps include validating the certificate chain and online revocation status against official trust stores. Analysts should also verify file hash reputation against known threat intelligence feeds and conduct dynamic sandbox execution to observe outbound network connections, dropped binaries, and process execution trees during installation.",
+    "model": "gemini-3.8-flash"
+  }
+}

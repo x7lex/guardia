@@ -506,40 +506,20 @@ export default function ReportDetailModal({
               </ul>
             </Section>
           )}
-          {report.risk_assessment.trust && (
-            <Section title="Signature and publisher context">
-              <dl className="grid grid-cols-2 gap-x-3 gap-y-2 break-words text-sm">
-                <dt>Signature integrity</dt>
-                <dd>{report.risk_assessment.trust.signature_integrity}</dd>
-                <dt>Publisher in certificate</dt>
-                <dd>{report.risk_assessment.trust.publisher ?? "None"}</dd>
-                <dt>Publisher verified</dt>
-                <dd>
-                  {report.risk_assessment.trust.publisher_verified
-                    ? "Yes"
-                    : "No"}
-                </dd>
-                <dt>Certificate chain</dt>
-                <dd>
-                  {report.risk_assessment.trust.chain_trust.replaceAll(
-                    "_",
-                    " ",
-                  )}
-                </dd>
-                <dt>Revocation</dt>
-                <dd>
-                  {report.risk_assessment.trust.revocation.replaceAll("_", " ")}
-                </dd>
-              </dl>
-            </Section>
-          )}
-          {!report.risk_assessment.visibility && (
-            <p className="text-xs text-[#805775]">
-              Saved with an older scoring model. Rescan the file to see separate
-              threat evidence, visibility and trust.
-            </p>
-          )}
-          <GeminiReview report={report} />
+                {report.risk_assessment.trust && (
+                    <Section title="Signature and publisher context">
+                        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 break-words text-sm">
+                            <dt>Signature integrity</dt><dd>{report.risk_assessment.trust.signature_integrity}</dd>
+                            <dt>Publisher in certificate</dt><dd>{report.risk_assessment.trust.publisher ?? "None"}</dd>
+                            <dt>Publisher verified</dt><dd>{report.risk_assessment.trust.publisher_verified ? "Yes" : "No"}</dd>
+                            <dt>Certificate chain</dt><dd>{report.risk_assessment.trust.chain_trust.replaceAll("_", " ")}</dd>
+                            <dt>Revocation</dt><dd>{report.risk_assessment.trust.revocation.replaceAll("_", " ")}</dd>
+                        </dl>
+                    </Section>
+                )}
+                {report.risk_assessment.signature_state && <Section title="Deterministic risk score"><p>Signature: {report.risk_assessment.signature_state.replaceAll("_", " ")}. Score: {risk.points}/10.</p><p className="mt-2 text-xs">Signature baseline plus capability combinations and a bounded CPU contribution. Trusted signatures discount weak findings; strong combinations retain their weight. Every contribution is listed in this report.</p></Section>}
+                {!report.risk_assessment.visibility && !report.risk_assessment.signature_state && <p className="text-xs text-[#805775]">Saved with an older scoring model. Rescan the file to see separate threat evidence, visibility and trust.</p>}
+                <GeminiReview report={report} />
 
           <button
             type="button"

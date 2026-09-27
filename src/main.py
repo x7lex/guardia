@@ -9,7 +9,12 @@ from pathlib import Path
 
 from backend.analyzer import UnsupportedFileError, output
 from backend.risk_score import calculate_risk
+from backend.gemini_review import attach_review
+from dotenv import load_dotenv
+
 from logger import start_logger
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
 logger = getLogger("Main")
 
@@ -45,22 +50,10 @@ async def scan_file(target_file, report_directory=None, timestamp=None):
     try:
         analysis = await output(target_file)
         risk = calculate_risk(analysis)
-        report_path = save_report(
-            {"analysis": analysis, "risk_assessment": risk}, report_directory, timestamp
-        )
-        print(
-            f"[+] Scanned: {target_file.name}\n    Risk: {risk['risk']['score']} ({risk['risk']['verdict']})\n    Report: {report_path}"
-        )
-        print(
-            f"    Threat evidence: {risk['risk']['threat_points']}/10; visibility: {risk['visibility']['level']} ({risk['visibility']['score']}); role: {risk['context']['likely_role']}"
-        )
-        if risk["diagnostics"]["assessment"] == "limited_visibility":
-            print("    Coverage limited; inspect report diagnostics.")
-        return {
-            "file": target_file.name,
-            "status": "scanned",
-            "report": str(report_path),
-        }
+        report = await attach_review({"analysis": analysis, "risk_assessment": risk})
+        report_path = save_report(report, report_directory, timestamp)
+        print(f"[+] Scanned: {target_file.name}\n    Risk: {risk['risk']['score']} ({risk['risk']['verdict']})\n    Report: {report_path}")
+        return {"file": target_file.name, "status": "scanned", "report": str(report_path)}
     except UnsupportedFileError as error:
         print(f"[~] Skipped: {target_file.name} -> {error}")
         return {"file": target_file.name, "status": "skipped", "reason": str(error)}
@@ -123,6 +116,7 @@ async def main():
             report = json.loads(args.rescore_report.read_text(encoding="utf-8"))
             risk = calculate_risk(report["analysis"])
             report["risk_assessment"] = risk
+            await attach_review(report)
             path = save_report(report)
             print(
                 f"{risk['risk']['score']} ({risk['risk']['verdict']})\nReport: {path}"
