@@ -10,6 +10,7 @@ export function reportMatches(
 ) {
   const zone = riskZone(
     report.risk_assessment.risk.verdict ?? report.risk_assessment.risk.level,
+    report.risk_assessment.risk.points,
   );
   return (
     (risk === "all" || risk === zone) &&
