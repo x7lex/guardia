@@ -1,0 +1,119 @@
+[
+  {
+    "sample": "ChromeSetup.exe",
+    "fixture": "installer.json",
+    "old_risk": {
+      "points": 2.5,
+      "score": "2.5/10.0",
+      "level": "Low Risk",
+      "coverage_limited": false
+    },
+    "rescored_risk": {
+      "points": 0.6,
+      "score": "0.6/10.0",
+      "level": "Low Risk",
+      "verdict": "Low Risk",
+      "confidence": 0.8,
+      "coverage_limited": false,
+      "threat_points": 0.6,
+      "uncertainty_floor": 0.0,
+      "uncertainty_contribution": 0.0,
+      "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
+      "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict"
+    },
+    "rescored_visibility": "GOOD",
+    "role": "installer_updater",
+    "fresh_risk": {
+      "points": 1.8,
+      "score": "1.8/10.0",
+      "level": "Low Risk",
+      "verdict": "Inconclusive",
+      "confidence": 0.55,
+      "coverage_limited": true,
+      "threat_points": 0.6,
+      "uncertainty_floor": 1.8,
+      "uncertainty_contribution": 1.2,
+      "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
+      "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict"
+    },
+    "fresh_visibility": "PARTIAL"
+  },
+  {
+    "sample": "legacy_malware.exe",
+    "fixture": "opaque_container.json",
+    "old_risk": {
+      "points": 1.5,
+      "score": "1.5/10.0",
+      "level": "Use at your own risk",
+      "coverage_limited": true
+    },
+    "rescored_risk": {
+      "points": 3.2,
+      "score": "3.2/10.0",
+      "level": "Low Risk",
+      "verdict": "Inconclusive",
+      "confidence": 0.2,
+      "coverage_limited": true,
+      "threat_points": 0,
+      "uncertainty_floor": 3.2,
+      "uncertainty_contribution": 3.2,
+      "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
+      "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict"
+    },
+    "rescored_visibility": "SEVERELY_LIMITED",
+    "role": "container_application",
+    "fresh_risk": {
+      "points": 3.2,
+      "score": "3.2/10.0",
+      "level": "Low Risk",
+      "verdict": "Inconclusive",
+      "confidence": 0.2,
+      "coverage_limited": true,
+      "threat_points": 0,
+      "uncertainty_floor": 3.2,
+      "uncertainty_contribution": 3.2,
+      "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
+      "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict"
+    },
+    "fresh_visibility": "SEVERELY_LIMITED"
+  },
+  {
+    "sample": "hrisitosense.exe",
+    "fixture": "packed_application.json",
+    "old_risk": {
+      "points": 2.0,
+      "score": "2.0/10.0",
+      "level": "Use at your own risk",
+      "coverage_limited": true
+    },
+    "rescored_risk": {
+      "points": 3.2,
+      "score": "3.2/10.0",
+      "level": "Low Risk",
+      "verdict": "Inconclusive",
+      "confidence": 0.2,
+      "coverage_limited": true,
+      "threat_points": 0,
+      "uncertainty_floor": 3.2,
+      "uncertainty_contribution": 3.2,
+      "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
+      "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict"
+    },
+    "rescored_visibility": "SEVERELY_LIMITED",
+    "role": "packed_application",
+    "fresh_risk": {
+      "points": 3.2,
+      "score": "3.2/10.0",
+      "level": "Low Risk",
+      "verdict": "Inconclusive",
+      "confidence": 0.2,
+      "coverage_limited": true,
+      "threat_points": 0,
+      "uncertainty_floor": 3.2,
+      "uncertainty_contribution": 3.2,
+      "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
+      "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict"
+    },
+    "fresh_visibility": "SEVERELY_LIMITED"
+  }
+]

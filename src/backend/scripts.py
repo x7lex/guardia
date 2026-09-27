@@ -10,6 +10,7 @@ import re
 import tokenize
 import zlib
 from backend.script_symbols import recover_symbols
+from backend.behaviors import correlate_capabilities
 
 MAX_SOURCE = 2 * 1024 * 1024
 MAX_NODES = 50000
@@ -54,23 +55,24 @@ def inspect_python(data, source, layer=0, budget=None):
         result.update(status="limited", limitations=[f"Source could not be parsed: {type(error).__name__}"])
         return result
 
-    aliases, recovered_symbols = recover_symbols(tree)
+    try:
+        aliases, recovered_symbols, resolved_names, resolved_literals, symbol_limits = recover_symbols(tree, detailed=True)
+    except (ValueError, TypeError, RecursionError, OverflowError):
+        result.update(status="limited", limitations=["Bounded symbol recovery could not complete"])
+        return result
+    result["limitations"].extend(symbol_limits)
     assignments = {}
     for node in nodes:
-        if isinstance(node, ast.Import):
-            for item in node.names:
-                aliases[item.asname or item.name.split('.')[0]] = item.name if item.asname else item.name.split('.')[0]
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            for item in node.names:
-                aliases[item.asname or item.name] = f"{node.module}.{item.name}"
-        elif isinstance(node, ast.Assign):
+        if isinstance(node, ast.Assign):
             for target in node.targets:
                 if isinstance(target, ast.Name):
                     assignments.setdefault(target.id, []).append(node.value)
 
     def name(node):
+        if id(node) in resolved_names:
+            return resolved_names[id(node)]
         if isinstance(node, ast.Name):
-            return aliases.get(node.id, node.id)
+            return node.id
         if isinstance(node, ast.Attribute):
             return f"{name(node.value)}.{node.attr}"
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "__import__" and node.args and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str):
@@ -80,6 +82,10 @@ def inspect_python(data, source, layer=0, budget=None):
     def resolve(node, depth=0):
         if depth > 12:
             raise ValueError("Expression depth limit")
+        if id(node) in resolved_literals and not isinstance(node, (ast.Constant, ast.Name)):
+            return resolved_literals[id(node)], ["bounded_literal_transformation"]
+        if isinstance(node, ast.Name) and id(node) in resolved_literals:
+            return resolved_literals[id(node)], []
         if isinstance(node, ast.Constant) and isinstance(node.value, (str, bytes)):
             value, chain = node.value, []
         elif isinstance(node, ast.Name) and len(assignments.get(node.id, [])) == 1:
@@ -117,21 +123,25 @@ def inspect_python(data, source, layer=0, budget=None):
     result["imports"] = sorted(set(aliases.values()))[:80]
     result["recovered_symbols"] = recovered_symbols
     literals = [node.value for node in nodes if isinstance(node, ast.Constant) and isinstance(node.value, str)]
+    recovered_text = sorted({value for value in resolved_literals.values() if isinstance(value, str)})
+    literals.extend(recovered_text)
+    result["recovered_literals"] = [value[:500] for value in recovered_text[:80]]
+    result["literal_recovery_limits"] = {"text_bytes": 8192, "operations": 200000, "scope": "Lexical blocks with conservative invalidation; no arbitrary function evaluation"}
 
     def finding(identifier, family, strength, reason, evidence):
         result["findings"].append({"id": identifier, "family": family, "strength": strength,
                                    "reason": reason, "evidence": {"source": source, "layer": layer, **evidence}})
 
-    recovered = {item["symbol"] for item in recovered_symbols if item.get("encoded_name")}
     dynamic_imports = [node.lineno for node in calls
                        if name(node.func).removeprefix("builtins.") == "__import__"
-                       and node.args and not isinstance(node.args[0], ast.Constant)]
-    if {"builtins.__dict__", "builtins.__import__"} <= recovered and dynamic_imports:
+                       and node.args and not isinstance(resolved_literals.get(id(node.args[0])), str)]
+    result["unresolved_dynamic_imports"] = dynamic_imports[:80]
+    if dynamic_imports:
         finding("obfuscated_runtime_resolution", "packing", "weak",
                 "Encoded built-in lookup combines with dynamically constructed module imports",
                 {"recovered_symbols": recovered_symbols, "dynamic_import_lines": dynamic_imports[:20],
                  "limitation": "Indicates concealed capabilities, not a specific malicious behavior; code protectors can match."})
-        result["limitations"].append("Encoded runtime bindings and dynamic module names prevent complete capability recovery")
+        result["limitations"].append("Some dynamic module names could not be resolved by bounded constant propagation")
 
     for node in calls:
         if name(node.func) not in {"exec", "eval", "builtins.exec", "builtins.eval"} or not node.args:
@@ -178,24 +188,48 @@ def inspect_python(data, source, layer=0, budget=None):
                          "limitation": "Obfuscated execution is suspicious but can also be used by legitimate code protection; the executed contents remain unresolved."})
             result["limitations"].append(f"Dynamic execution input at line {node.lineno} could not be resolved statically")
 
-    # Scope patterns to a single source member. Do not combine capabilities from
-    # unrelated runtime libraries into an artificial behavior chain.
-    joined = "\n".join(s[:4096] for s in literals if len(s) < 8192).lower()
+    # Feed recovered names and literals into the same semantic engine used for PE imports.
+    # Facts stay in one source member/layer; never union unrelated archive libraries.
+    joined = "\n".join(text[:4096] for text in literals if len(text) < 8192).lower()
     names = set(call_names)
-    browsers = [term for term in ("login data", "logins.json", "local state", "cookies") if term in joined]
+    def calls_matching(*terms):
+        return sorted(n for n in names if n in terms)
+    browser_profile = re.findall(r"(?:google[\\/]chrome[\\/]user data|mozilla[\\/]firefox[\\/]profiles|microsoft[\\/]edge[\\/]user data)", joined)
+    storage = [term for term in ("login data", "logins.json", "key4.db", "local state", "cookies") if term in joined]
     query = "select" in joined and any(term in joined for term in ("password_value", "encrypted_value", "logins", "cookies"))
-    database = any(n in {"sqlite3.connect", "sqlite3.dbapi2.connect"} for n in names)
-    decrypt = any(n.endswith((".CryptUnprotectData", ".decrypt", ".decrypt_and_verify")) for n in names)
-    if browsers and query and database and decrypt:
-        finding("script_browser_credentials", "credentials", "strong",
-                "Script queries browser credential records and decrypts stored values",
-                {"storage": browsers, "calls": sorted(n for n in names if n.endswith((".connect", ".decrypt", ".CryptUnprotectData", ".decrypt_and_verify")))})
-    outbound = sorted(n for n in names if n in {"requests.post", "httpx.post", "urllib.request.urlopen"})
-    webhook = bool(re.search(r"https?://(?:[^/]+/api/webhooks/|api\.telegram\.org/bot)", joined))
-    if outbound and webhook and browsers and query and database:
-        finding("credential_exfiltration", "exfiltration", "strong",
-                "Browser credential queries coexist with outbound POST and webhook/bot destination",
-                {"calls": outbound, "storage": browsers, "limitation": "Static co-occurrence within the same script, not observed transfer."})
+    database = calls_matching("sqlite3.connect", "sqlite3.dbapi2.connect")
+    decrypt = sorted(n for n in names if n.endswith((".CryptUnprotectData", ".decrypt", ".decrypt_and_verify")))
+    writes = calls_matching("pathlib.Path.write_bytes", "shutil.copy", "shutil.copy2", "urllib.request.urlretrieve")
+    for call in calls:
+        if name(call.func) in {"open", "builtins.open"}:
+            mode_node = call.args[1] if len(call.args) > 1 else next((kw.value for kw in call.keywords if kw.arg == "mode"), None)
+            mode = resolved_literals.get(id(mode_node), "r") if mode_node is not None else "r"
+            if isinstance(mode, str) and any(flag in mode for flag in "wax+"):
+                writes.append(f"open(mode={mode})")
+    execute = calls_matching("subprocess.run", "subprocess.Popen", "subprocess.call", "subprocess.check_output", "os.system", "os.startfile")
+    facts = {
+        "browser_profile": browser_profile, "credential_storage": storage,
+        "file_read": database if query else calls_matching("pathlib.Path.read_bytes", "json.load"),
+        "decrypt": decrypt,
+        "network_send": calls_matching("requests.post", "httpx.post", "socket.send", "socket.sendall"),
+        "network_retrieve": calls_matching("requests.get", "httpx.get", "urllib.request.urlopen", "urllib.request.urlretrieve"),
+        "file_write": writes, "process_execute": execute,
+        "registry_write": calls_matching("winreg.SetValueEx", "winreg.SetValue"),
+        "autorun": re.findall(r"software[\\/]microsoft[\\/]windows[\\/]currentversion[\\/](?:runonce|run)\b", joined),
+        "startup": ["Startup folder"] if "start menu" in joined and "startup" in joined else [],
+        "scheduled_task": re.findall(r"schtasks[^\n]{0,300}/create[^\n]{0,300}/tr", joined),
+        "suspicious_shell": re.findall(r"powershell[^\n]{0,200}-(?:enc|encodedcommand|windowstyle\s+hidden)\b", joined),
+    }
+    # Native APIs reached via ctypes retain exact API suffixes as source-local facts.
+    for capability, suffixes in {
+        "process_access": (".OpenProcess", ".NtOpenProcess"),
+        "remote_allocate": (".VirtualAllocEx", ".NtAllocateVirtualMemory"),
+        "remote_write": (".WriteProcessMemory", ".NtWriteVirtualMemory"),
+        "remote_execute": (".CreateRemoteThread", ".NtCreateThreadEx", ".QueueUserAPC"),
+    }.items():
+        facts[capability] = sorted(n for n in names if n.endswith(suffixes))
+    result["capabilities"] = {key: value for key, value in facts.items() if value}
+    result["findings"].extend(correlate_capabilities(facts, source + f"::layer{layer}"))
     if result["limitations"] or any(child["status"] != "inspected" for child in result["decoded_layers"]):
         result["status"] = "limited"
     return result

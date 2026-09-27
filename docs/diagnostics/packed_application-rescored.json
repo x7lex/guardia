@@ -1,0 +1,398 @@
+{
+  "analysis": {
+    "schema_version": "2.2",
+    "file": {
+      "file_name": "hrisitosense.exe",
+      "file_path": "/Users/hadi/Desktop/stuff/hrisitosense.exe",
+      "file_size": 13454848,
+      "sha256": "f12316bceefbabe45f8279bd5a9d6e8e815a9f76114097991548ca7e259f6472",
+      "format": "FORMATS.PE",
+      "machine": "MACHINE_TYPES.I386",
+      "entry_point": "0x17745d0",
+      "section_count": 3,
+      "sections": [
+        {
+          "name": "UPX0",
+          "virtual_address": "0x1000",
+          "virtual_size": 6946816,
+          "raw_size": 0,
+          "raw_offset": 1024,
+          "entropy": 0.0,
+          "executable": true,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": "UPX1",
+          "virtual_address": "0x6a1000",
+          "virtual_size": 13455360,
+          "raw_size": 13452288,
+          "raw_offset": 1024,
+          "entropy": 7.744,
+          "executable": true,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rsrc",
+          "virtual_address": "0x1376000",
+          "virtual_size": 4096,
+          "raw_size": 1536,
+          "raw_offset": 13453312,
+          "entropy": 3.934,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        }
+      ],
+      "overlay": {
+        "offset": 13454848,
+        "size": 0,
+        "certificate_bytes": 0,
+        "payload_bytes": 0,
+        "payload_fraction": 0.0,
+        "content_analysis": "NOT_PRESENT"
+      }
+    },
+    "imports": {
+      "libraries": [
+        {
+          "name": "ADVAPI32.dll",
+          "kind": "normal",
+          "functions": [
+            "RegCloseKey"
+          ]
+        },
+        {
+          "name": "d3d9.dll",
+          "kind": "normal",
+          "functions": [
+            "Direct3DCreate9"
+          ]
+        },
+        {
+          "name": "d3dx9_43.dll",
+          "kind": "normal",
+          "functions": [
+            "D3DXCreateTextureFromFileInMemory"
+          ]
+        },
+        {
+          "name": "GDI32.dll",
+          "kind": "normal",
+          "functions": [
+            "GetDeviceCaps"
+          ]
+        },
+        {
+          "name": "IMM32.dll",
+          "kind": "normal",
+          "functions": [
+            "ImmGetContext"
+          ]
+        },
+        {
+          "name": "KERNEL32.DLL",
+          "kind": "normal",
+          "functions": [
+            "LoadLibraryA",
+            "ExitProcess",
+            "GetProcAddress",
+            "VirtualProtect"
+          ]
+        },
+        {
+          "name": "SHELL32.dll",
+          "kind": "normal",
+          "functions": [
+            "ShellExecuteA"
+          ]
+        },
+        {
+          "name": "USER32.dll",
+          "kind": "normal",
+          "functions": [
+            "GetDC"
+          ]
+        }
+      ],
+      "library_count": 8,
+      "function_count": 11
+    },
+    "strings": {
+      "matches": {
+        "browser_database": [],
+        "browser_path": [],
+        "autorun": [],
+        "startup": [],
+        "scheduled_task": [],
+        "suspicious_shell": [],
+        "download_execute": [],
+        "vm_artifact": [],
+        "url": [],
+        "ipv4": [],
+        "domain": [
+          "t.NET"
+        ]
+      },
+      "match_counts": {
+        "browser_database": 0,
+        "browser_path": 0,
+        "autorun": 0,
+        "startup": 0,
+        "scheduled_task": 0,
+        "suspicious_shell": 0,
+        "download_execute": 0,
+        "vm_artifact": 0,
+        "url": 0,
+        "ipv4": 0,
+        "domain": 1
+      },
+      "limits": {
+        "examples_per_category": 20,
+        "printable_run_characters": 2048
+      },
+      "note": "ASCII and ASCII-range UTF-16LE only; text is untrusted data. URLs/domains/IP-like strings carry no risk by themselves.",
+      "bytes_scanned": 13454848,
+      "truncated": false
+    },
+    "signature": {
+      "signed": false,
+      "integrity": "UNSIGNED",
+      "chain_trust": "NOT_EVALUATED",
+      "revocation": "NOT_CHECKED",
+      "publisher_identity": "NOT_TRUST_VALIDATED",
+      "publishers": [],
+      "checks": [],
+      "known_ca": false
+    },
+    "disassembly": {
+      "supported": true,
+      "scored": false,
+      "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+      "bytes_decoded": 3632,
+      "instruction_count": 1769,
+      "mnemonic_counts": {
+        "pushal": 1,
+        "mov": 42,
+        "lea": 11,
+        "push": 25,
+        "jmp": 12,
+        "nop": 2,
+        "inc": 11,
+        "add": 1541,
+        "jne": 13,
+        "sub": 15,
+        "adc": 14,
+        "jb": 5,
+        "jae": 3,
+        "dec": 5,
+        "xor": 4,
+        "shl": 2,
+        "je": 6,
+        "sar": 1,
+        "cmp": 6,
+        "jbe": 2,
+        "ja": 5,
+        "pop": 8,
+        "shr": 1,
+        "rol": 3,
+        "xchg": 4,
+        "loop": 2,
+        "or": 5,
+        "call": 7,
+        "repne scasb": 1,
+        "and": 3,
+        "stosb": 1,
+        "popal": 1,
+        "cld": 1,
+        "lodsd": 1,
+        "test": 3,
+        "ret": 1,
+        "clc": 1
+      }
+    },
+    "payload_inspection": null,
+    "suspicious_instructions": {
+      "count": 0,
+      "instructions": [],
+      "scored": false,
+      "supported": true
+    },
+    "coverage": {
+      "static_only": true,
+      "limitations": [],
+      "yara": "NOT_CONFIGURED",
+      "hash_reputation": "NOT_CONFIGURED",
+      "unpacking": "NOT_PERFORMED",
+      "control_flow": "NOT_ANALYZED"
+    }
+  },
+  "risk_assessment": {
+    "model_version": "3.0",
+    "file_name": "hrisitosense.exe",
+    "sha256": "f12316bceefbabe45f8279bd5a9d6e8e815a9f76114097991548ca7e259f6472",
+    "risk": {
+      "points": 3.2,
+      "score": "3.2/10.0",
+      "level": "Low Risk",
+      "verdict": "Inconclusive",
+      "confidence": 0.2,
+      "coverage_limited": true,
+      "threat_points": 0,
+      "uncertainty_floor": 3.2,
+      "uncertainty_contribution": 3.2,
+      "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
+      "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict"
+    },
+    "visibility": {
+      "level": "SEVERELY_LIMITED",
+      "score": 0.2,
+      "reasons": [
+        {
+          "id": "packed_native_code",
+          "ceiling": 0.2,
+          "reason": "Packed native code has not been unpacked; visible imports describe its loader",
+          "evidence": {
+            "packer_sections": [
+              "UPX0",
+              "UPX1"
+            ],
+            "high_entropy_code": [
+              "UPX1"
+            ],
+            "rwx": [
+              "UPX0",
+              "UPX1"
+            ],
+            "sparse_imports": true,
+            "dynamic_resolution": [
+              "getprocaddress"
+            ]
+          }
+        }
+      ],
+      "requires_review": true,
+      "policy": "Minimum visibility ceiling across limitations; correlated indicators are not added. Baseline 0.90 reflects bounded static analysis, not complete behavior recovery.",
+      "score_meaning": "Heuristic visibility index, not percent of code analyzed or probability of correctness"
+    },
+    "trust": {
+      "signed": false,
+      "signature_integrity": "UNSIGNED",
+      "chain_trust": "NOT_EVALUATED",
+      "publisher": null,
+      "publishers": [],
+      "publisher_identity": "NOT_TRUST_VALIDATED",
+      "publisher_verified": false,
+      "revocation": "NOT_CHECKED",
+      "fully_verified": false,
+      "policy": "Signature integrity is separate from chain trust, identity and revocation. Issuer names and known_ca never establish publisher trust. No flat risk deduction."
+    },
+    "context": {
+      "likely_role": "packed_application",
+      "confidence": 0.9,
+      "evidence": [],
+      "limitations": [
+        "Role is inferred from co-occurring static clues. A claimed installer can still be malicious."
+      ],
+      "installer_adjustment_eligible": false
+    },
+    "behaviors": [],
+    "reasons": [
+      {
+        "id": "rwx_sections",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Writable executable sections; permissions alone do not establish malware",
+        "base_points": 0.0,
+        "evidence": {
+          "sections": [
+            "UPX0",
+            "UPX1"
+          ]
+        },
+        "nominal_points": 0.0,
+        "context_factor": 1.0,
+        "adjusted_points": 0.0,
+        "points": 0.0,
+        "context_reason": "No role adjustment",
+        "scoring": "Informational; no threat points"
+      },
+      {
+        "id": "packed_layout",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Packing conceals native capabilities; unpacking was not performed",
+        "base_points": 0.0,
+        "evidence": {
+          "packer_sections": [
+            "UPX0",
+            "UPX1"
+          ],
+          "high_entropy_code": [
+            "UPX1"
+          ],
+          "rwx": [
+            "UPX0",
+            "UPX1"
+          ],
+          "sparse_imports": true,
+          "dynamic_resolution": [
+            "getprocaddress"
+          ]
+        },
+        "nominal_points": 0.0,
+        "context_factor": 1.0,
+        "adjusted_points": 0.0,
+        "points": 0.0,
+        "context_reason": "No role adjustment",
+        "scoring": "Informational; no threat points"
+      },
+      {
+        "id": "dynamic_resolution",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Dynamic API resolution is common in ordinary software",
+        "base_points": 0.0,
+        "evidence": {
+          "imports": [
+            "getprocaddress"
+          ]
+        },
+        "nominal_points": 0.0,
+        "context_factor": 1.0,
+        "adjusted_points": 0.0,
+        "points": 0.0,
+        "context_reason": "No role adjustment",
+        "scoring": "Informational; no threat points"
+      }
+    ],
+    "diagnostics": {
+      "uncapped_threat_score": 0,
+      "family_scores": {},
+      "family_caps": {
+        "injection": 6.0,
+        "credentials": 6.0,
+        "exfiltration": 4.0,
+        "execution": 4.0,
+        "persistence": 2.5,
+        "anti_analysis": 1.0,
+        "integrity": 3.0
+      },
+      "family_policy": "Strongest correlated behavior per family; sum families and cap threat at 10. Visibility does not add threat points.",
+      "final_score_formula": "max(round(min(10, sum(family_scores)), 1), round(min(3.5, 4*(1-visibility)), 1) if visibility<0.75 else 0)",
+      "verdict_policy": "Visibility below 0.75 with threat below 6 is Inconclusive. Strong threat evidence overrides the uncertainty verdict, never its coverage disclosure.",
+      "signature_policy": "Signature integrity is separate from chain trust, identity and revocation. Issuer names and known_ca never establish publisher trust. No flat risk deduction.",
+      "unscored_context": {
+        "user_elevation": false,
+        "sensitive_metadata": false
+      },
+      "limitations": [
+        "Packed native code has not been unpacked; visible imports describe its loader",
+        "Static capabilities are not observed behavior; absence of findings is not proof of safety.",
+        "Co-occurring imports/strings do not establish argument linkage, call order or reachability."
+      ],
+      "assessment": "limited_visibility"
+    }
+  }
+}

@@ -46,7 +46,8 @@ async def scan_file(target_file, report_directory=None, timestamp=None):
         analysis = await output(target_file)
         risk = calculate_risk(analysis)
         report_path = save_report({"analysis": analysis, "risk_assessment": risk}, report_directory, timestamp)
-        print(f"[+] Scanned: {target_file.name}\n    Risk: {risk['risk']['score']} ({risk['risk']['level']})\n    Report: {report_path}")
+        print(f"[+] Scanned: {target_file.name}\n    Risk: {risk['risk']['score']} ({risk['risk']['verdict']})\n    Report: {report_path}")
+        print(f"    Threat evidence: {risk['risk']['threat_points']}/10; visibility: {risk['visibility']['level']} ({risk['visibility']['score']}); role: {risk['context']['likely_role']}")
         if risk["diagnostics"]["assessment"] == "limited_visibility":
             print("    Coverage limited; inspect report diagnostics.")
         return {"file": target_file.name, "status": "scanned", "report": str(report_path)}
@@ -74,14 +75,14 @@ async def scan_directory(directory):
 
 async def main():
     start_logger()
-    parser = argparse.ArgumentParser(description="Statically scan PE files or start the WebSocket server.")
+    parser = argparse.ArgumentParser(description="Statically scan PE files or start the web app API.")
     parser.add_argument("target", nargs="?", help="File or directory; prompts if omitted")
-    parser.add_argument("--websocket", action="store_true", help="Start the WebSocket server")
+    parser.add_argument("--serve", "--websocket", dest="serve", action="store_true", help="Start the HTTP upload API (default: 127.0.0.1:8000)")
     parser.add_argument("--rescore-report", type=Path, help="Rescore saved JSON facts without reopening the binary")
     args = parser.parse_args()
-    if args.websocket:
-        from backend.websocket import start_websocket
-        await start_websocket()
+    if args.serve:
+        from backend.api import start_server
+        await start_server()
         return
     try:
         if args.rescore_report:
@@ -89,7 +90,7 @@ async def main():
             risk = calculate_risk(report["analysis"])
             report["risk_assessment"] = risk
             path = save_report(report)
-            print(f"{risk['risk']['score']} ({risk['risk']['level']})\nReport: {path}")
+            print(f"{risk['risk']['score']} ({risk['risk']['verdict']})\nReport: {path}")
             return
         target = get_target(args.target)
         if target.is_file():
