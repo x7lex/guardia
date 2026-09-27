@@ -10,5 +10,8 @@ __pycache__/
 !.env.example
 node_modules/
 .next-desktop/
+.desktop-resources/
+desktop-dist/
+build/desktop/
 src/reports/
 .vscode/
