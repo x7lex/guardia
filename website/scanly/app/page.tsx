@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { scanTranscript } from "@/lib/scan-transcript"
+import { riskZone } from "@/lib/risk"
+import { scanFile, type ScanIssue } from "@/lib/scanner"
 import Settings from "@/components/settings"
 import { playRetroSound } from "@/lib/retro-sounds"
 import { reportMatches, RiskFilter } from "@/lib/report-view"
@@ -10,20 +12,23 @@ import Banner from "@/components/banner"
 import Form from "@/components/Form"
 import FolderPicker from "@/components/FolderPicker"
 import DragBox from "@/components/dragbox"
-import ReportMarker, { Report, riskAppearance } from "@/components/report-marker"
+import { type GeminiFinding } from "@/components/gemini-summary"
+import GeminiChat, { Sparkles } from "@/components/gemini-chat"
+import { createReviewQueue, isGeminiResult, requestGeminiReview } from "@/lib/gemini-review"
+import ReportMarker, { Report } from "@/components/report-marker"
 import ReportDetailModal from "@/components/report-detail-modal"
 import { Body, Size, Zone, keepInside, zoneCenter, zoneScale, separate } from "@/lib/marker-physics"
 
 type ReportMap = Record<string, Report>
-type Visit = { path: string; reports: ReportMap | null; scanId?: string; paths?: string[] }
-type SavedScan = { id: string; scannedAt: string; path: string; reports: ReportMap }
+type Visit = { path: string; reports: ReportMap | null; scanId?: string; paths?: string[]; issues?: ScanIssue[] }
+type SavedScan = { id: string; scannedAt: string; path: string; reports: ReportMap; issues?: ScanIssue[] }
 // Retain the original storage key so existing saved scans remain available.
 const SCAN_STORAGE_KEY = "scanly.past-scans.v1"
 
 type BatchFolder = { path: string; status: "waiting" | "scanning" | "complete" | "failed" | "stopped"; scan?: SavedScan }
 
 type Marker = Body & { id: string; report: Report; zone: Zone; scale: number }
-const reportZone = (report: Report): Zone => riskAppearance(report.risk_assessment.risk.level).label.toLowerCase() as Zone
+const reportZone = (report: Report): Zone => riskZone(report.risk_assessment.risk.verdict ?? report.risk_assessment.risk.level)
 
 function createMarkers(reports: ReportMap | null, width: number, top: number, height: number): Marker[] {
     const entries = Object.entries(reports ?? {})
@@ -64,6 +69,8 @@ function createMarkers(reports: ReportMap | null, width: number, top: number, he
 }
 
 export default function Home() {
+  const [aiOpen, setAiOpen] = useState(false)
+  const aiButton = useRef<HTMLButtonElement>(null)
   const [history, setHistory] = useState<Visit[]>([{ path: "", reports: null }])
   const [pastScans, setPastScans] = useState<SavedScan[]>([])
   const [scanActionNotice, setScanActionNotice] = useState("")
@@ -71,6 +78,8 @@ export default function Home() {
   const [cursor, setCursor] = useState(0)
   const [scanPath, setScanPath] = useState("")
   const [folderQueue, setFolderQueue] = useState<string[]>([])
+  const selectedFiles = useRef(new Map<string, File[]>())
+  const [fileProgress, setFileProgress] = useState({ current: 0, total: 0, name: "" })
   const [batchFolders, setBatchFolders] = useState<BatchFolder[]>([])
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 })
   const pastScansRef = useRef<SavedScan[]>([])
@@ -91,27 +100,54 @@ export default function Home() {
   const sizes = useRef(new Map<string, Size>())
   const boardRef = useRef<HTMLDivElement>(null)
   const bannerRef = useRef<HTMLDivElement>(null)
-  const socketRef = useRef<WebSocket | null>(null)
-  const scanRevealTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const scanController = useRef<AbortController | null>(null)
   const compactRef = useRef(false)
   const visit = history[cursor]
+  const reviewStates = useRef(new WeakMap<Report, Omit<GeminiFinding, "path">>())
+  const reviewQueue = useRef(createReviewQueue<Report>(requestGeminiReview))
+  const [, refreshReviews] = useState(0)
+
+  function serializeScans(scans: SavedScan[]) {
+    return JSON.stringify(scans, (_key, value) => {
+      const state = value && typeof value === "object" ? reviewStates.current.get(value) : undefined
+      return state?.status === "complete" ? { ...value, gemini_review: { review: state.review, model: state.model } } : value
+    })
+  }
+
+  function reviewReport(report: Report, retry = false) {
+    if (!retry && reviewStates.current.has(report)) return
+    if (isGeminiResult(report.gemini_review)) {
+      reviewStates.current.set(report, { status: "complete", ...report.gemini_review })
+      refreshReviews(value => value + 1)
+      return
+    }
+    reviewStates.current.set(report, { status: "waiting" })
+    refreshReviews(value => value + 1)
+    void reviewQueue.current(report, () => {
+      reviewStates.current.set(report, { status: "loading" })
+      refreshReviews(value => value + 1)
+    }, retry).then(result => {
+      reviewStates.current.set(report, { status: "complete", ...result })
+      try {
+        localStorage.setItem(SCAN_STORAGE_KEY, serializeScans(pastScansRef.current))
+      } catch {
+        setStorageNotice("Gemini findings could not be saved. They remain available for this session.")
+      }
+    }).catch(cause => {
+      reviewStates.current.set(report, { status: "error", error: cause instanceof Error ? cause.message : "Could not load Gemini findings." })
+    }).finally(() => refreshReviews(value => value + 1))
+  }
 
   const stopScan = useCallback(() => {
-    if (scanRevealTimer.current !== null) clearTimeout(scanRevealTimer.current)
-    scanRevealTimer.current = null
-    const socket = socketRef.current
-    socketRef.current = null
-    socket?.close()
+    scanController.current?.abort()
+    scanController.current = null
     setScanning(false)
     setBatchFolders(folders => folders.map(folder =>
       folder.status === "waiting" || folder.status === "scanning" ? { ...folder, status: "stopped" } : folder))
   }, [])
 
   useEffect(() => () => {
-    if (scanRevealTimer.current !== null) clearTimeout(scanRevealTimer.current)
-    const socket = socketRef.current
-    socketRef.current = null
-    socket?.close()
+    scanController.current?.abort()
   }, [])
 
   useEffect(() => {
@@ -131,13 +167,13 @@ export default function Home() {
     } catch { /* A blocked or unavailable store does not prevent scanning. */ }
   }, [])
 
-  function saveScan(path: string, reports: ReportMap) {
-    const saved = { id: crypto.randomUUID(), scannedAt: new Date().toISOString(), path, reports }
+  function saveScan(path: string, reports: ReportMap, issues: ScanIssue[] = []) {
+    const saved = { id: crypto.randomUUID(), scannedAt: new Date().toISOString(), path, reports, issues }
     const next = [saved, ...pastScansRef.current]
     pastScansRef.current = next
     setPastScans(next)
     try {
-      localStorage.setItem(SCAN_STORAGE_KEY, JSON.stringify(next))
+      localStorage.setItem(SCAN_STORAGE_KEY, serializeScans(next))
       setStorageNotice("")
     } catch {
       setStorageNotice("Storage is unavailable or full. New scans are kept for this session only.")
@@ -148,7 +184,7 @@ export default function Home() {
   function persistPastScans(next: SavedScan[]) {
     pastScansRef.current = next
     try {
-      localStorage.setItem(SCAN_STORAGE_KEY, JSON.stringify(next))
+      localStorage.setItem(SCAN_STORAGE_KEY, serializeScans(next))
       setStorageNotice("")
     } catch {
       setStorageNotice("Could not update device storage. This change applies to this session only.")
@@ -189,11 +225,12 @@ export default function Home() {
   }
 
   function openPastScan(saved: SavedScan) {
+    Object.values(saved.reports).forEach(report => reviewReport(report))
     stopScan()
     setBatchFolders(folders => folders.some(folder => folder.scan?.id === saved.id)
       ? folders : [{ path: saved.path, status: "complete", scan: saved }])
     const previous = history.slice(0, cursor + 1)
-    setHistory([...previous, { path: saved.path, reports: saved.reports, scanId: saved.id }])
+    setHistory([...previous, { path: saved.path, reports: saved.reports, scanId: saved.id, issues: saved.issues }])
     setCursor(previous.length)
     showVisit(saved)
   }
@@ -209,7 +246,7 @@ export default function Home() {
         reports[`${folder.path} › ${filePath}`] = report
       }
     }
-    const next: Visit = { path: `All folders (${completed.length})`, paths: completed.map(folder => folder.path), reports }
+    const next: Visit = { path: `All folders (${completed.length})`, paths: completed.map(folder => folder.path), reports, issues: completed.flatMap(folder => folder.scan?.issues ?? []) }
     const previous = history.slice(0, cursor + 1)
     setHistory([...previous, next])
     setCursor(previous.length)
@@ -245,91 +282,84 @@ export default function Home() {
     setHistory([initial])
     setCursor(0)
     setFolderQueue([])
+    selectedFiles.current.clear()
     setBatchFolders([])
     sizes.current.clear()
     showVisit(initial)
   }
 
-  function chooseFolders(paths: string[]) {
-    if (!paths.length) return
-    if (!scanPath.trim()) {
-      setScanPath(paths[0])
-      setFolderQueue(current => [...new Set([...current.filter(Boolean), ...paths.slice(1)])])
-    } else {
-      setFolderQueue(current => [...new Set([...current.filter(Boolean), ...paths.filter(path => path !== scanPath)])])
+  function chooseFiles(files: File[]) {
+    const groups = new Map<string, File[]>()
+    for (const file of files) {
+      const label = file.webkitRelativePath.split("/")[0] || "Selected files"
+      groups.set(label, [...(groups.get(label) ?? []), file])
     }
+    const added: string[] = []
+    for (const [label, files] of groups) {
+      let path = label
+      let suffix = 2
+      while (selectedFiles.current.has(path)) path = `${label} (${suffix++})`
+      selectedFiles.current.set(path, files)
+      added.push(path)
+    }
+    setFolderQueue(current => [...current, ...added])
+    setError("")
   }
 
-  function scan(requestedPaths: string[]) {
-    const paths = [...new Set(requestedPaths.map(path => path.trim()).filter(Boolean))]
-    if (!paths.length || socketRef.current) return
-    const invalid = paths.find(path => !path.startsWith("/") && !/^[A-Za-z]:[\\/]/.test(path) && !path.startsWith("\\\\"))
-    if (invalid) {
-      setError(`Enter a full folder path for “${invalid}”, such as /Users/you/Documents or C:\\Users\\you\\Documents.`)
+  async function scan(requestedPaths: string[]) {
+    const paths = [...new Set(requestedPaths.filter(Boolean))]
+    if (!paths.length || scanController.current) return
+    if (paths.some(path => !selectedFiles.current.has(path))) {
+      setError("Choose these files again to rescan. Browsers require you to reselect files after a reload.")
       return
     }
+    const controller = new AbortController()
+    scanController.current = controller
     setError("")
     setScanning(true)
     setBatchFolders(paths.map(path => ({ path, status: "waiting" })))
     setSelection(null)
     let navigation = history.slice(0, cursor + 1)
-    if (!visit.reports) navigation[cursor] = { path: paths[0], reports: null }
-
-    function run(index: number) {
-      const path = paths[index]
-      setBatchFolders(folders => folders.map(folder => folder.path === path ? { ...folder, status: "scanning" } : folder))
-      setScanPath(path)
-      setBatchProgress({ current: index + 1, total: paths.length })
-      const startedAt = performance.now()
-      const socket = new WebSocket("ws://localhost:8000/path")
-      socketRef.current = socket
-      socket.onopen = () => socket.send(JSON.stringify({ path }))
-      socket.onmessage = (event) => {
-        if (socketRef.current !== socket) return
-        try {
-          const reports = JSON.parse(event.data) as ReportMap
-          if (!reports || typeof reports !== "object" || Array.isArray(reports) ||
-              !Object.values(reports).every(report => report?.analysis?.file && report?.risk_assessment?.risk)) {
-            throw new Error("Invalid scan response")
+    let currentPath = paths[0]
+    try {
+      for (let index = 0; index < paths.length; index++) {
+        currentPath = paths[index]
+        const path = currentPath
+        const files = selectedFiles.current.get(path)!
+        const reports: ReportMap = {}
+        const issues: ScanIssue[] = []
+        setBatchFolders(folders => folders.map(folder => folder.path === path ? { ...folder, status: "scanning" } : folder))
+        setScanPath(path)
+        setBatchProgress({ current: index + 1, total: paths.length })
+        for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
+          const file = files[fileIndex]
+          setFileProgress({ current: fileIndex + 1, total: files.length, name: file.webkitRelativePath || file.name })
+          const result = await scanFile(file, controller.signal)
+          if (controller.signal.aborted) return
+          if (result.status === "scanned") {
+            reports[result.file] = result.report
+            reviewReport(result.report)
           }
-          socket.onmessage = null
-          socket.onclose = null
-          socket.onerror = null
-          socket.close()
-          scanRevealTimer.current = setTimeout(() => {
-            if (socketRef.current !== socket) return
-            const saved = saveScan(path, reports)
-            setBatchFolders(folders => folders.map(folder => folder.path === path ? { ...folder, status: "complete", scan: saved } : folder))
-            const next = { path, reports, scanId: saved.id }
-            navigation = [...navigation, next]
-            setHistory(navigation)
-            setCursor(navigation.length - 1)
-            showVisit(next)
-            setFolderQueue(queued => queued.filter(item => item !== path))
-            scanRevealTimer.current = null
-            if (index + 1 < paths.length) run(index + 1)
-            else { stopScan(); void playRetroSound("complete") }
-          }, Math.max(0, 1500 - (performance.now() - startedAt)))
-        } catch {
-          setBatchFolders(folders => folders.map(folder => folder.path === path ? { ...folder, status: "failed" } : folder))
-          setError(`Invalid report for ${path}. Queue stopped; completed scans are saved.`)
-          stopScan()
+          else issues.push({ file: result.file, reason: result.reason })
         }
+        const saved = saveScan(path, reports, issues)
+        setBatchFolders(folders => folders.map(folder => folder.path === path ? { ...folder, status: "complete", scan: saved } : folder))
+        const next = { path, reports, scanId: saved.id, issues }
+        navigation = [...navigation, next]
+        setHistory(navigation)
+        setCursor(navigation.length - 1)
+        showVisit(next)
+        setFolderQueue(queued => queued.filter(item => item !== path))
       }
-      socket.onerror = () => {
-        if (socketRef.current !== socket) return
-        setBatchFolders(folders => folders.map(folder => folder.path === path ? { ...folder, status: "failed" } : folder))
-        setError(`Could not scan ${path}. Queue stopped; completed scans are saved.`)
-        stopScan()
+      void playRetroSound("complete")
+    } catch (cause) {
+      if (!controller.signal.aborted) {
+        setBatchFolders(folders => folders.map(folder => folder.path === currentPath ? { ...folder, status: "failed" } : folder))
+        setError(`${cause instanceof Error ? cause.message : "Scan failed"} Queue stopped; completed scans are saved.`)
       }
-      socket.onclose = () => {
-        if (socketRef.current !== socket) return
-        setBatchFolders(folders => folders.map(folder => folder.path === path ? { ...folder, status: "failed" } : folder))
-        setError(`Scan interrupted for ${path}. Queue stopped; completed scans are saved.`)
-        stopScan()
-      }
+    } finally {
+      if (scanController.current === controller) stopScan()
     }
-    run(0)
   }
 
   const measure = useCallback((id: string, width: number, height: number) => {
@@ -447,7 +477,7 @@ export default function Home() {
   const visibleMarkers = markers.filter(marker => reportMatches(marker.id, marker.report, query, riskFilter, unsignedOnly))
   const counts = { safe: 0, review: 0, unsafe: 0 }
   for (const marker of markers) counts[marker.zone]++
-  const highest = markers.reduce<Marker | null>((best, marker) => !best || marker.report.risk_assessment.risk.percentage > best.report.risk_assessment.risk.percentage ? marker : best, null)
+  const highest = markers.reduce<Marker | null>((best, marker) => !best || marker.report.risk_assessment.risk.points > best.report.risk_assessment.risk.points ? marker : best, null)
 
   const selected = markers.find(marker => marker.id === selection?.id)
   return (
@@ -457,10 +487,11 @@ export default function Home() {
       <div ref={bannerRef} className="relative z-40 w-full">
         <Banner>
           <nav aria-label="Scan navigation" className="flex flex-wrap justify-end gap-2">
+            <button ref={aiButton} type="button" className="retro-button inline-flex items-center gap-2 px-4" aria-expanded={aiOpen} aria-controls="gemini-chat" onClick={() => setAiOpen(value => !value)}><Sparkles />AI · Gemini</button>
             <button className="retro-button inline-flex items-center gap-2 px-4" onClick={() => navigate(0)} aria-current={cursor === 0 ? "page" : undefined}><RetroIcon name="home" />Home</button>
             <button className="retro-button px-4" disabled={cursor === 0} onClick={() => navigate(cursor - 1)}>← Back</button>
             <button className="retro-button px-4" disabled={cursor === history.length - 1} onClick={() => navigate(cursor + 1)}>Forward →</button>
-            <button className="retro-button px-4" disabled={!visit.reports || scanning} onClick={() => scan(visit.paths ?? [scanPath])}>{scanning ? "Scanning…" : "↻ Rescan"}</button>
+            <button className="retro-button px-4" disabled={!visit.reports || scanning} onClick={() => scan(visit.paths ?? [visit.path])}>{scanning ? "Scanning…" : "↻ Rescan"}</button>
             <button className="retro-button px-4" onClick={restart}>Restart</button>
             <Settings />
           </nav>
@@ -491,10 +522,19 @@ export default function Home() {
               <span role="status">{batchFolders.filter(folder => folder.status === "complete").length}/{batchFolders.length} scanned</span>
             </div>
           ) : <p className="mt-2 text-right text-xs text-[#ffe1bf]">Choose a folder to get started</p>}
+          {!!visit.issues?.length && <details className="mt-2 max-h-40 overflow-auto bg-[#fff9e6] p-2 text-xs text-[#805775]"><summary>{visit.issues.length} files skipped — show details</summary><ul>{visit.issues.map((issue, index) => <li key={index} className="mt-1 break-all">{issue.file}: {issue.reason}</li>)}</ul></details>}
           {error && <p role="alert" className="mt-2 max-w-md bg-[#fff9e6] p-2 text-xs text-[#b32635]">{error}</p>}
         </Banner>
 
       </div>
+        <GeminiChat open={aiOpen} onClose={() => { setAiOpen(false); aiButton.current?.focus() }} reports={visit.reports ?? {}}
+          findings={Object.entries(visit.reports ?? {}).map(([path, report]) => ({ path,
+            ...(reviewStates.current.get(report) ?? (isGeminiResult(report.gemini_review)
+              ? { status: "complete" as const, ...report.gemini_review }
+              : { status: "waiting" as const })),
+          }))}
+          onRetry={path => { const report = visit.reports?.[path]; if (report) reviewReport(report, true) }}
+        />
       {visit.reports === null && (
         <div className="home-workspace">
           <aside className="retro-panel past-scans-sidebar" aria-label="Past scans">
@@ -527,18 +567,17 @@ export default function Home() {
           <main className="home-scan-panel">
             <Form>
               <div className="col-span-full space-y-4">
-                <p className="text-xs text-[#805775]">Enter the full path to each folder on the scanner’s computer. Use Browse in the desktop app to select folders.</p>
-                <DragBox onDrop={setScanPath} disabled={scanning} />
-                <FolderPicker path={scanPath} onPathChange={setScanPath} onFoldersSelected={chooseFolders} disabled={scanning} />
-                {folderQueue.map((path, index) => (
-                  <div key={index} className="flex items-end gap-2">
-                    <FolderPicker path={path} onPathChange={value => setFolderQueue(paths => paths.map((item, i) => i === index ? value : item))} disabled={scanning} />
-                    <button className="retro-button flex h-11 w-10 shrink-0 items-center justify-center" disabled={scanning} title="Remove folder" aria-label={`Remove folder ${index + 2}`} onClick={() => setFolderQueue(paths => paths.filter((_, i) => i !== index))}><RetroIcon name="trash" /></button>
+                <p className="text-xs text-[#805775]">Select Windows executables, DLLs, or a folder including its subfolders. Selected files are uploaded to the scanner for static analysis.</p>
+                <FolderPicker onFilesSelected={chooseFiles} disabled={scanning} />
+                <DragBox onDrop={setScanPath} onFilesSelected={chooseFiles} disabled={scanning} />
+                {folderQueue.map(path => (
+                  <div key={path} className="flex items-center gap-2 border-2 border-[#cbaa9c] bg-[#fffdf5] p-3">
+                    <div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{path}</p><p className="text-xs">{selectedFiles.current.get(path)?.length ?? 0} files selected</p></div>
+                    <button className="retro-button flex h-10 w-10 shrink-0 items-center justify-center" disabled={scanning} aria-label={`Remove ${path}`} onClick={() => { selectedFiles.current.delete(path); setFolderQueue(paths => paths.filter(item => item !== path)) }}><RetroIcon name="trash" /></button>
                   </div>
                 ))}
-                <button className="retro-button px-4" disabled={scanning} onClick={() => setFolderQueue(paths => [...paths, ""])}>+ Add another folder</button>
-                <button className="retro-button block w-full px-6" disabled={![scanPath, ...folderQueue].some(path => path.trim()) || scanning} onClick={() => scan([scanPath, ...folderQueue])}>{scanning ? "Scanning…" : `Scan All (${new Set([scanPath, ...folderQueue].map(path => path.trim()).filter(Boolean)).size})`}</button>
-                <p className="text-xs text-[#805775]">Scans run from top to bottom, one folder at a time.</p>
+                <button className="retro-button block w-full px-6" disabled={!folderQueue.length || scanning} onClick={() => scan(folderQueue)}>{scanning ? "Scanning…" : `Scan All (${folderQueue.length})`}</button>
+                <p className="text-xs text-[#805775]">Files are scanned one at a time, up to 512 MiB each. Unsupported files are listed as skipped. Uploaded originals are deleted after analysis.</p>
               </div>
             </Form>
           </main>
@@ -552,7 +591,8 @@ export default function Home() {
             ))}</span>Scanning {batchProgress.current} of {batchProgress.total}…</div>
             <p className="mb-3 truncate text-xs">{scanPath}</p>
             <div className="retro-loading-track" aria-hidden="true"><div className="retro-loading-blocks" /></div>
-            <p className="mt-3 text-xs">Inspecting files. Please wait.</p>
+            <p className="mt-3 break-all text-xs">File {fileProgress.current} of {fileProgress.total}: {fileProgress.name}</p>
+            <button className="retro-button pointer-events-auto mt-3 px-4" onClick={stopScan}>Cancel scan</button>
           </div>
         </div>
       )}
@@ -561,9 +601,9 @@ export default function Home() {
         <div ref={boardRef} className="report-board" aria-label="Reports grouped by scan result">
           {(["safe", "review", "unsafe"] as Zone[]).map(zone => (
             <section key={zone} className={`report-zone report-zone-${zone}`} aria-label={`${zone} reports`}>
-              <h2 title={zone === "review" ? "Needs review" : zone === "safe" ? "Safe" : "Unsafe"}>
+              <h2 title={zone === "review" ? "Needs review" : zone === "safe" ? "Few indicators" : "High risk"}>
                 <RetroIcon name={zone === "safe" ? "happy" : zone === "unsafe" ? "unhappy" : "neutral"} size={32} />
-                <span className="sr-only">{zone === "review" ? "Needs review" : zone === "safe" ? "Safe" : "Unsafe"}</span>
+                <span className="sr-only">{zone === "review" ? "Needs review" : zone === "safe" ? "Few indicators" : "High risk"}</span>
                 <span>{visibleMarkers.filter(marker => marker.zone === zone).length} files</span>
               </h2>
             </section>
@@ -582,14 +622,14 @@ export default function Home() {
             <div id="filters-sidebar-content" hidden={filtersCollapsed}>
             <h2 className="retro-window-title mb-4"><span className="inline-flex items-center gap-2"><RetroIcon name="controls" />File filters</span></h2>
             <fieldset className="retro-settings-group flex flex-col gap-2 text-xs" aria-label="Scan summary"><legend>Scan summary</legend>
-              <strong>{markers.length} files</strong><span className="text-[#287044]">Safe: {counts.safe}</span><span className="text-[#956014]">Review: {counts.review}</span><span className="text-[#b32635]">Unsafe: {counts.unsafe}</span>
-              {highest && <span className="max-w-full truncate" title={highest.id}>Highest risk: {highest.report.analysis.file.file_name} ({highest.report.risk_assessment.risk.percentage}%)</span>}
+              <strong>{markers.length} files</strong><span className="text-[#287044]">Few indicators: {counts.safe}</span><span className="text-[#956014]">Review: {counts.review}</span><span className="text-[#b32635]">High risk: {counts.unsafe}</span>
+              {highest && <span className="max-w-full truncate" title={highest.id}>Highest risk: {highest.report.analysis.file.file_name} ({highest.report.risk_assessment.risk.points}/10)</span>}
             </fieldset>
             <fieldset className="retro-settings-group mt-4 flex flex-col gap-3"><legend>Find files</legend>
               <label htmlFor="file-search" className="text-xs">File name or path</label>
               <input id="file-search" aria-label="Search files" placeholder="Search files or paths…" value={query} onChange={event => { setQuery(event.target.value); filtersRef.current.query = event.target.value }} className="retro-input-frame min-w-0 w-full px-3 py-2 text-sm" />
               <label htmlFor="risk-filter" className="text-xs">Risk level</label>
-              <select id="risk-filter" aria-label="Filter by risk" value={riskFilter} onChange={event => { setRiskFilter(event.target.value as RiskFilter); filtersRef.current.risk = event.target.value as RiskFilter }} className="retro-input-frame px-2 py-2 text-sm"><option value="all">All risk levels</option><option value="safe">Safe</option><option value="review">Needs review</option><option value="unsafe">Unsafe</option></select>
+              <select id="risk-filter" aria-label="Filter by risk" value={riskFilter} onChange={event => { setRiskFilter(event.target.value as RiskFilter); filtersRef.current.risk = event.target.value as RiskFilter }} className="retro-input-frame px-2 py-2 text-sm"><option value="all">All risk levels</option><option value="safe">Few indicators</option><option value="review">Needs review</option><option value="unsafe">High risk</option></select>
               <label className="flex items-center gap-1 text-xs"><input className="retro-checkbox" type="checkbox" checked={unsignedOnly} onChange={event => { setUnsignedOnly(event.target.checked); filtersRef.current.unsigned = event.target.checked }} />Unsigned only</label>
               <button className="retro-window-control min-h-9 px-3 text-xs" aria-pressed={frozen} onClick={() => { frozenRef.current = !frozen; setFrozen(!frozen); markersRef.current = markersRef.current.map(marker => ({ ...marker, vx: 0, vy: 0 })) }}>{frozen ? "Unfreeze" : "Freeze"}</button>
               <span className="retro-settings-status text-xs" role="status">Showing {visibleMarkers.length} of {markers.length}</span>
@@ -599,7 +639,7 @@ export default function Home() {
         </div>
       )}
       {visit.reports && markers.length > 0 && !visibleMarkers.length && <p className="pointer-events-none absolute bottom-8 z-20 bg-[#fff9e6] p-3 text-sm">No files match these filters.</p>}
-      {visit.reports && !markers.length && <p className="retro-panel mt-8">No files were reported. Go back to choose another folder.</p>}
+      {visit.reports && !markers.length && <p className="retro-panel mt-8">No supported PE files were reported. Check the skipped files above, or go back and choose an EXE or DLL.</p>}
       {visibleMarkers.map(renderMarker)}
       {selected && selection && <ReportDetailModal filePath={selected.id} report={selected.report} originRect={selection.rect} onClose={() => setSelection(null)} />}
     </div>

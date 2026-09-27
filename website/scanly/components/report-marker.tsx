@@ -1,10 +1,12 @@
 "use client"
 
+import { riskZone } from "@/lib/risk"
 import RetroIcon from "@/components/retro-icon"
 
 import { useLayoutEffect, useRef } from "react"
 
 export interface Report {
+    gemini_review?: { review: string; model: string }
     analysis: {
         file: {
             file_name: string
@@ -46,14 +48,26 @@ export interface Report {
     }
 
     risk_assessment: {
+        model_version?: string
         file_name: string
         sha256: string
 
         risk: {
             points: number
-            percentage: number
+            score?: string
+            coverage_limited?: boolean
             level: string
+            verdict?: string
+            confidence?: number
+            threat_points?: number
+            uncertainty_floor?: number
+            uncertainty_contribution?: number
         }
+
+        visibility?: { level: string; score: number; reasons: { id: string; reason: string; ceiling: number }[] }
+        trust?: { signature_integrity: string; publisher: string | null; publisher_verified: boolean; chain_trust: string; revocation: string }
+        context?: { likely_role: string; confidence: number }
+        diagnostics?: { limitations?: string[] }
 
         reasons: {
             reason: string
@@ -89,14 +103,14 @@ interface ReportMarkerProps {
 }
 
 export function riskAppearance(level: string) {
-    const normalized = level.trim().toLowerCase()
-    if (normalized === "safe" || normalized === "low") {
-        return { color: "#287044", background: "#fff9e6", header: "#f6e8d5", label: "SAFE", icon: "✓" }
+    const zone = riskZone(level)
+    if (zone === "safe") {
+        return { color: "#287044", background: "#fff9e6", header: "#f6e8d5", label: "FEW INDICATORS", icon: "✓" }
     }
-    if (normalized === "unsafe" || normalized === "high" || normalized === "critical") {
-        return { color: "#b32635", background: "#fff9e6", header: "#f6e8d5", label: "UNSAFE", icon: "!" }
+    if (zone === "unsafe") {
+        return { color: "#b32635", background: "#fff9e6", header: "#f6e8d5", label: "HIGH RISK", icon: "!" }
     }
-    return { color: "#956014", background: "#fff9e6", header: "#f6e8d5", label: "REVIEW", icon: "!" }
+    return { color: "#956014", background: "#fff9e6", header: "#f6e8d5", label: level.toLowerCase() === "inconclusive" ? "INCONCLUSIVE" : "REVIEW", icon: "!" }
 }
 
 export function riskColor(level: string) {
@@ -277,8 +291,8 @@ export default function ReportMarker({
         suspicious_instructions,
     } = report.analysis
 
-    const appearance = riskAppearance(risk.level)
-    const safe = appearance.label === "SAFE"
+    const appearance = riskAppearance(risk.verdict ?? risk.level)
+    const safe = appearance.label === "FEW INDICATORS"
     const color = appearance.color
     const statusText = appearance.label
 
@@ -442,9 +456,9 @@ export default function ReportMarker({
                             }}
                         >
                             {
-                                risk.percentage
+                                risk.points
                             }
-                            %
+                            /10
                         </span>
                     </div>
                 </div>
@@ -608,70 +622,14 @@ export default function ReportMarker({
                                 "nowrap",
                         }}
                     >
-                        {safe
-                            ? "✓"
-                            : "!"}
-
-                        {
-                            statusText
-                        }
+                        {statusText}
                     </span>
                 </div>
 
-                {/* RISK */}
-
-                <div
-                    style={{
-                        padding:
-                            "9px 10px 7px",
-                    }}
-                >
-                    <div
-                        style={{
-                            display:
-                                "flex",
-
-                            justifyContent:
-                                "space-between",
-
-                            alignItems:
-                                "center",
-
-                            marginBottom:
-                                5,
-                        }}
-                    >
-                        <span
-                            style={{
-                                color:
-                                    "#6b4962",
-
-                                fontSize:
-                                    11,
-
-                                fontWeight:
-                                    "bold",
-                            }}
-                        >
-                            Risk
-                        </span>
-
-                        <span
-                            style={{
-                                color,
-
-                                fontSize:
-                                    14,
-
-                                fontWeight:
-                                    "bold",
-                            }}
-                        >
-                            {
-                                risk.percentage
-                            }
-                            %
-                        </span>
+                <div style={{ padding: "8px 10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5, fontSize: 11, color }}>
+                        <span>Triage score</span>
+                        <strong>{risk.points}/10</strong>
                     </div>
 
                     <div
@@ -698,7 +656,7 @@ export default function ReportMarker({
 
                                 width:
                                     `${Math.max(
-                                        risk.percentage,
+                                        risk.points * 10,
                                         2
                                     )}%`,
 
@@ -731,13 +689,11 @@ export default function ReportMarker({
                                 3,
                         }}
                     >
-                        {safe
-                            ? "No issues detected"
-                            : `${reasons.length} ${reasons.length ===
-                                1
-                                ? "issue"
-                                : "issues"
-                            } detected`}
+                        {risk.verdict === "Inconclusive"
+                            ? "Visibility limits the assessment"
+                            : safe ? "Few visible indicators"
+                            : `${reasons.filter(reason => reason.points > 0).length} scored findings`}
+
                     </div>
 
                     <div

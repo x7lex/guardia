@@ -95,7 +95,7 @@ export default function ReportDetailModal({
     }, [maximized])
     const { file, imports, signature, suspicious_instructions } = report.analysis
     const { risk, reasons } = report.risk_assessment
-    const appearance = riskAppearance(risk.level)
+    const appearance = riskAppearance(risk.verdict ?? risk.level)
     const levelColor = appearance.color
 
     const capture = useCallback(async () => {
@@ -365,7 +365,7 @@ export default function ReportDetailModal({
                             <div
                                 style={{
                                     width:
-                                        `${risk.percentage}%`,
+                                        `${risk.points * 10}%`,
 
                                     background: "#9c7b8d",
 
@@ -383,19 +383,21 @@ export default function ReportDetailModal({
                             "
                         >
                             {
-                                risk.percentage
+                                risk.points
                             }
-                            % risk
+                            /10 triage score
                         </span>
                     </div>
 
                     <div className="text-sm text-[#4a2b45]">
                         {plainLanguageSummary(
-                            risk.level,
+                            risk.verdict ?? risk.level,
                             signature.signed
                         )}
                     </div>
 
+                    <p className="text-xs text-[#805775]">{risk.verdict ?? risk.level}. Static indicators are not a probability of malware or proof of safety.</p>
+                    {report.risk_assessment.diagnostics?.limitations?.length ? <ul className="list-disc pl-4 text-xs text-[#805775]">{report.risk_assessment.diagnostics.limitations.map((limitation, index) => <li key={index}>{limitation}</li>)}</ul> : null}
                     {reasons.length >
                         0 && (
                             <ul className="mt-3 flex flex-col gap-1.5">
@@ -423,6 +425,33 @@ export default function ReportDetailModal({
                             </ul>
                         )}
                 </Section>
+
+                {report.risk_assessment.visibility && (
+                    <Section title="Evidence and visibility">
+                        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                            <dt>Verdict</dt><dd className="font-bold">{risk.verdict ?? risk.level}</dd>
+                            <dt>Threat evidence</dt><dd>{risk.threat_points ?? risk.points}/10</dd>
+                            <dt>Visibility review floor</dt><dd>{risk.uncertainty_floor ?? 0}/10</dd>
+                            <dt>Visibility</dt><dd>{report.risk_assessment.visibility.level.replaceAll("_", " ")}</dd>
+                            <dt>Visibility index</dt><dd>{report.risk_assessment.visibility.score.toFixed(2)} / 1</dd>
+                            <dt>Likely role</dt><dd>{report.risk_assessment.context?.likely_role.replaceAll("_", " ") ?? "Unknown"}</dd>
+                        </dl>
+                        <p className="mt-3 text-xs text-[#805775]">Triage uses the higher of threat evidence and the bounded visibility floor. The visibility index is a heuristic, not a probability or a measured percentage of code analyzed.</p>
+                        <ul className="mt-3 list-disc space-y-1 pl-4 text-xs">{report.risk_assessment.visibility.reasons.map((reason, index) => <li key={index}>{reason.reason}</li>)}</ul>
+                    </Section>
+                )}
+                {report.risk_assessment.trust && (
+                    <Section title="Signature and publisher context">
+                        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 break-words text-sm">
+                            <dt>Signature integrity</dt><dd>{report.risk_assessment.trust.signature_integrity}</dd>
+                            <dt>Publisher in certificate</dt><dd>{report.risk_assessment.trust.publisher ?? "None"}</dd>
+                            <dt>Publisher verified</dt><dd>{report.risk_assessment.trust.publisher_verified ? "Yes" : "No"}</dd>
+                            <dt>Certificate chain</dt><dd>{report.risk_assessment.trust.chain_trust.replaceAll("_", " ")}</dd>
+                            <dt>Revocation</dt><dd>{report.risk_assessment.trust.revocation.replaceAll("_", " ")}</dd>
+                        </dl>
+                    </Section>
+                )}
+                {!report.risk_assessment.visibility && <p className="text-xs text-[#805775]">Saved with an older scoring model. Rescan the file to see separate threat evidence, visibility and trust.</p>}
 
                 <button
                     type="button"
@@ -720,28 +749,13 @@ function plainLanguageSummary(
     level: string,
     signed: boolean
 ) {
-    const normalized =
-        level.toLowerCase()
-
-    if (
-        normalized ===
-        "unsafe"
-    ) {
-        return signed
-            ? "This file looks risky, even though it's signed."
-            : "This file looks risky and isn't signed by a trusted publisher."
+    const appearance = riskAppearance(level)
+    if (appearance.label === "HIGH RISK") {
+        return signed ? "Strong risk indicators were found despite an embedded signature." : "Strong risk indicators were found in this unsigned file."
     }
+    if (appearance.label === "FEW INDICATORS") return "Few static indicators were found. Review the analysis coverage before trusting this file."
+    return "This file needs closer review. Check the findings and coverage limitations."
 
-    if (
-        normalized ===
-        "safe" ||
-        normalized ===
-        "low"
-    ) {
-        return "This file looks safe. No major red flags were found."
-    }
-
-    return "This file has some things worth a closer look."
 }
 
 function Section({

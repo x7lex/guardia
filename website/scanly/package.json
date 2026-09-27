@@ -5,11 +5,11 @@
   "main": "electron/main.js",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/run.mjs dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/run.mjs start",
     "lint": "eslint",
-    "desktop:dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
+    "desktop:dev": "node scripts/run.mjs desktop",
     "desktop:build": "next build && electron-builder"
   },
   "dependencies": {
@@ -38,9 +38,12 @@
   },
   "build": {
     "productName": "Guardia",
+    "asar": false,
     "files": [
       "electron/**/*",
-      "out/**/*"
+      ".next/**/*",
+      "!.next/cache/**/*",
+      "public/**/*"
     ],
     "directories": {
       "output": "dist"

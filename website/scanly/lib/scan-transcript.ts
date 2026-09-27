@@ -1,6 +1,6 @@
 import type { Report } from '../components/report-marker'
 
-export function scanTranscript(scan: { path: string; scannedAt: string; reports: Record<string, Report> }) {
+export function scanTranscript(scan: { path: string; scannedAt: string; reports: Record<string, Report>; issues?: { file: string; reason: string }[] }) {
     const lines = ["GUARDIA — SCAN TRANSCRIPT", `Folder: ${scan.path}`, `Scanned: ${scan.scannedAt}`, `Files: ${Object.keys(scan.reports).length}`, ""]
     function describe(value: unknown, indent = ""): void {
         if (Array.isArray(value)) {
@@ -22,9 +22,10 @@ export function scanTranscript(scan: { path: string; scannedAt: string; reports:
         }
     }
     for (const [path, report] of Object.entries(scan.reports)) {
-        lines.push("=".repeat(60), `FILE: ${path}`, `RESULT: ${report.risk_assessment.risk.level} · ${report.risk_assessment.risk.percentage}% risk`, "")
+        lines.push("=".repeat(60), `FILE: ${path}`, `RESULT: ${report.risk_assessment.risk.verdict ?? report.risk_assessment.risk.level} · ${report.risk_assessment.risk.points}/10 triage score`, "")
         describe(report)
         lines.push("")
     }
+    for (const issue of scan.issues ?? []) lines.push(`SKIPPED: ${issue.file} — ${issue.reason}`)
     return lines.join("\n") + "\n"
 }
