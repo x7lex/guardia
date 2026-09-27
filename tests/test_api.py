@@ -37,7 +37,7 @@ def minimal_pe():
 
 class UploadTests(unittest.TestCase):
     def setUp(self):
-        env = patch.dict(os.environ, {"GEMINI_API_KEY": "", "API_TOKEN": ""})
+        env = patch.dict(os.environ, {"GEMINI_API_KEY": "", "API_TOKEN": "", "REPUTATION_PROVIDER": "disabled", "YARA_RULES_PATH": ""})
         env.start()
         self.addCleanup(env.stop)
         self.client = TestClient(app)
@@ -84,6 +84,17 @@ class UploadTests(unittest.TestCase):
         self.assertEqual(result["risk_assessment"]["risk"]["points"], 4.0)
         self.assertEqual(reviewer.call_args.args[0]["analysis"], result["analysis"])
         self.assertNotIn("gemini_review", reviewer.call_args.args[0])
+
+    def test_upload_applies_exact_hash_override_separately_from_heuristic(self):
+        from backend.reputation import classify_response
+        digest = hashlib.sha256(minimal_pe()).hexdigest()
+        reputation = classify_response(digest, "malwarebazaar", {"query_status": "ok", "data": [{"sha256_hash": digest}]})
+        with patch("backend.assessment.lookup_hash", new=AsyncMock(return_value=reputation)):
+            report = self.upload(minimal_pe()).json()["report"]
+        self.assertEqual(report["risk_assessment"]["heuristic"]["points"], 4)
+        self.assertEqual(report["risk_assessment"]["risk"]["points"], 10)
+        self.assertEqual(report["risk_assessment"]["decision"]["source"], "reputation_override")
+        self.assertEqual(report["reputation"], reputation)
 
     def test_unsupported_and_empty_files_are_explicitly_skipped(self):
         for content in (b"", b"not an executable"):
