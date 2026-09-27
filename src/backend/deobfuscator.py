@@ -7,9 +7,9 @@ Only literal values and explicitly implemented pure operations can be folded.
 import ast
 import base64
 import binascii
-from dataclasses import dataclass
 import operator
 import re
+from dataclasses import dataclass
 
 MAX_SOURCE = 1_000_000
 MAX_NODES = 50_000
@@ -36,19 +36,41 @@ class LimitReached(ValueError):
 class Recovery:
     def __init__(self):
         self.result = {
-            "supported": True, "language": "python", "decoded_strings": [],
-            "imports": [], "resolved_attributes": [], "resolved_calls": [],
+            "supported": True,
+            "language": "python",
+            "decoded_strings": [],
+            "imports": [],
+            "resolved_attributes": [],
+            "resolved_calls": [],
             "resolved_import_sites": [],
-            "behavior_hints": {key: [] for key in (
-                "process_execution", "networking", "filesystem", "browser_data",
-                "credential_access", "persistence", "shell", "crypto")},
+            "behavior_hints": {
+                key: []
+                for key in (
+                    "process_execution",
+                    "networking",
+                    "filesystem",
+                    "browser_data",
+                    "credential_access",
+                    "persistence",
+                    "shell",
+                    "crypto",
+                )
+            },
             "transformations": [],
-            "obfuscation": {"dynamic_import_resolution": False,
-                            "dynamic_attribute_resolution": False,
-                            "encoded_strings": False, "multiple_decode_layers": False},
-            "coverage": {"ast_parsed": False, "expressions_examined": 0,
-                         "expressions_resolved": 0, "expressions_unresolved": 0,
-                         "resolution_ratio": 0.0, "limits_hit": []},
+            "obfuscation": {
+                "dynamic_import_resolution": False,
+                "dynamic_attribute_resolution": False,
+                "encoded_strings": False,
+                "multiple_decode_layers": False,
+            },
+            "coverage": {
+                "ast_parsed": False,
+                "expressions_examined": 0,
+                "expressions_resolved": 0,
+                "expressions_unresolved": 0,
+                "resolution_ratio": 0.0,
+                "limits_hit": [],
+            },
             "diagnostics": [],
         }
         self.operations = 0
@@ -56,9 +78,23 @@ class Recovery:
         self.seen_strings = {}
         self.decode_nodes = set()
         # Known external names may appear in recovered fragments without imports.
-        self.env = {name: Symbol(name) for name in (
-            "chr", "ord", "bytes", "bytearray", "reversed", "map", "getattr",
-            "__import__", "globals", "locals", "builtins", "base64")}
+        self.env = {
+            name: Symbol(name)
+            for name in (
+                "chr",
+                "ord",
+                "bytes",
+                "bytearray",
+                "reversed",
+                "map",
+                "getattr",
+                "__import__",
+                "globals",
+                "locals",
+                "builtins",
+                "base64",
+            )
+        }
         self.env["__builtins__"] = Symbol("builtins")
 
     def limit(self, name):
@@ -83,9 +119,8 @@ class Recovery:
             self.limit("collection_items" if collection else "string_length")
 
     def checked(self, value):
-        if isinstance(value, Symbol):
-            if len(value.name) > MAX_EXAMPLE:
-                self.limit("symbol_length")
+        if isinstance(value, Symbol) and len(value.name) > MAX_EXAMPLE:
+            self.limit("symbol_length")
         if type(value) is int and value.bit_length() > MAX_INTEGER_BITS:
             self.limit("integer_bits")
         if isinstance(value, (str, bytes)):
@@ -120,7 +155,9 @@ class Recovery:
             categories.append(category)
         if any(term in lower for term in ("powershell", "cmd.exe", "schtasks")):
             categories.append("commands")
-        if "currentversion\\" in lower or lower.startswith(("hkey_", "hklm\\", "hkcu\\")):
+        if "currentversion\\" in lower or lower.startswith(
+            ("hkey_", "hklm\\", "hkcu\\")
+        ):
             categories.append("registry_paths")
         if re.search(r"https?://", lower):
             categories.append("URLs")
@@ -133,10 +170,30 @@ class Recovery:
         hints = self.result["behavior_hints"]
         for family, terms in {
             "process_execution": ("subprocess", "popen", "os.system", "schtasks"),
-            "networking": ("requests", "socket", "http://", "https://", "urllib", "httpx"),
+            "networking": (
+                "requests",
+                "socket",
+                "http://",
+                "https://",
+                "urllib",
+                "httpx",
+            ),
             "filesystem": ("appdata", "pathlib", "shutil"),
-            "browser_data": ("login data", "cookies", "local state", "chrome", "firefox", "edge", "discord"),
-            "credential_access": ("cryptunprotectdata", "password_value", "logins.json", "key4.db"),
+            "browser_data": (
+                "login data",
+                "cookies",
+                "local state",
+                "chrome",
+                "firefox",
+                "edge",
+                "discord",
+            ),
+            "credential_access": (
+                "cryptunprotectdata",
+                "password_value",
+                "logins.json",
+                "key4.db",
+            ),
             "persistence": ("currentversion\\run", "schtasks", "startup"),
             "shell": ("powershell", "cmd.exe", "/bin/sh"),
             "crypto": ("cryptography", "crypto.", "decrypt"),
@@ -144,10 +201,18 @@ class Recovery:
             if any(term in lower for term in terms):
                 hints[family].append(value[:MAX_EXAMPLE])
                 if family in {"shell", "browser_data", "persistence"}:
-                    categories.append({"shell": "shell_references", "browser_data": "browser_artifacts", "persistence": "persistence_references"}[family])
-        entry = {"value": value[:MAX_EXAMPLE],
-                 "categories": categories or ["general_strings"],
-                 "truncated": len(value) > MAX_EXAMPLE}
+                    categories.append(
+                        {
+                            "shell": "shell_references",
+                            "browser_data": "browser_artifacts",
+                            "persistence": "persistence_references",
+                        }[family]
+                    )
+        entry = {
+            "value": value[:MAX_EXAMPLE],
+            "categories": categories or ["general_strings"],
+            "truncated": len(value) > MAX_EXAMPLE,
+        }
         self.append("decoded_strings", entry)
         self.seen_strings[value] = entry
 
@@ -162,7 +227,9 @@ class Recovery:
             value = self.checked(self.fold(node, env, depth))
             if value is not UNKNOWN:
                 self.text(value)
-                if isinstance(value, (str, bytes)) and not isinstance(node, (ast.Constant, ast.Name)):
+                if isinstance(value, (str, bytes)) and not isinstance(
+                    node, (ast.Constant, ast.Name)
+                ):
                     kind = type(node).__name__
                     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
                         kind = "string_concat"
@@ -170,9 +237,24 @@ class Recovery:
                         kind = "slice"
                     elif isinstance(node, ast.Call):
                         kind = "static_call"
-                    self.append("transformations", {"type": kind,
-                        "line": getattr(node, "lineno", None), "result": str(value)[:MAX_EXAMPLE]})
-        except (ValueError, TypeError, IndexError, KeyError, UnicodeError, OverflowError, ZeroDivisionError, binascii.Error):
+                    self.append(
+                        "transformations",
+                        {
+                            "type": kind,
+                            "line": getattr(node, "lineno", None),
+                            "result": str(value)[:MAX_EXAMPLE],
+                        },
+                    )
+        except (
+            ValueError,
+            TypeError,
+            IndexError,
+            KeyError,
+            UnicodeError,
+            OverflowError,
+            ZeroDivisionError,
+            binascii.Error,
+        ):
             value = UNKNOWN
         if value is UNKNOWN:
             coverage["expressions_unresolved"] += 1
@@ -190,7 +272,11 @@ class Recovery:
             return self.expression(child, env, depth + 1)
 
         if isinstance(node, ast.Constant):
-            return node.value if type(node.value) in (str, bytes, int, bool, type(None)) else UNKNOWN
+            return (
+                node.value
+                if type(node.value) in (str, bytes, int, bool, type(None))
+                else UNKNOWN
+            )
         if isinstance(node, ast.Name):
             return env.get(node.id, UNKNOWN)
         if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
@@ -198,39 +284,75 @@ class Recovery:
             values = [read(item) for item in node.elts]
             if any(not self.scalar(v) for v in values):
                 return UNKNOWN
-            return tuple(values) if isinstance(node, ast.Tuple) else set(values) if isinstance(node, ast.Set) else values
+            return (
+                tuple(values)
+                if isinstance(node, ast.Tuple)
+                else set(values)
+                if isinstance(node, ast.Set)
+                else values
+            )
         if isinstance(node, ast.Dict):
             self.size(len(node.keys), True)
-            pairs = [(read(k), read(v)) for k, v in zip(node.keys, node.values) if k is not None]
-            if len(pairs) != len(node.keys) or any(not self.scalar(k) or not self.scalar(v) for k, v in pairs):
+            pairs = [
+                (read(k), read(v))
+                for k, v in zip(node.keys, node.values)
+                if k is not None
+            ]
+            if len(pairs) != len(node.keys) or any(
+                not self.scalar(k) or not self.scalar(v) for k, v in pairs
+            ):
                 return UNKNOWN
             return dict(pairs)
         if isinstance(node, ast.UnaryOp):
             value = read(node.operand)
-            ops = {ast.USub: operator.neg, ast.UAdd: operator.pos, ast.Invert: operator.invert}
+            ops = {
+                ast.USub: operator.neg,
+                ast.UAdd: operator.pos,
+                ast.Invert: operator.invert,
+            }
             if type(value) is int and type(node.op) in ops:
                 return ops[type(node.op)](value)
         if isinstance(node, ast.BinOp):
             left, right = read(node.left), read(node.right)
-            if isinstance(node.op, ast.Add) and type(left) is type(right) and isinstance(left, (str, bytes, list, tuple)):
+            if (
+                isinstance(node.op, ast.Add)
+                and type(left) is type(right)
+                and isinstance(left, (str, bytes, list, tuple))
+            ):
                 self.size(len(left) + len(right), isinstance(left, (list, tuple)))
                 return left + right
             if isinstance(node.op, ast.Mult):
                 if type(left) is int and isinstance(right, (str, bytes, list, tuple)):
                     left, right = right, left
                 if isinstance(left, (str, bytes, list, tuple)) and type(right) is int:
-                    self.size(len(left) * max(0, right), isinstance(left, (list, tuple)))
+                    self.size(
+                        len(left) * max(0, right), isinstance(left, (list, tuple))
+                    )
                     return left * max(0, right)
-            ops = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
-                   ast.BitXor: operator.xor, ast.BitAnd: operator.and_, ast.BitOr: operator.or_,
-                   ast.FloorDiv: operator.floordiv, ast.Mod: operator.mod,
-                   ast.LShift: operator.lshift, ast.RShift: operator.rshift}
+            ops = {
+                ast.Add: operator.add,
+                ast.Sub: operator.sub,
+                ast.Mult: operator.mul,
+                ast.BitXor: operator.xor,
+                ast.BitAnd: operator.and_,
+                ast.BitOr: operator.or_,
+                ast.FloorDiv: operator.floordiv,
+                ast.Mod: operator.mod,
+                ast.LShift: operator.lshift,
+                ast.RShift: operator.rshift,
+            }
             if type(left) is int and type(right) is int and type(node.op) in ops:
-                if isinstance(node.op, (ast.LShift, ast.RShift)) and not 0 <= right <= MAX_INTEGER_BITS:
+                if (
+                    isinstance(node.op, (ast.LShift, ast.RShift))
+                    and not 0 <= right <= MAX_INTEGER_BITS
+                ):
                     self.limit("integer_bits")
                 return ops[type(node.op)](left, right)
         if isinstance(node, ast.Slice):
-            bounds = [read(n) if n is not None else None for n in (node.lower, node.upper, node.step)]
+            bounds = [
+                read(n) if n is not None else None
+                for n in (node.lower, node.upper, node.step)
+            ]
             if all(v is None or type(v) is int for v in bounds) and bounds[2] != 0:
                 return slice(*bounds)
         if isinstance(node, ast.Subscript):
@@ -248,7 +370,11 @@ class Recovery:
                 if isinstance(part, ast.FormattedValue):
                     value = read(part.value)
                     # No format mini-language or custom conversion machinery.
-                    if type(value) not in (str, int, bool) or part.format_spec is not None or part.conversion != -1:
+                    if (
+                        type(value) not in (str, int, bool)
+                        or part.format_spec is not None
+                        or part.conversion != -1
+                    ):
                         return UNKNOWN
                     parts.append(str(value))
                 else:
@@ -258,9 +384,16 @@ class Recovery:
                     parts.append(value)
             self.size(sum(map(len, parts)))
             return "".join(parts)
-        if isinstance(node, (ast.ListComp, ast.GeneratorExp)) and len(node.generators) == 1:
+        if (
+            isinstance(node, (ast.ListComp, ast.GeneratorExp))
+            and len(node.generators) == 1
+        ):
             generator = node.generators[0]
-            if generator.ifs or generator.is_async or not isinstance(generator.target, ast.Name):
+            if (
+                generator.ifs
+                or generator.is_async
+                or not isinstance(generator.target, ast.Name)
+            ):
                 return UNKNOWN
             items = read(generator.iter)
             if not isinstance(items, (list, tuple, str, bytes)):
@@ -290,15 +423,42 @@ class Recovery:
                 name = function.name.removeprefix("builtins.")
                 self.append("resolved_calls", function.name)
                 self.text(function.name, "attribute_names")
-                if name in {"__import__", "importlib.import_module"} and len(args) == 1 and isinstance(args[0], str):
-                    self.append("imports", {"name": args[0][:MAX_EXAMPLE], "source": "dynamic_resolved", "confidence": "high"})
+                if (
+                    name in {"__import__", "importlib.import_module"}
+                    and len(args) == 1
+                    and isinstance(args[0], str)
+                ):
+                    self.append(
+                        "imports",
+                        {
+                            "name": args[0][:MAX_EXAMPLE],
+                            "source": "dynamic_resolved",
+                            "confidence": "high",
+                        },
+                    )
                     self.text(args[0], "module_names")
                     self.result["obfuscation"]["dynamic_import_resolution"] = True
-                    self.append("resolved_import_sites", {"line": node.lineno, "column": node.col_offset})
-                    return Symbol(args[0].split(".")[0] if name == "__import__" else args[0])
-                if name == "getattr" and len(args) in (2, 3) and isinstance(args[1], str):
+                    self.append(
+                        "resolved_import_sites",
+                        {"line": node.lineno, "column": node.col_offset},
+                    )
+                    return Symbol(
+                        args[0].split(".")[0] if name == "__import__" else args[0]
+                    )
+                if (
+                    name == "getattr"
+                    and len(args) in (2, 3)
+                    and isinstance(args[1], str)
+                ):
                     obj = args[0].name if isinstance(args[0], Symbol) else None
-                    self.append("resolved_attributes", {"object": obj[:MAX_EXAMPLE] if obj else None, "attribute": args[1][:MAX_EXAMPLE], "confidence": "high" if obj else "medium"})
+                    self.append(
+                        "resolved_attributes",
+                        {
+                            "object": obj[:MAX_EXAMPLE] if obj else None,
+                            "attribute": args[1][:MAX_EXAMPLE],
+                            "confidence": "high" if obj else "medium",
+                        },
+                    )
                     self.text(args[1], "attribute_names")
                     self.result["obfuscation"]["dynamic_attribute_resolution"] = True
                     return Symbol(obj + "." + args[1]) if obj else UNKNOWN
@@ -306,21 +466,52 @@ class Recovery:
                     return Symbol("<namespace>")
                 if name == "chr" and len(args) == 1 and type(args[0]) is int:
                     return chr(args[0])
-                if name == "ord" and len(args) == 1 and isinstance(args[0], (str, bytes)) and len(args[0]) == 1:
+                if (
+                    name == "ord"
+                    and len(args) == 1
+                    and isinstance(args[0], (str, bytes))
+                    and len(args[0]) == 1
+                ):
                     return ord(args[0])
-                if name in {"bytes", "bytearray"} and len(args) == 1 and isinstance(args[0], (list, tuple)) and all(type(v) is int and 0 <= v < 256 for v in args[0]):
+                if (
+                    name in {"bytes", "bytearray"}
+                    and len(args) == 1
+                    and isinstance(args[0], (list, tuple))
+                    and all(type(v) is int and 0 <= v < 256 for v in args[0])
+                ):
                     return bytes(args[0])
-                if name == "reversed" and len(args) == 1 and isinstance(args[0], (str, bytes, list, tuple)):
+                if (
+                    name == "reversed"
+                    and len(args) == 1
+                    and isinstance(args[0], (str, bytes, list, tuple))
+                ):
                     self.size(len(args[0]), True)
                     return list(reversed(args[0]))
-                if name == "map" and len(args) == 2 and isinstance(args[0], Symbol) and isinstance(args[1], (list, tuple, str, bytes)):
+                if (
+                    name == "map"
+                    and len(args) == 2
+                    and isinstance(args[0], Symbol)
+                    and isinstance(args[1], (list, tuple, str, bytes))
+                ):
                     self.size(len(args[1]), True)
                     mapped = args[0].name.removeprefix("builtins.")
                     if mapped == "chr" and all(type(v) is int for v in args[1]):
                         return [chr(v) for v in args[1]]
-                    if mapped == "ord" and all(isinstance(v, (str, bytes)) and len(v) == 1 for v in args[1]):
+                    if mapped == "ord" and all(
+                        isinstance(v, (str, bytes)) and len(v) == 1 for v in args[1]
+                    ):
                         return [ord(v) for v in args[1]]
-                if name in {"bytes.fromhex", "bytearray.fromhex", "base64.b64decode", "base64.urlsafe_b64decode"} and len(args) == 1 and isinstance(args[0], (str, bytes)):
+                if (
+                    name
+                    in {
+                        "bytes.fromhex",
+                        "bytearray.fromhex",
+                        "base64.b64decode",
+                        "base64.urlsafe_b64decode",
+                    }
+                    and len(args) == 1
+                    and isinstance(args[0], (str, bytes))
+                ):
                     self.decode_nodes.add(id(node))
                     self.result["obfuscation"]["encoded_strings"] = True
                     # Inputs already obey the string and aggregate byte budgets.
@@ -332,24 +523,52 @@ class Recovery:
                         value = base64.urlsafe_b64decode(args[0])
                     else:
                         return UNKNOWN
-                    self.append("transformations", {"type": name, "line": node.lineno, "result": str(value)[:MAX_EXAMPLE]})
+                    self.append(
+                        "transformations",
+                        {
+                            "type": name,
+                            "line": node.lineno,
+                            "result": str(value)[:MAX_EXAMPLE],
+                        },
+                    )
                     return value
             if isinstance(node.func, ast.Attribute):
                 obj = read(node.func.value)
                 method = node.func.attr
-                if method == "join" and isinstance(obj, (str, bytes)) and len(args) == 1 and isinstance(args[0], (list, tuple)) and all(type(v) is type(obj) for v in args[0]):
-                    self.size(sum(map(len, args[0])) + len(obj) * max(0, len(args[0]) - 1))
+                if (
+                    method == "join"
+                    and isinstance(obj, (str, bytes))
+                    and len(args) == 1
+                    and isinstance(args[0], (list, tuple))
+                    and all(type(v) is type(obj) for v in args[0])
+                ):
+                    self.size(
+                        sum(map(len, args[0])) + len(obj) * max(0, len(args[0]) - 1)
+                    )
                     return obj.join(args[0])
-                if method == "replace" and isinstance(obj, (str, bytes)) and len(args) in (2, 3) and all(type(v) is type(obj) for v in args[:2]):
+                if (
+                    method == "replace"
+                    and isinstance(obj, (str, bytes))
+                    and len(args) in (2, 3)
+                    and all(type(v) is type(obj) for v in args[:2])
+                ):
                     count = args[2] if len(args) == 3 else -1
                     if type(count) is int:
                         matches = obj.count(args[0])
                         if count >= 0:
                             matches = min(matches, count)
-                        self.size(len(obj) + matches * max(0, len(args[1]) - len(args[0])))
+                        self.size(
+                            len(obj) + matches * max(0, len(args[1]) - len(args[0]))
+                        )
                         return obj.replace(args[0], args[1], count)
                 encoding = args[0] if len(args) == 1 else "utf-8" if not args else None
-                if isinstance(encoding, str) and encoding in {"utf-8", "ascii", "latin1", "latin-1", "utf-16le"}:
+                if isinstance(encoding, str) and encoding in {
+                    "utf-8",
+                    "ascii",
+                    "latin1",
+                    "latin-1",
+                    "utf-16le",
+                }:
                     if method == "decode" and isinstance(obj, bytes):
                         return obj.decode(encoding)
                     if method == "encode" and isinstance(obj, str):
@@ -367,17 +586,36 @@ class Recovery:
             self.tick()
             if isinstance(node, (ast.Import, ast.ImportFrom)):
                 for item in node.names:
-                    module = node.module if isinstance(node, ast.ImportFrom) else item.name
+                    module = (
+                        node.module if isinstance(node, ast.ImportFrom) else item.name
+                    )
                     if not module or getattr(node, "level", 0) or item.name == "*":
                         env.clear()
                         continue
-                    self.append("imports", {"name": module[:MAX_EXAMPLE], "source": "normal", "confidence": "high"})
+                    self.append(
+                        "imports",
+                        {
+                            "name": module[:MAX_EXAMPLE],
+                            "source": "normal",
+                            "confidence": "high",
+                        },
+                    )
                     self.text(module, "module_names")
-                    name = f"{module}.{item.name}" if isinstance(node, ast.ImportFrom) else item.name if item.asname else item.name.split('.')[0]
-                    env[item.asname or item.name.split('.')[0]] = self.checked(Symbol(name))
+                    name = (
+                        f"{module}.{item.name}"
+                        if isinstance(node, ast.ImportFrom)
+                        else item.name
+                        if item.asname
+                        else item.name.split(".")[0]
+                    )
+                    env[item.asname or item.name.split(".")[0]] = self.checked(
+                        Symbol(name)
+                    )
             elif isinstance(node, (ast.Assign, ast.AnnAssign)):
                 value = self.expression(node.value, env) if node.value else UNKNOWN
-                targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+                targets = (
+                    node.targets if isinstance(node, ast.Assign) else [node.target]
+                )
                 for target in targets:
                     if isinstance(target, ast.Name):
                         env[target.id] = value
@@ -386,16 +624,25 @@ class Recovery:
                         env.clear()
             elif isinstance(node, ast.Expr):
                 self.expression(node.value, env)
-            elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            elif isinstance(
+                node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+            ):
                 # Bodies are not called. Inspect independently of mutable outer bindings.
-                local = {key: value for key, value in Recovery().env.items()
-                         if env.get(key) == value}
+                local = {
+                    key: value
+                    for key, value in Recovery().env.items()
+                    if env.get(key) == value
+                }
                 for part in ast.walk(node):
-                    if isinstance(part, ast.Name) and isinstance(part.ctx, (ast.Store, ast.Del)):
+                    if isinstance(part, ast.Name) and isinstance(
+                        part.ctx, (ast.Store, ast.Del)
+                    ):
                         local[part.id] = UNKNOWN
                     if isinstance(part, ast.arg):
                         local[part.arg] = UNKNOWN
-                    if isinstance(part, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    if isinstance(
+                        part, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+                    ):
                         local[part.name] = UNKNOWN
                     if isinstance(part, (ast.Import, ast.ImportFrom)):
                         for alias in part.names:
@@ -433,13 +680,30 @@ class Recovery:
             self.statements(tree.body, self.env)
             # Report actual nested decoding, not independent encoded constants.
             for node in ast.walk(tree):
-                if (id(node) in self.decode_nodes or isinstance(node, ast.Subscript)) and any(id(child) in self.decode_nodes for child in ast.walk(node) if child is not node):
+                if (
+                    id(node) in self.decode_nodes or isinstance(node, ast.Subscript)
+                ) and any(
+                    id(child) in self.decode_nodes
+                    for child in ast.walk(node)
+                    if child is not node
+                ):
                     self.result["obfuscation"]["multiple_decode_layers"] = True
                     break
-        except (SyntaxError, ValueError, TypeError, UnicodeError, RecursionError, MemoryError) as error:
-            self.result["diagnostics"].append(type(error).__name__ + ": " + str(error)[:200])
+        except (
+            SyntaxError,
+            ValueError,
+            TypeError,
+            UnicodeError,
+            RecursionError,
+            MemoryError,
+        ) as error:
+            self.result["diagnostics"].append(
+                type(error).__name__ + ": " + str(error)[:200]
+            )
         examined = coverage["expressions_examined"]
-        coverage["resolution_ratio"] = round(coverage["expressions_resolved"] / examined, 3) if examined else 0.0
+        coverage["resolution_ratio"] = (
+            round(coverage["expressions_resolved"] / examined, 3) if examined else 0.0
+        )
         coverage["operations"] = self.operations
         self.result["supported"] = coverage["ast_parsed"]
         return self.result

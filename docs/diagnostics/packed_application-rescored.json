@@ -59,37 +59,27 @@
         {
           "name": "ADVAPI32.dll",
           "kind": "normal",
-          "functions": [
-            "RegCloseKey"
-          ]
+          "functions": ["RegCloseKey"]
         },
         {
           "name": "d3d9.dll",
           "kind": "normal",
-          "functions": [
-            "Direct3DCreate9"
-          ]
+          "functions": ["Direct3DCreate9"]
         },
         {
           "name": "d3dx9_43.dll",
           "kind": "normal",
-          "functions": [
-            "D3DXCreateTextureFromFileInMemory"
-          ]
+          "functions": ["D3DXCreateTextureFromFileInMemory"]
         },
         {
           "name": "GDI32.dll",
           "kind": "normal",
-          "functions": [
-            "GetDeviceCaps"
-          ]
+          "functions": ["GetDeviceCaps"]
         },
         {
           "name": "IMM32.dll",
           "kind": "normal",
-          "functions": [
-            "ImmGetContext"
-          ]
+          "functions": ["ImmGetContext"]
         },
         {
           "name": "KERNEL32.DLL",
@@ -104,16 +94,12 @@
         {
           "name": "SHELL32.dll",
           "kind": "normal",
-          "functions": [
-            "ShellExecuteA"
-          ]
+          "functions": ["ShellExecuteA"]
         },
         {
           "name": "USER32.dll",
           "kind": "normal",
-          "functions": [
-            "GetDC"
-          ]
+          "functions": ["GetDC"]
         }
       ],
       "library_count": 8,
@@ -131,9 +117,7 @@
         "vm_artifact": [],
         "url": [],
         "ipv4": [],
-        "domain": [
-          "t.NET"
-        ]
+        "domain": ["t.NET"]
       },
       "match_counts": {
         "browser_database": 0,
@@ -254,21 +238,11 @@
           "ceiling": 0.2,
           "reason": "Packed native code has not been unpacked; visible imports describe its loader",
           "evidence": {
-            "packer_sections": [
-              "UPX0",
-              "UPX1"
-            ],
-            "high_entropy_code": [
-              "UPX1"
-            ],
-            "rwx": [
-              "UPX0",
-              "UPX1"
-            ],
+            "packer_sections": ["UPX0", "UPX1"],
+            "high_entropy_code": ["UPX1"],
+            "rwx": ["UPX0", "UPX1"],
             "sparse_imports": true,
-            "dynamic_resolution": [
-              "getprocaddress"
-            ]
+            "dynamic_resolution": ["getprocaddress"]
           }
         }
       ],
@@ -306,10 +280,7 @@
         "reason": "Writable executable sections; permissions alone do not establish malware",
         "base_points": 0.0,
         "evidence": {
-          "sections": [
-            "UPX0",
-            "UPX1"
-          ]
+          "sections": ["UPX0", "UPX1"]
         },
         "nominal_points": 0.0,
         "context_factor": 1.0,
@@ -325,21 +296,11 @@
         "reason": "Packing conceals native capabilities; unpacking was not performed",
         "base_points": 0.0,
         "evidence": {
-          "packer_sections": [
-            "UPX0",
-            "UPX1"
-          ],
-          "high_entropy_code": [
-            "UPX1"
-          ],
-          "rwx": [
-            "UPX0",
-            "UPX1"
-          ],
+          "packer_sections": ["UPX0", "UPX1"],
+          "high_entropy_code": ["UPX1"],
+          "rwx": ["UPX0", "UPX1"],
           "sparse_imports": true,
-          "dynamic_resolution": [
-            "getprocaddress"
-          ]
+          "dynamic_resolution": ["getprocaddress"]
         },
         "nominal_points": 0.0,
         "context_factor": 1.0,
@@ -355,9 +316,7 @@
         "reason": "Dynamic API resolution is common in ordinary software",
         "base_points": 0.0,
         "evidence": {
-          "imports": [
-            "getprocaddress"
-          ]
+          "imports": ["getprocaddress"]
         },
         "nominal_points": 0.0,
         "context_factor": 1.0,

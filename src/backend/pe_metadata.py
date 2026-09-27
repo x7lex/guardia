@@ -1,6 +1,8 @@
 """Bounded PE resource inventory and certificate-aware overlay intervals."""
+
 import math
 from collections import Counter
+
 from backend.payloads import SIGNATURES, inspect_payload
 
 
@@ -8,23 +10,42 @@ def overlay_layout(size, section_end, certificate_offset=0, certificate_size=0):
     start = min(max(0, section_end), size)
     intervals = [(start, size)] if start < size else []
     certificate_bytes = 0
-    valid_range = (certificate_size > 0 and certificate_offset >= section_end
-                   and certificate_offset + certificate_size <= size)
+    valid_range = (
+        certificate_size > 0
+        and certificate_offset >= section_end
+        and certificate_offset + certificate_size <= size
+    )
     if valid_range:
         certificate_end = certificate_offset + certificate_size
         certificate_bytes = certificate_size
-        intervals = [(a, b) for a, b in ((start, certificate_offset), (certificate_end, size)) if b > a]
+        intervals = [
+            (a, b)
+            for a, b in ((start, certificate_offset), (certificate_end, size))
+            if b > a
+        ]
     payload = sum(b - a for a, b in intervals)
-    return {"offset": section_end, "size": max(0, size - section_end),
-            "certificate_bytes": certificate_bytes, "certificate_range_valid": valid_range if certificate_size else None,
-            "payload_bytes": payload, "payload_fraction": payload / size if size else 0,
-            "payload_ranges": [{"offset": a, "size": b - a} for a, b in intervals],
-            "content_analysis": "NOT_PRESENT" if not payload else "NOT_INSPECTED"}
+    return {
+        "offset": section_end,
+        "size": max(0, size - section_end),
+        "certificate_bytes": certificate_bytes,
+        "certificate_range_valid": valid_range if certificate_size else None,
+        "payload_bytes": payload,
+        "payload_fraction": payload / size if size else 0,
+        "payload_ranges": [{"offset": a, "size": b - a} for a, b in intervals],
+        "content_analysis": "NOT_PRESENT" if not payload else "NOT_INSPECTED",
+    }
 
 
 def resource_facts(binary):
-    result = {"entries": [], "inspections": [], "total_bytes": 0, "opaque_bytes": 0,
-              "truncated": False, "limitations": [], "limits": {"nodes": 4096, "leaves": 512, "inspection_bytes": 16 * 1024 * 1024}}
+    result = {
+        "entries": [],
+        "inspections": [],
+        "total_bytes": 0,
+        "opaque_bytes": 0,
+        "truncated": False,
+        "limitations": [],
+        "limits": {"nodes": 4096, "leaves": 512, "inspection_bytes": 16 * 1024 * 1024},
+    }
     versions = {}
     if not binary.has_resources:
         return versions, result
@@ -53,23 +74,58 @@ def resource_facts(binary):
                     if len(stack) >= 4096:
                         result["truncated"] = True
                         break
-                    stack.append((child, path + [str(child.name) if child.has_name else str(child.id)]))
+                    stack.append(
+                        (
+                            child,
+                            path
+                            + [str(child.name) if child.has_name else str(child.id)],
+                        )
+                    )
                 continue
             view = node.content
             size = len(view)
             result["total_bytes"] += size
-            prefix = bytes(view[:min(size, 1024 * 1024)])
+            prefix = bytes(view[: min(size, 1024 * 1024)])
             counts = Counter(prefix)
-            entropy = -sum((c / len(prefix)) * math.log2(c / len(prefix)) for c in counts.values()) if prefix else 0
-            formats = [kind for kind, magic in SIGNATURES.items() if prefix.startswith(magic)]
+            entropy = (
+                -sum(
+                    (c / len(prefix)) * math.log2(c / len(prefix))
+                    for c in counts.values()
+                )
+                if prefix
+                else 0
+            )
+            formats = [
+                kind for kind, magic in SIGNATURES.items() if prefix.startswith(magic)
+            ]
             native = prefix.startswith(b"MZ")
             # Icons, bitmaps, strings, menus and version metadata are inventoried
             # without treating their compressed multimedia entropy as executable code.
-            standard_data = path and path[0] in {"1", "2", "3", "4", "5", "6", "9", "12", "14", "16", "24"}
+            standard_data = path and path[0] in {
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "9",
+                "12",
+                "14",
+                "16",
+                "24",
+            }
             opaque = bool(native or formats or (not standard_data and size >= 65536))
-            entry = {"path": "/".join(path)[:300], "size": size, "entropy": round(entropy, 3),
-                     "kind": "native" if native else formats[0] if formats else "resource_data",
-                     "status": "inventoried"}
+            entry = {
+                "path": "/".join(path)[:300],
+                "size": size,
+                "entropy": round(entropy, 3),
+                "kind": "native"
+                if native
+                else formats[0]
+                if formats
+                else "resource_data",
+                "status": "inventoried",
+            }
             if formats and size <= remaining and size <= 16 * 1024 * 1024:
                 item = inspect_payload(bytes(view), source="resource::" + entry["path"])
                 result["inspections"].append(item)
@@ -82,8 +138,18 @@ def resource_facts(binary):
                 result["opaque_bytes"] += size
             result["entries"].append(entry)
         if result["opaque_bytes"]:
-            result["limitations"].append("Some executable/container resource contents remain opaque; no native or 7z unpacking is performed")
-    except (AttributeError, TypeError, ValueError, RuntimeError, OverflowError) as error:
+            result["limitations"].append(
+                "Some executable/container resource contents remain opaque; no native or 7z unpacking is performed"
+            )
+    except (
+        AttributeError,
+        TypeError,
+        ValueError,
+        RuntimeError,
+        OverflowError,
+    ) as error:
         result["truncated"] = True
-        result["limitations"].append(f"Resource inventory incomplete: {type(error).__name__}")
+        result["limitations"].append(
+            f"Resource inventory incomplete: {type(error).__name__}"
+        )
     return versions, result

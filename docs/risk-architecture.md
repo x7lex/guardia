@@ -8,15 +8,15 @@ hash, or a publisher allowlist.
 
 ## What the original reports establish
 
-| Property | Known malware | CSGO cheat | Chrome installer |
-| --- | --- | --- | --- |
-| Previous score | 1.5 | 2.0 | 2.5 |
-| Named imports | 112 | 11 | 425 |
-| Appended non-certificate bytes | 12,850,547 (96.88%) | 0 | 0 |
-| Certificate bytes in overlay | 0 | 0 | 18,872 |
-| Key concealment evidence | Partial ZIP inspection; encoded Python imports; native/bytecode members | UPX0/UPX1, RWX, UPX1 entropy 7.744, sparse loader imports | No native packer layout in saved facts |
-| Signature | Unsigned | Unsigned | Integrity VALID; Google LLC subject, chain NOT_EVALUATED, revocation NOT_CHECKED |
-| Specific recovered malicious chain | None established | None established | None established |
+| Property                           | Known malware                                                           | CSGO cheat                                                | Chrome installer                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Previous score                     | 1.5                                                                     | 2.0                                                       | 2.5                                                                              |
+| Named imports                      | 112                                                                     | 11                                                        | 425                                                                              |
+| Appended non-certificate bytes     | 12,850,547 (96.88%)                                                     | 0                                                         | 0                                                                                |
+| Certificate bytes in overlay       | 0                                                                       | 0                                                         | 18,872                                                                           |
+| Key concealment evidence           | Partial ZIP inspection; encoded Python imports; native/bytecode members | UPX0/UPX1, RWX, UPX1 entropy 7.744, sparse loader imports | No native packer layout in saved facts                                           |
+| Signature                          | Unsigned                                                                | Unsigned                                                  | Integrity VALID; Google LLC subject, chain NOT_EVALUATED, revocation NOT_CHECKED |
+| Specific recovered malicious chain | None established                                                        | None established                                          | None established                                                                 |
 
 Chrome's two browser database string matches, 66 URL matches, 62 domain matches,
 and 425 imports are **not** malicious evidence. All three have dynamic resolution
@@ -24,7 +24,7 @@ capability. A bare debugger API, generic process query or linear-disassembly
 instruction count likewise establishes little. The original autorun rule did not
 prove that registry writes targeted the matched key, and ignored installer role.
 
-The original packing-family score discarded the *meaning* of multiple visibility
+The original packing-family score discarded the _meaning_ of multiple visibility
 limitations. Changing their weights would not fix this. Also, an inspection that
 read every compressed byte was still only a **partial semantic analysis**: native
 members and custom script decoding remained unresolved.
@@ -108,14 +108,14 @@ measured percentage of code examined. Low Risk is not a guarantee of safety.
 
 ## Results and remaining limits
 
-| Input facts | Threat | Triage | Verdict | Visibility |
-| --- | ---: | ---: | --- | --- |
-| Saved malware report | 0.0 | 3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
-| Saved cheat report | 0.0 | 3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
-| Saved Chrome report | 0.6 | 0.6 | Low Risk | GOOD (0.80) |
-| Fresh malware scan | 0.0 | 3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
-| Fresh cheat scan | 0.0 | 3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
-| Fresh Chrome scan | 0.6 | 1.8 | Inconclusive | PARTIAL (0.55) |
+| Input facts          | Threat | Triage | Verdict      | Visibility              |
+| -------------------- | -----: | -----: | ------------ | ----------------------- |
+| Saved malware report |    0.0 |    3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
+| Saved cheat report   |    0.0 |    3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
+| Saved Chrome report  |    0.6 |    0.6 | Low Risk     | GOOD (0.80)             |
+| Fresh malware scan   |    0.0 |    3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
+| Fresh cheat scan     |    0.0 |    3.2 | Inconclusive | SEVERELY_LIMITED (0.20) |
+| Fresh Chrome scan    |    0.6 |    1.8 | Inconclusive | PARTIAL (0.55)          |
 
 These values are observed results, not regression targets. Tests assert invariants,
 including stability when sample names/hashes/publisher names are changed.

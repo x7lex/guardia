@@ -81,18 +81,18 @@ exponentially nested hashing and equality. Aggregate intermediate text is charge
 on every evaluation, including repeated references, so the budget is intentionally
 conservative.
 
-| Resource | Limit |
-| --- | ---: |
-| Source length | 1,000,000 bytes or text characters |
-| AST nodes | 50,000 |
-| Expression / statement depth | 24 |
-| Evaluation operations | 50,000 |
-| Collection entries | 2,000 |
-| Individual string / byte value | 64,000 |
+| Resource                           |                                               Limit |
+| ---------------------------------- | --------------------------------------------------: |
+| Source length                      |                  1,000,000 bytes or text characters |
+| AST nodes                          |                                              50,000 |
+| Expression / statement depth       |                                                  24 |
+| Evaluation operations              |                                              50,000 |
+| Collection entries                 |                                               2,000 |
+| Individual string / byte value     |                                              64,000 |
 | Aggregate intermediate text budget | 4,000,000 bytes (text charged at 4 bytes/character) |
-| Integer size | 128 bits |
-| Each fact collection | 200 |
-| Report example / symbolic name | 500 characters |
+| Integer size                       |                                            128 bits |
+| Each fact collection               |                                                 200 |
+| Report example / symbolic name     |                                      500 characters |
 
 Nested decoding shares the expression-depth and operation limits; there is no
 unbounded repeat-until-decoded loop. The multiple-layer diagnostic recognizes
