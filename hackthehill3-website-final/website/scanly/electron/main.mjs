@@ -112,10 +112,17 @@ async function start() {
     PYTHONUNBUFFERED: '1',
     GUARDIA_CONFIG_FILE: path.join(app.getPath('appData'), 'Guardia', 'scanner.env'),
   };
-  const executable = app.isPackaged
+  const embeddedWindows = app.isPackaged && process.platform === 'win32' &&
+    fs.existsSync(path.join(process.resourcesPath, 'scanner', 'python.exe'));
+  const executable = embeddedWindows
+    ? path.join(process.resourcesPath, 'scanner', 'python.exe')
+    : app.isPackaged
     ? path.join(process.resourcesPath, 'scanner', process.platform === 'win32' ? 'guardia-scanner.exe' : 'guardia-scanner')
     : (process.env.GUARDIA_PYTHON || path.join(root, '.venv', process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python'));
-  scanner = spawn(executable, app.isPackaged ? [] : [path.join(root, 'src/desktop_server.py')], {
+  const scannerArgs = embeddedWindows
+    ? [path.join(process.resourcesPath, 'scanner', 'app', 'desktop_server.py')]
+    : app.isPackaged ? [] : [path.join(root, 'src/desktop_server.py')];
+  scanner = spawn(executable, scannerArgs, {
     env, cwd: app.getPath('userData'), stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true,
   });
   const portPromise = scannerPort(scanner);
