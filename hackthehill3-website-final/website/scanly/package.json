@@ -15,7 +15,10 @@
     "desktop:scanner": "node electron/build-scanner.mjs",
     "desktop:pack": "npm run desktop:scanner && npm run desktop:prepare && electron-builder --dir",
     "desktop:dist": "npm run desktop:scanner && npm run desktop:prepare && electron-builder",
-    "test:desktop": "node electron/smoke-test.mjs"
+    "test:desktop": "node electron/smoke-test.mjs",
+    "desktop:windows-runtime": "node electron/prepare-windows.mjs",
+    "desktop:dist:win": "npm run desktop:prepare && npm run desktop:windows-runtime && electron-builder --config electron-builder.windows.yml --win --x64 --publish never",
+    "desktop:dist:mac": "npm run desktop:scanner && npm run desktop:prepare && electron-builder --mac dmg --publish never"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",

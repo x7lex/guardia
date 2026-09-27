@@ -1,0 +1,37 @@
+appId: org.guardia.desktop
+productName: Guardia
+asar: true
+npmRebuild: false
+files:
+  - electron/main.mjs
+  - package.json
+  - '!node_modules/**/*'
+extraResources:
+  - from: ../../../dist/scanner-windows/guardia-scanner
+    to: scanner
+  - from: ../../../build/windows-web
+    to: web
+    filter:
+      - '**/*'
+      - '!**/.env'
+      - '!**/.env.*'
+  - from: ../../../build/windows-web/node_modules
+    to: web/node_modules
+    filter: ['**/*']
+directories:
+  output: ../../../dist/desktop
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  signAndEditExecutable: false
+nsis:
+  artifactName: 'Guardia-${version}-windows-${arch}-Setup.${ext}'
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  runAfterFinish: false
+portable:
+  artifactName: 'Guardia-${version}-windows-${arch}-Portable.${ext}'
