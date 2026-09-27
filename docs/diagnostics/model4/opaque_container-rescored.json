@@ -92,9 +92,7 @@
         {
           "name": "bcryptprimitives.dll",
           "kind": "normal",
-          "functions": [
-            "ProcessPrng"
-          ]
+          "functions": ["ProcessPrng"]
         },
         {
           "name": "api-ms-win-core-synch-l1-2-0.dll",
@@ -233,39 +231,27 @@
         {
           "name": "api-ms-win-crt-stdio-l1-1-0.dll",
           "kind": "normal",
-          "functions": [
-            "__p__commode",
-            "_set_fmode"
-          ]
+          "functions": ["__p__commode", "_set_fmode"]
         },
         {
           "name": "api-ms-win-crt-math-l1-1-0.dll",
           "kind": "normal",
-          "functions": [
-            "__setusermatherr"
-          ]
+          "functions": ["__setusermatherr"]
         },
         {
           "name": "api-ms-win-crt-locale-l1-1-0.dll",
           "kind": "normal",
-          "functions": [
-            "_configthreadlocale"
-          ]
+          "functions": ["_configthreadlocale"]
         },
         {
           "name": "api-ms-win-crt-heap-l1-1-0.dll",
           "kind": "normal",
-          "functions": [
-            "_set_new_mode",
-            "free"
-          ]
+          "functions": ["_set_new_mode", "free"]
         },
         {
           "name": "api-ms-win-crt-string-l1-1-0.dll",
           "kind": "normal",
-          "functions": [
-            "strlen"
-          ]
+          "functions": ["strlen"]
         }
       ],
       "library_count": 11,
@@ -273,9 +259,7 @@
     },
     "strings": {
       "matches": {
-        "browser_database": [
-          "cookies"
-        ],
+        "browser_database": ["cookies"],
         "browser_path": [],
         "autorun": [],
         "startup": [],
@@ -285,10 +269,7 @@
         "vm_artifact": [],
         "url": [],
         "ipv4": [],
-        "domain": [
-          "index.crates.io",
-          "k.Cn"
-        ]
+        "domain": ["index.crates.io", "k.Cn"]
       },
       "match_counts": {
         "browser_database": 1,
@@ -755,12 +736,7 @@
                       "encoded_name": true
                     }
                   ],
-                  "dynamic_import_lines": [
-                    18,
-                    32,
-                    77,
-                    302
-                  ],
+                  "dynamic_import_lines": [18, 32, 77, 302],
                   "limitation": "Indicates concealed capabilities, not a specific malicious behavior; code protectors can match."
                 }
               }
@@ -981,9 +957,7 @@
           "source": "outer_pe",
           "correlation": "source-local co-occurrence",
           "capabilities": {
-            "debug_check": [
-              "isdebuggerpresent"
-            ]
+            "debug_check": ["isdebuggerpresent"]
           },
           "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
         },
@@ -1057,12 +1031,7 @@
               "encoded_name": true
             }
           ],
-          "dynamic_import_lines": [
-            18,
-            32,
-            77,
-            302
-          ],
+          "dynamic_import_lines": [18, 32, 77, 302],
           "limitation": "Indicates concealed capabilities, not a specific malicious behavior; code protectors can match."
         },
         "nominal_points": 0.0,
@@ -1078,9 +1047,7 @@
         "reason": "Dynamic API resolution is common in ordinary software",
         "base_points": 0.0,
         "evidence": {
-          "imports": [
-            "getprocaddress"
-          ]
+          "imports": ["getprocaddress"]
         },
         "nominal_points": 0.0,
         "signature_factor": 1.5,

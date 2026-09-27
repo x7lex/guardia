@@ -2,11 +2,11 @@
 
 import hashlib
 import os
-from pathlib import Path
 import struct
 import sys
 import unittest
-from unittest.mock import patch, AsyncMock
+from pathlib import Path
+from unittest.mock import AsyncMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from fastapi.testclient import TestClient
@@ -37,7 +37,15 @@ def minimal_pe():
 
 class UploadTests(unittest.TestCase):
     def setUp(self):
-        env = patch.dict(os.environ, {"GEMINI_API_KEY": "", "API_TOKEN": "", "REPUTATION_PROVIDER": "disabled", "YARA_RULES_PATH": ""})
+        env = patch.dict(
+            os.environ,
+            {
+                "GEMINI_API_KEY": "",
+                "API_TOKEN": "",
+                "REPUTATION_PROVIDER": "disabled",
+                "YARA_RULES_PATH": "",
+            },
+        )
         env.start()
         self.addCleanup(env.stop)
         self.client = TestClient(app)
@@ -76,8 +84,13 @@ class UploadTests(unittest.TestCase):
         self.assertTrue(all(not path.exists() for path in paths))
 
     def test_scan_attaches_second_opinion_without_overwriting_score(self):
-        reviewer = AsyncMock(return_value={"review": "Possible false positive", "model": "test"})
-        with patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"}), patch("backend.gemini_review.review_report", reviewer):
+        reviewer = AsyncMock(
+            return_value={"review": "Possible false positive", "model": "test"}
+        )
+        with (
+            patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"}),
+            patch("backend.gemini_review.review_report", reviewer),
+        ):
             result = self.upload(minimal_pe()).json()["report"]
         reviewer.assert_awaited_once()
         self.assertEqual(result["gemini_review"]["status"], "complete")
@@ -87,13 +100,22 @@ class UploadTests(unittest.TestCase):
 
     def test_upload_applies_exact_hash_override_separately_from_heuristic(self):
         from backend.reputation import classify_response
+
         digest = hashlib.sha256(minimal_pe()).hexdigest()
-        reputation = classify_response(digest, "malwarebazaar", {"query_status": "ok", "data": [{"sha256_hash": digest}]})
-        with patch("backend.assessment.lookup_hash", new=AsyncMock(return_value=reputation)):
+        reputation = classify_response(
+            digest,
+            "malwarebazaar",
+            {"query_status": "ok", "data": [{"sha256_hash": digest}]},
+        )
+        with patch(
+            "backend.assessment.lookup_hash", new=AsyncMock(return_value=reputation)
+        ):
             report = self.upload(minimal_pe()).json()["report"]
         self.assertEqual(report["risk_assessment"]["heuristic"]["points"], 4)
         self.assertEqual(report["risk_assessment"]["risk"]["points"], 10)
-        self.assertEqual(report["risk_assessment"]["decision"]["source"], "reputation_override")
+        self.assertEqual(
+            report["risk_assessment"]["decision"]["source"], "reputation_override"
+        )
         self.assertEqual(report["reputation"], reputation)
 
     def test_unsupported_and_empty_files_are_explicitly_skipped(self):

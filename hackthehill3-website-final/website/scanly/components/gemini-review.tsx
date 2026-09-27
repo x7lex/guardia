@@ -6,14 +6,26 @@ import type { Report } from "@/components/report-marker";
 type Review = { review: string; model: string; assessment_type?: string };
 
 export default function GeminiReview({ report }: { report: Report }) {
-    const id = useId()
-    const saved = report.gemini_review
-    const [open, setOpen] = useState(Boolean(saved))
-    const [result, setResult] = useState<Review | null>(saved?.status === "complete" && saved.review && saved.model ? { review: saved.review, model: saved.model, assessment_type: saved.assessment_type } : null)
-    const [loading, setLoading] = useState(false)
-    const [billingRequired, setBillingRequired] = useState(false)
-    const [error, setError] = useState(saved?.status === "unavailable" ? saved.reason ?? "Review unavailable" : "")
-    const controller = useRef<AbortController | null>(null)
+  const id = useId();
+  const saved = report.gemini_review;
+  const [open, setOpen] = useState(Boolean(saved));
+  const [result, setResult] = useState<Review | null>(
+    saved?.status === "complete" && saved.review && saved.model
+      ? {
+          review: saved.review,
+          model: saved.model,
+          assessment_type: saved.assessment_type,
+        }
+      : null,
+  );
+  const [loading, setLoading] = useState(false);
+  const [billingRequired, setBillingRequired] = useState(false);
+  const [error, setError] = useState(
+    saved?.status === "unavailable"
+      ? (saved.reason ?? "Review unavailable")
+      : "",
+  );
+  const controller = useRef<AbortController | null>(null);
 
   useEffect(
     () => () => {
@@ -105,7 +117,9 @@ export default function GeminiReview({ report }: { report: Report }) {
         <span className="text-xs text-[#805775]">Powered by Gemini</span>
       </div>
       <p className="mt-2 text-xs text-[#805775]">
-        Independent Gemini assessment: sends raw static evidence and hash reputation. The local score and verdict are excluded. Gemini may disagree with the engine.
+        Independent Gemini assessment: sends raw static evidence and hash
+        reputation. The local score and verdict are excluded. Gemini may
+        disagree with the engine.
       </p>
       <div id={id} hidden={!open} className="mt-3 text-sm text-[#4a2b45]">
         {loading && (
@@ -148,7 +162,10 @@ export default function GeminiReview({ report }: { report: Report }) {
               {result.review}
             </div>
             <p className="mt-3 text-xs text-[#805775]">
-              {result.model} · {result.assessment_type === "independent_static" ? "Independent assessment of the raw evidence; does not change the engine score." : "Legacy review, which may have used the old score. Request a new assessment for independent analysis."}
+              {result.model} ·{" "}
+              {result.assessment_type === "independent_static"
+                ? "Independent assessment of the raw evidence; does not change the engine score."
+                : "Legacy review, which may have used the old score. Request a new assessment for independent analysis."}
             </p>
           </div>
         )}
