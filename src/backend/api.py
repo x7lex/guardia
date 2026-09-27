@@ -12,8 +12,8 @@ from fastapi import FastAPI, HTTPException, Request
 from uvicorn import Config, Server
 
 from backend.analyzer import MAX_FILE_BYTES, UnsupportedFileError, output
-from backend.gemini_review import review_report
 from backend.risk_score import calculate_risk
+from backend.gemini_review import review_report, attach_review
 
 load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
 MAX_REVIEW_BYTES = 4 * 1024 * 1024
@@ -74,13 +74,9 @@ async def scan(request: Request, name: str):
                 return {"status": "skipped", "file": name, "reason": "File is empty"}
             try:
                 analysis = await output(target)
-                analysis["file"].update(
-                    file_name=PurePosixPath(name).name, file_path=name
-                )
-                report = {
-                    "analysis": analysis,
-                    "risk_assessment": calculate_risk(analysis),
-                }
+                analysis["file"].update(file_name=PurePosixPath(name).name, file_path=name)
+                report = {"analysis": analysis, "risk_assessment": calculate_risk(analysis)}
+                await attach_review(report)
                 return {"status": "scanned", "file": name, "report": report}
             except UnsupportedFileError as error:
                 return {"status": "skipped", "file": name, "reason": str(error)}

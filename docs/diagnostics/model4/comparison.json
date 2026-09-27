@@ -1,0 +1,77 @@
+[
+  {
+    "sample": "ChromeSetup.exe",
+    "fixture": "installer.json",
+    "old_risk": {
+      "points": 2.5,
+      "score": "2.5/10.0",
+      "level": "Low Risk",
+      "coverage_limited": false
+    },
+    "rescored_risk": {
+      "points": 0.6,
+      "score": "0.6/10.0",
+      "level": "Low Risk",
+      "verdict": "Low Risk",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "fresh_risk": {
+      "points": 0.6,
+      "score": "0.6/10.0",
+      "level": "Low Risk",
+      "verdict": "Low Risk",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "gemini_status": "complete"
+  },
+  {
+    "sample": "legacy_malware.exe",
+    "fixture": "opaque_container.json",
+    "old_risk": {
+      "points": 1.5,
+      "score": "1.5/10.0",
+      "level": "Use at your own risk",
+      "coverage_limited": true
+    },
+    "rescored_risk": {
+      "points": 4.5,
+      "score": "4.5/10.0",
+      "level": "Suspicious",
+      "verdict": "Suspicious",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "fresh_risk": {
+      "points": 4.5,
+      "score": "4.5/10.0",
+      "level": "Suspicious",
+      "verdict": "Suspicious",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "gemini_status": "complete"
+  },
+  {
+    "sample": "hrisitosense.exe",
+    "fixture": "packed_application.json",
+    "old_risk": {
+      "points": 2.0,
+      "score": "2.0/10.0",
+      "level": "Use at your own risk",
+      "coverage_limited": true
+    },
+    "rescored_risk": {
+      "points": 4.0,
+      "score": "4.0/10.0",
+      "level": "Suspicious",
+      "verdict": "Suspicious",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "fresh_risk": {
+      "points": 4.0,
+      "score": "4.0/10.0",
+      "level": "Suspicious",
+      "verdict": "Suspicious",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "gemini_status": "complete"
+  }
+]

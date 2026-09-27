@@ -9,6 +9,7 @@ import capstone
 import lief
 
 from backend.features import STRING_PATTERNS
+from backend.signatures import recognized_issuer
 from backend.payloads import inspect_payload
 from backend.pe_metadata import overlay_layout, resource_facts
 
@@ -109,22 +110,16 @@ def get_signatures(binary):
             result["checks"].append({"error": str(error)})
     # Preserve a failing signature even if another embedded signature passes.
     result["integrity"] = "INVALID" if invalid else "VALID" if valid else "UNKNOWN"
+    result["known_ca"] = any(recognized_issuer(p["issuer"]) for p in result["publishers"])
     return result
 
 
 def disassembly_facts(binary):
-    modes = {
-        lief.PE.Header.MACHINE_TYPES.I386: capstone.CS_MODE_32,
-        lief.PE.Header.MACHINE_TYPES.AMD64: capstone.CS_MODE_64,
-    }
-    result = {
-        "supported": binary.header.machine in modes,
-        "scored": False,
-        "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
-        "bytes_decoded": 0,
-        "instruction_count": 0,
-        "mnemonic_counts": {},
-    }
+    modes = {lief.PE.Header.MACHINE_TYPES.I386: capstone.CS_MODE_32,
+             lief.PE.Header.MACHINE_TYPES.AMD64: capstone.CS_MODE_64}
+    result = {"supported": binary.header.machine in modes, "scored": True,
+              "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+              "bytes_decoded": 0, "instruction_count": 0, "mnemonic_counts": {}}
     if not result["supported"]:
         return result
     rva = binary.optional_header.addressof_entrypoint
@@ -285,51 +280,18 @@ def _analyze(target_file):
             "Authenticode verification inconclusive; see signature checks."
         )
     disassembly = disassembly_facts(binary)
-    return {
-        "schema_version": "3.0",
-        "file": {
-            "file_name": path.name,
-            "file_path": str(path),
-            "file_size": size,
-            "sha256": digest.hexdigest(),
-            "format": str(binary.format),
-            "machine": str(binary.header.machine),
-            "entry_point": hex(binary.entrypoint),
-            "section_count": len(sections),
-            "sections": sections,
-            "overlay": overlay,
-            "version_info": version_info,
-            "is_dll": binary.header.has_characteristic(
-                lief.PE.Header.CHARACTERISTICS.DLL
-            ),
-        },
-        "imports": {
-            "libraries": libraries,
-            "library_count": len(libraries),
-            "function_count": sum(len(lib["functions"]) for lib in libraries),
-        },
-        "strings": strings,
-        "signature": signature,
-        "disassembly": disassembly,
-        "payload_inspection": payload_inspection,
-        "resources": resources,
-        "suspicious_instructions": {
-            "count": 0,
-            "instructions": [],
-            "scored": False,
-            "supported": disassembly["supported"],
-        },
-        "coverage": {
-            "static_only": True,
-            "limitations": limitations,
-            "yara": "NOT_CONFIGURED",
-            "hash_reputation": "NOT_CONFIGURED",
-            "unpacking": "BOUNDED_ZIP_AND_LITERAL_SCRIPT_DECODING"
-            if payload_inspection
-            else "NOT_PERFORMED",
-            "control_flow": "NOT_ANALYZED",
-        },
-    }
+    return {"schema_version": "4.0", "file": {"file_name": path.name, "file_path": str(path), "file_size": size,
+            "sha256": digest.hexdigest(), "format": str(binary.format), "machine": str(binary.header.machine),
+            "entry_point": hex(binary.entrypoint), "section_count": len(sections), "sections": sections, "overlay": overlay,
+            "version_info": version_info, "is_dll": binary.header.has_characteristic(lief.PE.Header.CHARACTERISTICS.DLL)},
+            "imports": {"libraries": libraries, "library_count": len(libraries), "function_count": sum(len(lib["functions"]) for lib in libraries)},
+            "strings": strings, "signature": signature, "disassembly": disassembly,
+            "payload_inspection": payload_inspection, "resources": resources,
+            "suspicious_instructions": {"count": 0, "instructions": [], "scored": False, "supported": disassembly["supported"]},
+            "coverage": {"static_only": True, "limitations": limitations,
+                         "yara": "NOT_CONFIGURED", "hash_reputation": "NOT_CONFIGURED",
+                         "unpacking": "BOUNDED_ZIP_AND_LITERAL_SCRIPT_DECODING" if payload_inspection else "NOT_PERFORMED",
+                         "control_flow": "NOT_ANALYZED"}}
 
 
 async def analyze_file(target_file):

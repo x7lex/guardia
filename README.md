@@ -63,13 +63,15 @@ is removed.
 
 ## Gemini review
 
-Open a file report and click **Review with Gemini**. The review panel sends the
+After each API or CLI scan (and CLI rescore), the backend sends the
 complete report JSON (including extracted strings and analysis evidence) to Google
 Gemini through the Python backend. It does not upload the original binary to Gemini.
 The response explains the evidence, uncertainty, and suggested next steps while
-preserving the original scanner score. Review is on demand, with loading, cancel,
-and retry states; hiding and reopening the panel reuses its response while that
-report window remains open.
+preserving the original scanner score. The plain-text second opinion is saved as `gemini_review` and displayed in the
+report panel. It assesses score reasonableness and likely false positives/negatives.
+Missing credentials, oversized reports, or provider failures leave the deterministic
+report intact with an explicit review-unavailable reason. The panel supports retry.
+Configured reviews can add up to 90 seconds to each scan.
 
 Set `API_TOKEN` (or `GEMINI_API_KEY`) in the root `.env`. The default model is
 `gemini-3.8-flash`; override with `GEMINI_MODEL`. Restart Python after changing these
@@ -79,8 +81,10 @@ panel. The integration uses Google's [generateContent API](https://ai.google.dev
 
 ## Verification
 
-Stop the development launcher before building and running browser tests so ports
-3000 and 8000 are free and the tests start fresh production servers.
+Browser tests start isolated production servers on ports 3100 and 8100 with live
+Gemini calls disabled. Provider interactions are mocked in tests; fixture comparison
+uses the configured live reviewer. Avoid running a production build concurrently
+with a development server using the same Next.js output directory.
 
 ```sh
 .venv/bin/python -m unittest discover -s tests -v
@@ -111,20 +115,24 @@ Rescore an existing report without reopening its binary:
 ```
 
 Analysis is static only. Reports are written to `src/reports`.
-Model 3 separates correlated threat evidence, visibility, executable role and trust.
-The final score is triage priority, not a malware probability. Opaque files receive
-an **Inconclusive** verdict with an explicit, bounded visibility floor; uncertainty
-does not become malicious evidence. Strong behavior chains cannot be erased by a
-valid signature or installer context. The website shows these separate assessments.
+Model 4 uses a signature baseline plus capability combinations and a bounded CPU
+contribution. Unsigned files start at 4.0, invalid signatures at 5.0, unknown
+verification at 3.0, valid unrecognized signatures at 0.5, and valid recognized
+signatures at 0.0. Trusted signing discounts weak findings by 90%; strong chains
+retain their full weight. Multiple behavioral families amplify one another.
+Every term and multiplier is explained in JSON; the final sum is capped at 10.0.
+There is no confidence score or visibility floor. Extraction limitations remain
+in the raw evidence, and low risk does not establish safety.
 
-See [the architecture and three-report comparison](docs/risk-architecture.md) for
-root causes, scoring formulas, regression results, and remaining extraction limits.
-Complete rescored/fresh reports are in [docs/diagnostics](docs/diagnostics).
+See [the scoring policy and verification results](docs/risk-architecture.md).
+Fresh scans, saved-report rescoring, and live plain-text Gemini reviews are in
+[model 4 diagnostics](docs/diagnostics/model4).
 
-Reproduce the saved-report comparison without reopening any target:
+Reproduce the comparison (optionally add `--samples-dir /path/to/fixtures` for
+fresh static scans):
 
 ```sh
-.venv/bin/python scripts/compare_reports.py
+.venv/bin/python scripts/compare_reports.py --output docs/diagnostics/model4
 ```
 
 Appended ZIP containers are inspected in memory with entry, byte, depth and

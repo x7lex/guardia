@@ -8,5 +8,5 @@ These files are unchanged copies of the supplied schema-2.2 reports under
 - `opaque_container.json`: legacy_malware.exe, known malware in the supplied ground truth.
 
 Names and labels select fixtures only. The classifier does not consult this folder
-or use sample identities. Tests mutate identities and assert semantic/visibility
-invariants rather than exact scores. No binaries are stored or executed by tests.
+or use sample identities. Tests mutate identities and assert combination/signature scoring
+invariants. No binaries are stored or executed by tests.

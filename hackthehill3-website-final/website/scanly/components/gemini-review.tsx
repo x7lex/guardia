@@ -6,13 +6,14 @@ import type { Report } from "@/components/report-marker";
 type Review = { review: string; model: string };
 
 export default function GeminiReview({ report }: { report: Report }) {
-  const id = useId();
-  const [open, setOpen] = useState(false);
-  const [result, setResult] = useState<Review | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [billingRequired, setBillingRequired] = useState(false);
-  const [error, setError] = useState("");
-  const controller = useRef<AbortController | null>(null);
+    const id = useId()
+    const saved = report.gemini_review
+    const [open, setOpen] = useState(Boolean(saved))
+    const [result, setResult] = useState<Review | null>(saved?.status === "complete" && saved.review && saved.model ? { review: saved.review, model: saved.model } : null)
+    const [loading, setLoading] = useState(false)
+    const [billingRequired, setBillingRequired] = useState(false)
+    const [error, setError] = useState(saved?.status === "unavailable" ? saved.reason ?? "Review unavailable" : "")
+    const controller = useRef<AbortController | null>(null)
 
   useEffect(
     () => () => {
