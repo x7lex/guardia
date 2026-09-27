@@ -22,6 +22,10 @@ def signature_state(signature):
     integrity = signature.get("integrity", "UNKNOWN")
     recognized = bool(signature.get("known_ca")) or any(
         recognized_issuer(p.get("issuer", "")) for p in signature.get("publishers", []))
+    if signature.get("revocation") == "REVOKED":
+        return "invalid"
     if integrity == "VALID":
-        return "trusted_signed" if recognized else "valid_unrecognized"
+        if signature.get("chain_trust") == "TRUSTED":
+            return "trusted_signed"
+        return "recognized_signed" if recognized else "valid_unrecognized"
     return {"UNSIGNED": "unsigned", "INVALID": "invalid"}.get(integrity, "unknown")

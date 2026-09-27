@@ -9,8 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from backend.analyzer import output
-from backend.risk_score import calculate_risk
-from backend.gemini_review import attach_review
+from backend.assessment import build_report
 from dotenv import load_dotenv
 load_dotenv(ROOT / ".env", override=False)
 
@@ -29,19 +28,21 @@ async def main():
     for fixture in sorted((ROOT / "tests" / "fixtures" / "reports").glob("*.json")):
         saved = json.loads(fixture.read_text())
         original = saved["risk_assessment"]
-        assessment = calculate_risk(saved["analysis"])
+        rescored = await build_report(saved["analysis"])
+        assessment = rescored["risk_assessment"]
         name = saved["analysis"]["file"]["file_name"]
-        rescored = {"analysis": saved["analysis"], "risk_assessment": assessment}
-        await attach_review(rescored)
         (args.output / (fixture.stem + "-rescored.json")).write_text(json.dumps(rescored, indent=2) + "\n")
         row = {"sample": name, "fixture": fixture.name, "old_risk": original["risk"],
                "rescored_risk": assessment["risk"]}
         if args.samples_dir:
             analysis = await output(args.samples_dir / Path(name).name)
-            fresh = calculate_risk(analysis)
-            fresh_report = await attach_review({"analysis": analysis, "risk_assessment": fresh})
+            fresh_report = await build_report(analysis)
+            fresh = fresh_report["risk_assessment"]
             (args.output / (fixture.stem + "-fresh.json")).write_text(json.dumps(fresh_report, indent=2) + "\n")
-            row.update(fresh_risk=fresh["risk"], gemini_status=fresh_report["gemini_review"]["status"])
+            row.update(fresh_risk=fresh["risk"], gemini_status=fresh_report["gemini_review"]["status"],
+                       gemini_verdict=fresh_report["gemini_review"].get("verdict"),
+                       heuristic=fresh["heuristic"], reputation=fresh_report["reputation"]["status"],
+                       decision_source=fresh["decision"]["source"])
         summary.append(row)
         print(
             name,

@@ -63,21 +63,25 @@ is removed.
 
 ## Gemini review
 
-After each API or CLI scan (and CLI rescore), the backend sends the
-complete report JSON (including extracted strings and analysis evidence) to Google
-Gemini through the Python backend. It does not upload the original binary to Gemini.
-The response explains the evidence, uncertainty, and suggested next steps while
-preserving the original scanner score. The plain-text second opinion is saved as `gemini_review` and displayed in the
-report panel. It assesses score reasonableness and likely false positives/negatives.
-The prompt prohibits Markdown conventions, and the backend removes common Markdown
-presentation syntax before saving or displaying reviews.
-Missing credentials, oversized reports, or provider failures leave the deterministic
-report intact with an explicit review-unavailable reason. The panel supports retry.
-Configured reviews can add up to 90 seconds to each scan. Temporary provider
-500/502/503/504 errors receive up to three attempts with exponential backoff and
-jitter within that total deadline. Persistent Gemini overload returns HTTP 503
-with a clear provider-unavailable message; key, billing and quota errors are not
-automatically retried.
+After each API/CLI scan or CLI rescore, Gemini independently evaluates the complete
+raw `analysis` evidence and separate `reputation` evidence. The backend excludes the
+deterministic score, local verdict, weighted reasons and previous AI opinions from
+its request, including legacy weights inside recovered script findings, so Gemini
+can disagree without being anchored to the score.
+
+Its plain-text response starts with exactly one of `THIS IS PERFECTLY FINE`,
+`I CANNOT CONFIDENTLY SAY THAT`, or `USE AT YOUR OWN RISK`, followed by evidence-based
+reasoning. A positive opinion is not a safety guarantee. Responses that violate the
+verdict contract are rejected rather than assigned an invented verdict. Common
+Markdown presentation syntax is removed before display. The result is saved in
+`gemini_review`; neither engine score is overwritten. Old cached score-aware
+reviews are identified as legacy.
+
+Missing credentials, oversized evidence or provider failures preserve the report
+with an explicit review-unavailable reason. Temporary provider 500/502/503/504
+responses get at most three attempts with exponential backoff and jitter within
+one 90-second deadline. Persistent overload returns 503; credential, billing and
+quota errors are not automatically retried. The UI supports retry.
 
 Set `API_TOKEN` (or `GEMINI_API_KEY`) in the root `.env`. The default model is
 `gemini-3.8-flash`; override with `GEMINI_MODEL`. Restart Python after changing these
@@ -121,24 +125,49 @@ Rescore an existing report without reopening its binary:
 ```
 
 Analysis is static only. Reports are written to `src/reports`.
-Model 4 uses a signature baseline plus capability combinations and a bounded CPU
-contribution. Unsigned files start at 4.0, invalid signatures at 5.0, unknown
-verification at 3.0, valid unrecognized signatures at 0.5, and valid recognized
-signatures at 0.0. Trusted signing discounts weak findings by 90%; strong chains
-retain their full weight. Multiple behavioral families amplify one another.
-Every term and multiplier is explained in JSON; the final sum is capped at 10.0.
-There is no confidence score or visibility floor. Extraction limitations remain
-in the raw evidence, and low risk does not establish safety.
+Model 5 separates hash reputation, deterministic local scoring and independent
+Gemini assessment. Unsigned files start at 4.0 and suspicious combinations amplify
+more strongly than in signed software. Common imports/instructions remain weak;
+packing and concealed scripts now contribute. Valid recognized issuers receive
+bounded discounts and are explicitly distinct from verified OS certificate chains.
+Every local contribution is explained; the local score is retained even when an
+exact known-malicious hash overrides the final engine classification to 10.0.
+There is no confidence index or visibility floor.
 
-See [the scoring policy and verification results](docs/risk-architecture.md).
-Fresh scans, saved-report rescoring, and live plain-text Gemini reviews are in
-[model 4 diagnostics](docs/diagnostics/model4).
+The UI shows local heuristic score, final engine score, hash reputation and Gemini
+independently. Scores below 3 use the happy face, 3–4.9 neutral, and 5+ frowny.
 
-Reproduce the comparison (optionally add `--samples-dir /path/to/fixtures` for
-fresh static scans):
+Optional hash-only reputation configuration in `.env`:
 
 ```sh
-.venv/bin/python scripts/compare_reports.py --output docs/diagnostics/model4
+REPUTATION_PROVIDER=malwarebazaar
+MALWAREBAZAAR_API_KEY=your-key
+```
+
+Alternatively use `REPUTATION_PROVIDER=virustotal` and `VIRUSTOTAL_API_KEY`.
+Default is `disabled`; there is no upload/download implementation. Unknown hashes,
+outages and rate limits do not stop static scans and do not imply safety. The
+[scoring policy](docs/risk-architecture.md) documents the exact consensus and
+positive-reputation thresholds. Obtain provider credentials from
+[MalwareBazaar](https://bazaar.abuse.ch/api/) or [VirusTotal](https://docs.virustotal.com/reference/overview).
+
+Optional local YARA scanning:
+
+```sh
+# yara-python is already included in requirements.txt.
+# In .env, point to reviewed local rules:
+YARA_RULES_PATH=/absolute/path/to/rules.yar
+```
+
+Strong YARA weight requires rule metadata `malware = true` and
+`confidence = "high"`; generic matches are weak. Rules are not downloaded.
+
+See [architecture, weights and calibration results](docs/risk-architecture.md), and
+[full model 5 diagnostic reports](docs/diagnostics/model5). Reproduce the comparison:
+
+```sh
+.venv/bin/python scripts/compare_reports.py --output docs/diagnostics/model5
+# Add --samples-dir /path/to/original/PEs for fresh static scans as well.
 ```
 
 Appended ZIP containers are inspected in memory with entry, byte, depth and
@@ -151,5 +180,5 @@ third-party dependency was added for the risk redesign.
 Recovered Python also receives a bounded AST deobfuscation report with decoded
 strings, symbolic imports and attributes, behavior hints, transformation examples
 and resolution coverage. These facts enrich the existing source-local behavior
-rules without assigning risk points. See [Python deobfuscation](docs/python-deobfuscation.md)
+rules; model 5 gives observed concealment and correlated behaviors explicit risk contributions. See [Python deobfuscation](docs/python-deobfuscation.md)
 for supported patterns, safety limits and a synthetic demo.

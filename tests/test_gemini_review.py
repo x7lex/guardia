@@ -12,7 +12,7 @@ import httpx
 from fastapi.testclient import TestClient
 
 from backend.api import app
-from backend.gemini_review import attach_review, SYSTEM_INSTRUCTION
+from backend.gemini_review import attach_review, SYSTEM_INSTRUCTION, independent_evidence, VERDICTS
 from backend.plain_text import plain_text_review
 
 REPORT = {
@@ -49,7 +49,7 @@ class GeminiReviewTests(unittest.TestCase):
             self.assertNotIn("test-secret", str(request.url))
             body = json.loads(request.content)
             self.assertEqual(
-                json.loads(body["contents"][0]["parts"][0]["text"]), REPORT
+                json.loads(body["contents"][0]["parts"][0]["text"]), independent_evidence(REPORT)
             )
             self.assertIn("untrusted", body["systemInstruction"]["parts"][0]["text"])
             return httpx.Response(
@@ -61,7 +61,7 @@ class GeminiReviewTests(unittest.TestCase):
                             "content": {
                                 "parts": [
                                     {"text": "Private reasoning", "thought": True},
-                                    {"text": "Assessment: needs review."},
+                                    {"text": "I CANNOT CONFIDENTLY SAY THAT\n\nStatic evidence is incomplete."},
                                 ]
                             },
                         }
@@ -71,7 +71,7 @@ class GeminiReviewTests(unittest.TestCase):
 
         response = self.call(handler)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["review"], "Assessment: needs review.")
+        self.assertEqual(response.json()["review"], "I CANNOT CONFIDENTLY SAY THAT\n\nStatic evidence is incomplete.")
         self.assertNotIn("test-secret", response.text)
 
     def test_automatic_review_preserves_score_and_sends_only_raw_evidence(self):
@@ -79,16 +79,55 @@ class GeminiReviewTests(unittest.TestCase):
         report["gemini_review"] = {"review": "stale opinion"}
         def handler(request):
             body = json.loads(request.content)
-            self.assertEqual(json.loads(body["contents"][0]["parts"][0]["text"]), REPORT)
-            return httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": "The score seems too low."}]}}]})
+            self.assertEqual(json.loads(body["contents"][0]["parts"][0]["text"]), independent_evidence(REPORT))
+            return httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": "USE AT YOUR OWN RISK\n\nCredential access and outbound transfer are concerning."}]}}]})
         client = AsyncClient(transport=httpx.MockTransport(handler))
         with patch("backend.gemini_review.httpx.AsyncClient", return_value=client):
             result = asyncio.run(attach_review(report))
         self.assertEqual(result["risk_assessment"], REPORT["risk_assessment"])
         self.assertEqual(result["gemini_review"]["status"], "complete")
         self.assertIn("no Markdown", SYSTEM_INSTRUCTION)
-        self.assertIn("false positives", SYSTEM_INSTRUCTION)
-        self.assertIn("false negatives", SYSTEM_INSTRUCTION)
+        self.assertIn("independently", SYSTEM_INSTRUCTION)
+        self.assertIn("Unsigned is not automatically malicious", SYSTEM_INSTRUCTION)
+
+    def test_request_is_identical_for_opposite_deterministic_scores(self):
+        bodies = []
+        def handler(request):
+            bodies.append(json.loads(request.content))
+            return httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": VERDICTS[1] + "\n\nThe raw evidence is incomplete."}]}}]})
+        low, high = copy.deepcopy(REPORT), copy.deepcopy(REPORT)
+        low["risk_assessment"] = {"risk": {"points": 0, "verdict": "Low Risk"}, "reasons": ["low score bias"]}
+        high["risk_assessment"] = {"risk": {"points": 10, "verdict": "Dangerous"}, "reasons": ["high score bias"]}
+        high["gemini_review"] = {"review": "Previous verdict"}
+        low["analysis"]["yara"] = high["analysis"]["yara"] = {"status": "disabled"}
+        self.assertEqual(self.call(handler, low).status_code, 200)
+        self.assertEqual(self.call(handler, high).status_code, 200)
+        self.assertEqual(bodies[0], bodies[1])
+        sent = json.loads(bodies[0]["contents"][0]["parts"][0]["text"])
+        self.assertEqual(sent["analysis"], high["analysis"])
+        self.assertNotIn("risk_assessment", sent)
+        self.assertNotIn("gemini_review", sent)
+
+    def test_nested_legacy_weights_are_excluded_but_evidence_is_complete(self):
+        report = copy.deepcopy(REPORT)
+        finding = {"id": "credential_exfiltration", "family": "credentials", "base_points": 8,
+                   "points": 10, "strength": "strong", "evidence": {"calls": ["send"], "literal": "score = 10"}}
+        report["analysis"]["payload_inspection"] = {"scripts": [{"findings": [finding]}]}
+        evidence = independent_evidence(report)
+        cleaned = evidence["analysis"]["payload_inspection"]["scripts"][0]["findings"][0]
+        self.assertNotIn("base_points", cleaned)
+        self.assertNotIn("points", cleaned)
+        self.assertEqual(cleaned["evidence"], finding["evidence"])
+        self.assertEqual(finding["base_points"], 8)
+
+    def test_exact_verdict_contract_and_explanation_required(self):
+        for text in ("Introduction\n" + VERDICTS[0] + "\nFine.", "It is safe.", VERDICTS[0], VERDICTS[0] + "\n" + VERDICTS[2]):
+            response = self.call(lambda request: httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": text}]}}]}))
+            self.assertEqual(response.status_code, 502)
+        for verdict in VERDICTS:
+            response = self.call(lambda request: httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": verdict + "\n\nEvidence-based explanation."}]}}]}))
+            self.assertEqual(response.json()["verdict"], verdict)
+            self.assertTrue(response.json()["review"].startswith(verdict + "\n"))
 
     def test_automatic_review_failure_keeps_deterministic_report(self):
         client = AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(429)))
@@ -101,11 +140,11 @@ class GeminiReviewTests(unittest.TestCase):
             self.assertIn("not configured", result["gemini_review"]["reason"])
 
     def test_markdown_provider_response_is_returned_as_plain_text(self):
-        markdown = "# Assessment\n\n**Reasonable** score with `risk_assessment.risk.points`.\n\n- *Possible false positive*.\n1. Check [vendor](https://example.org).\n> Keep the score.\n```text\nEvidence remains.\n```"
+        markdown = "# I CANNOT CONFIDENTLY SAY THAT\n\n**Reasonable** score with `risk_assessment.risk.points`.\n\n- *Possible false positive*.\n1. Check [vendor](https://example.org).\n> Keep the score.\n```text\nEvidence remains.\n```"
         response = self.call(lambda request: httpx.Response(200, json={"candidates": [{
             "finishReason": "STOP", "content": {"parts": [{"text": markdown}]}}]}))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["review"], "Assessment\n\nReasonable score with risk_assessment.risk.points.\n\nPossible false positive.\nCheck vendor (https://example.org).\nKeep the score.\n\nEvidence remains.")
+        self.assertEqual(response.json()["review"], "I CANNOT CONFIDENTLY SAY THAT\n\nReasonable score with risk_assessment.risk.points.\n\nPossible false positive.\nCheck vendor (https://example.org).\nKeep the score.\n\nEvidence remains.")
 
     def test_plain_evidence_and_paragraphs_are_preserved(self):
         text = "The score is 4.5/10.0. risk_assessment and field_name are field names.\n\nPath: C:\\temp\\_internal_\\sample.exe. 2 * 3 = 6. https://example.org/a_b"
@@ -136,10 +175,10 @@ class GeminiReviewTests(unittest.TestCase):
             attempts.append(json.loads(request.content))
             if len(attempts) < 3:
                 return httpx.Response(503, json={"error": {"message": "test-secret"}})
-            return httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": "Review recovered."}]}}]})
+            return httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": "THIS IS PERFECTLY FINE\n\nThe evidence supports a benign assessment."}]}}]})
         response = self.call(handler)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["review"], "Review recovered.")
+        self.assertEqual(response.json()["review"], "THIS IS PERFECTLY FINE\n\nThe evidence supports a benign assessment.")
         self.assertEqual(len(attempts), 3)
         self.assertTrue(all(body == attempts[0] for body in attempts))
         self.assertEqual(self.sleep.await_count, 2)
@@ -202,7 +241,7 @@ class GeminiReviewTests(unittest.TestCase):
                     "candidates": [
                         {
                             "finishReason": "STOP",
-                            "content": {"parts": [{"text": "Review"}]},
+                            "content": {"parts": [{"text": "I CANNOT CONFIDENTLY SAY THAT\n\nEvidence is incomplete."}]},
                         }
                     ]
                 },

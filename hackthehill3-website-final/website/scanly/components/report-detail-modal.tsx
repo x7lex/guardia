@@ -518,7 +518,23 @@ export default function ReportDetailModal({
                         </dl>
                     </Section>
                 )}
-                {report.risk_assessment.signature_state && <Section title="Deterministic risk score"><p>Signature: {report.risk_assessment.signature_state.replaceAll("_", " ")}. Score: {risk.points}/10.</p><p className="mt-2 text-xs">Signature baseline plus capability combinations and a bounded CPU contribution. Trusted signatures discount weak findings; strong combinations retain their weight. Every contribution is listed in this report.</p></Section>}
+          {report.risk_assessment.signature_state && (
+            <Section title="Deterministic analysis">
+              <p>Signature: {report.risk_assessment.signature_state.replaceAll("_", " ")}.</p>
+              <p>Local heuristic score: {report.risk_assessment.heuristic?.points ?? risk.points}/10.</p>
+              <p>Final engine score: {risk.points}/10.</p>
+              {report.risk_assessment.decision?.override && <p className="mt-2 font-bold">Known-malicious SHA-256 match overrides the local heuristic score. Source: {report.risk_assessment.decision.override.provider}.</p>}
+              {!!report.risk_assessment.decision?.positive_reputation_discount && <p>Positive reputation discount: {report.risk_assessment.decision.positive_reputation_discount} points from unsigned status and weak evidence only.</p>}
+              <p className="mt-2 text-xs">Local findings combine signatures, behavior, structure and instructions. A high heuristic score signals risk, not confirmed malware. Recognized issuers and verified certificate chains receive different discounts.</p>
+            </Section>
+          )}
+          {report.reputation && (
+            <Section title="Hash reputation">
+              <p>Provider: {report.reputation.provider}. Status: {report.reputation.status.replaceAll("_", " ")}.</p>
+              <p>{report.reputation.reason}</p>
+              <p className="mt-2 text-xs">Hash lookup sends only SHA-256. No binary is uploaded. Unknown or unavailable reputation does not establish safety.</p>
+            </Section>
+          )}
                 {!report.risk_assessment.visibility && !report.risk_assessment.signature_state && <p className="text-xs text-[#805775]">Saved with an older scoring model. Rescan the file to see separate threat evidence, visibility and trust.</p>}
                 <GeminiReview report={report} />
 

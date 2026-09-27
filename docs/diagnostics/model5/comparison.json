@@ -1,0 +1,113 @@
+[
+  {
+    "sample": "ChromeSetup.exe",
+    "fixture": "installer.json",
+    "old_risk": {
+      "points": 2.5,
+      "score": "2.5/10.0",
+      "level": "Low Risk",
+      "coverage_limited": false
+    },
+    "rescored_risk": {
+      "points": 0.4,
+      "score": "0.4/10.0",
+      "level": "Low Risk",
+      "verdict": "Low Risk",
+      "classification": "heuristic_risk",
+      "source": "heuristics",
+      "score_meaning": "Static risk, not probability; known-malicious reputation is a separate override"
+    },
+    "fresh_risk": {
+      "points": 0.4,
+      "score": "0.4/10.0",
+      "level": "Low Risk",
+      "verdict": "Low Risk",
+      "classification": "heuristic_risk",
+      "source": "heuristics",
+      "score_meaning": "Static risk, not probability; known-malicious reputation is a separate override"
+    },
+    "gemini_status": "complete",
+    "heuristic": {
+      "points": 0.4,
+      "level": "Low Risk",
+      "uncapped_score": 0.413
+    },
+    "reputation": "disabled",
+    "decision_source": "heuristics",
+    "gemini_verdict": "THIS IS PERFECTLY FINE"
+  },
+  {
+    "sample": "legacy_malware.exe",
+    "fixture": "opaque_container.json",
+    "old_risk": {
+      "points": 1.5,
+      "score": "1.5/10.0",
+      "level": "Use at your own risk",
+      "coverage_limited": true
+    },
+    "rescored_risk": {
+      "points": 7.1,
+      "score": "7.1/10.0",
+      "level": "High Risk",
+      "verdict": "High Risk",
+      "classification": "heuristic_risk",
+      "source": "heuristics",
+      "score_meaning": "Static risk, not probability; known-malicious reputation is a separate override"
+    },
+    "fresh_risk": {
+      "points": 7.1,
+      "score": "7.1/10.0",
+      "level": "High Risk",
+      "verdict": "High Risk",
+      "classification": "heuristic_risk",
+      "source": "heuristics",
+      "score_meaning": "Static risk, not probability; known-malicious reputation is a separate override"
+    },
+    "gemini_status": "complete",
+    "heuristic": {
+      "points": 7.1,
+      "level": "High Risk",
+      "uncapped_score": 7.11
+    },
+    "reputation": "disabled",
+    "decision_source": "heuristics",
+    "gemini_verdict": "I CANNOT CONFIDENTLY SAY THAT"
+  },
+  {
+    "sample": "hrisitosense.exe",
+    "fixture": "packed_application.json",
+    "old_risk": {
+      "points": 2.0,
+      "score": "2.0/10.0",
+      "level": "Use at your own risk",
+      "coverage_limited": true
+    },
+    "rescored_risk": {
+      "points": 6.0,
+      "score": "6.0/10.0",
+      "level": "High Risk",
+      "verdict": "High Risk",
+      "classification": "heuristic_risk",
+      "source": "heuristics",
+      "score_meaning": "Static risk, not probability; known-malicious reputation is a separate override"
+    },
+    "fresh_risk": {
+      "points": 6.0,
+      "score": "6.0/10.0",
+      "level": "High Risk",
+      "verdict": "High Risk",
+      "classification": "heuristic_risk",
+      "source": "heuristics",
+      "score_meaning": "Static risk, not probability; known-malicious reputation is a separate override"
+    },
+    "gemini_status": "complete",
+    "heuristic": {
+      "points": 6.0,
+      "level": "High Risk",
+      "uncapped_score": 6.025
+    },
+    "reputation": "disabled",
+    "decision_source": "heuristics",
+    "gemini_verdict": "I CANNOT CONFIDENTLY SAY THAT"
+  }
+]
