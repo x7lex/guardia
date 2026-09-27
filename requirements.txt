@@ -3,3 +3,6 @@ yara-python
 capstone
 cryptography
 python-magic
+fastapi
+httpx
+uvicorn
