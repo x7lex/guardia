@@ -1,3 +1,4 @@
+import argparse
 import json
 import asyncio
 
@@ -174,6 +175,15 @@ async def scan_directory(directory: Path) -> None:
     )
 
 async def main() -> None:
+    parser = argparse.ArgumentParser(description="Scan PE files or start the WebSocket server.")
+    parser.add_argument("--websocket", action="store_true", help="Start the WebSocket server")
+    args = parser.parse_args()
+    if args.websocket:
+        from backend.websocket import start_websocket
+
+        await start_websocket()
+        return
+
     try:
         target = get_target()
 
