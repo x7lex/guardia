@@ -77,14 +77,14 @@ escalate much faster for unsigned files than for signed software.
 
 ### Signature baseline and evidence multipliers
 
-| Signature state | Baseline | Weak | Moderate | Strong |
-| --- | ---: | ---: | ---: | ---: |
-| Unsigned | 4.0 | 1.5 | 1.75 | 1.5 |
-| Invalid or revoked | 5.0 | 1.5 | 1.75 | 1.5 |
-| Unknown verification | 3.0 | 1.0 | 1.0 | 1.0 |
-| Valid integrity, unrecognized issuer | 0.5 | 0.75 | 1.0 | 1.0 |
-| Valid integrity, recognized issuer | 0.0 | 0.2 | 0.6 | 1.0 |
-| Valid integrity, verified trusted chain | 0.0 | 0.1 | 0.5 | 1.0 |
+| Signature state                         | Baseline | Weak | Moderate | Strong |
+| --------------------------------------- | -------: | ---: | -------: | -----: |
+| Unsigned                                |      4.0 |  1.5 |     1.75 |    1.5 |
+| Invalid or revoked                      |      5.0 |  1.5 |     1.75 |    1.5 |
+| Unknown verification                    |      3.0 |  1.0 |      1.0 |    1.0 |
+| Valid integrity, unrecognized issuer    |      0.5 | 0.75 |      1.0 |    1.0 |
+| Valid integrity, recognized issuer      |      0.0 |  0.2 |      0.6 |    1.0 |
+| Valid integrity, verified trusted chain |      0.0 |  0.1 |      0.5 |    1.0 |
 
 The current cross-platform analyzer verifies embedded signature integrity and
 recognizes explicit issuer CNs. It does not validate against an OS root store or
@@ -94,26 +94,26 @@ stronger weak-signal discount. Revoked/invalid evidence takes precedence.
 
 ### Nominal findings (before multipliers)
 
-| Evidence | Points | Strength / rationale |
-| --- | ---: | --- |
-| Isolated suspicious API, URLs/domains/cookie words, debugger API | 0 | Generic capability or unlinked text |
-| Two / three crypto-network-process import categories | 0.5 / 1.0 | Weak; breadth is common in legitimate software |
-| Full process-access/allocation/write/execution chain | 3.0 | Specific but dual-use; signature multiplier fixed at 1.0 |
-| Browser profile + credential store + file read + decrypt | 5.0 | Strong correlated credential-access evidence |
-| Credential chain + outbound submission | 8.0 | Strong; supersedes the credential-access finding |
-| Autorun or startup target plus writing | 0.75 | Weak; target linkage is not proven |
-| Service persistence / scheduled execution / concealed shell command | 2.0 | Moderate |
-| Download, file-write and launch capability | 0.5 | Weak; expected in installers |
-| Explicit script download-and-evaluate execution sink | 4.0 | Strong |
-| Multiple anti-analysis checks / VM discovery chain | 0.5 / 0.25 | Weak |
-| Encoded script execution or concealed runtime import resolution | 1.25 | Moderate; also occurs in protectors |
-| Packer sections / high-entropy executable section alone | 1.0 / 0.25 | Weak; strongest concealment finding only |
-| Majority opaque appended payload | 0.75 | Weak; only if incompletely inspected |
-| Writable executable section | 0.35 | Weak; also used by JITs/unpackers |
-| Out-of-bounds sections or inconsistent entry/header ranges | 1.0 | Moderate structural inconsistency |
-| CPU discovery/timing / system transition / privileged group | 0.1 / 0.1 / 0.25 | Weak; capped at 0.5 nominal |
-| Generic local YARA match | 0.5 | Weak, not automatically malware |
-| Explicit high-confidence malware YARA rule | 8.0 | Strong; no signature discount |
+| Evidence                                                            |           Points | Strength / rationale                                     |
+| ------------------------------------------------------------------- | ---------------: | -------------------------------------------------------- |
+| Isolated suspicious API, URLs/domains/cookie words, debugger API    |                0 | Generic capability or unlinked text                      |
+| Two / three crypto-network-process import categories                |        0.5 / 1.0 | Weak; breadth is common in legitimate software           |
+| Full process-access/allocation/write/execution chain                |              3.0 | Specific but dual-use; signature multiplier fixed at 1.0 |
+| Browser profile + credential store + file read + decrypt            |              5.0 | Strong correlated credential-access evidence             |
+| Credential chain + outbound submission                              |              8.0 | Strong; supersedes the credential-access finding         |
+| Autorun or startup target plus writing                              |             0.75 | Weak; target linkage is not proven                       |
+| Service persistence / scheduled execution / concealed shell command |              2.0 | Moderate                                                 |
+| Download, file-write and launch capability                          |              0.5 | Weak; expected in installers                             |
+| Explicit script download-and-evaluate execution sink                |              4.0 | Strong                                                   |
+| Multiple anti-analysis checks / VM discovery chain                  |       0.5 / 0.25 | Weak                                                     |
+| Encoded script execution or concealed runtime import resolution     |             1.25 | Moderate; also occurs in protectors                      |
+| Packer sections / high-entropy executable section alone             |       1.0 / 0.25 | Weak; strongest concealment finding only                 |
+| Majority opaque appended payload                                    |             0.75 | Weak; only if incompletely inspected                     |
+| Writable executable section                                         |             0.35 | Weak; also used by JITs/unpackers                        |
+| Out-of-bounds sections or inconsistent entry/header ranges          |              1.0 | Moderate structural inconsistency                        |
+| CPU discovery/timing / system transition / privileged group         | 0.1 / 0.1 / 0.25 | Weak; capped at 0.5 nominal                              |
+| Generic local YARA match                                            |              0.5 | Weak, not automatically malware                          |
+| Explicit high-confidence malware YARA rule                          |              8.0 | Strong; no signature discount                            |
 
 CPU repetition never increases weight. Common mov/add/xor and int3 padding are
 not scored. COFF timestamp and PE header values are retained as raw metadata;
@@ -195,11 +195,11 @@ full saved-report rescoring, fresh scans and independent Gemini outputs.
 The comparison JSON's `old_risk` is the original historical fixture score;
 the table below compares against the later model 4 diagnostic reports.
 
-| Fixture | Model 4 | Model 5 local score | Why |
-| --- | ---: | ---: | --- |
-| ChromeSetup.exe | 0.6 | 0.4 | Valid recognized signature and generic installer capability overlap; no specific malicious chain |
-| hrisitosense.exe (cheat) | 4.0 | 6.0 | Unsigned, UPX layout and writable executable sections; not classified as confirmed malware |
-| legacy_malware.exe | 4.5 | 7.1 | Unsigned, concealed runtime imports and multiple CPU groups correlate; payload remains incompletely understood |
+| Fixture                  | Model 4 | Model 5 local score | Why                                                                                                            |
+| ------------------------ | ------: | ------------------: | -------------------------------------------------------------------------------------------------------------- |
+| ChromeSetup.exe          |     0.6 |                 0.4 | Valid recognized signature and generic installer capability overlap; no specific malicious chain               |
+| hrisitosense.exe (cheat) |     4.0 |                 6.0 | Unsigned, UPX layout and writable executable sections; not classified as confirmed malware                     |
+| legacy_malware.exe       |     4.5 |                 7.1 | Unsigned, concealed runtime imports and multiple CPU groups correlate; payload remains incompletely understood |
 
 No reputation key is configured in this environment, so these real fixture scores
 have reputation disabled. We do not claim a live known-malicious hash hit. Mocked

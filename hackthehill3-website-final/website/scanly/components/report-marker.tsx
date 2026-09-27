@@ -6,26 +6,39 @@ import RetroIcon from "@/components/retro-icon";
 import { useLayoutEffect, useRef } from "react";
 
 export interface Report {
-    gemini_review?: { status: string; review?: string; model?: string; reason?: string; verdict?: string; assessment_type?: string }
-    reputation?: { status: string; provider: string; reason: string; sha256: string; checked_at?: string }
-    analysis: {
-        file: {
-            file_name: string
-            file_size: number
-            sha256: string
-            format: string
-            machine: string
-            entry_point: string
-            section_count: number
-            sections: {
-                name: string
-                virtual_address: string
-                virtual_size: number
-                raw_size: number
-                entropy: number
-                executable: boolean
-            }[]
-        }
+  gemini_review?: {
+    status: string;
+    review?: string;
+    model?: string;
+    reason?: string;
+    verdict?: string;
+    assessment_type?: string;
+  };
+  reputation?: {
+    status: string;
+    provider: string;
+    reason: string;
+    sha256: string;
+    checked_at?: string;
+  };
+  analysis: {
+    file: {
+      file_name: string;
+      file_size: number;
+      sha256: string;
+      format: string;
+      machine: string;
+      entry_point: string;
+      section_count: number;
+      sections: {
+        name: string;
+        virtual_address: string;
+        virtual_size: number;
+        raw_size: number;
+        entropy: number;
+        executable: boolean;
+      }[];
+    };
 
     imports: {
       library_count: number;
@@ -48,13 +61,22 @@ export interface Report {
     };
   };
 
-    risk_assessment: {
-        model_version?: string
-        signature_state?: string
-        heuristic?: { points: number; level: string; uncapped_score: number }
-        decision?: { source: string; override: { type: string; provider: string; reason: string; sha256: string } | null; positive_reputation_discount: number }
-        file_name: string
-        sha256: string
+  risk_assessment: {
+    model_version?: string;
+    signature_state?: string;
+    heuristic?: { points: number; level: string; uncapped_score: number };
+    decision?: {
+      source: string;
+      override: {
+        type: string;
+        provider: string;
+        reason: string;
+        sha256: string;
+      } | null;
+      positive_reputation_discount: number;
+    };
+    file_name: string;
+    sha256: string;
 
     risk: {
       points: number;

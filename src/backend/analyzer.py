@@ -9,10 +9,10 @@ import capstone
 import lief
 
 from backend.features import STRING_PATTERNS
-from backend.signatures import recognized_issuer
 from backend.payloads import inspect_payload
-from backend.yara_scan import inspect_yara
 from backend.pe_metadata import overlay_layout, resource_facts
+from backend.signatures import recognized_issuer
+from backend.yara_scan import inspect_yara
 
 MAX_STRING_BYTES = 32 * 1024 * 1024
 MAX_FILE_BYTES = 512 * 1024 * 1024
@@ -111,16 +111,25 @@ def get_signatures(binary):
             result["checks"].append({"error": str(error)})
     # Preserve a failing signature even if another embedded signature passes.
     result["integrity"] = "INVALID" if invalid else "VALID" if valid else "UNKNOWN"
-    result["known_ca"] = any(recognized_issuer(p["issuer"]) for p in result["publishers"])
+    result["known_ca"] = any(
+        recognized_issuer(p["issuer"]) for p in result["publishers"]
+    )
     return result
 
 
 def disassembly_facts(binary):
-    modes = {lief.PE.Header.MACHINE_TYPES.I386: capstone.CS_MODE_32,
-             lief.PE.Header.MACHINE_TYPES.AMD64: capstone.CS_MODE_64}
-    result = {"supported": binary.header.machine in modes, "scored": True,
-              "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
-              "bytes_decoded": 0, "instruction_count": 0, "mnemonic_counts": {}}
+    modes = {
+        lief.PE.Header.MACHINE_TYPES.I386: capstone.CS_MODE_32,
+        lief.PE.Header.MACHINE_TYPES.AMD64: capstone.CS_MODE_64,
+    }
+    result = {
+        "supported": binary.header.machine in modes,
+        "scored": True,
+        "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+        "bytes_decoded": 0,
+        "instruction_count": 0,
+        "mnemonic_counts": {},
+    }
     if not result["supported"]:
         return result
     rva = binary.optional_header.addressof_entrypoint
@@ -284,24 +293,66 @@ def _analyze(target_file):
     yara = inspect_yara(path)
     entry_rva = binary.optional_header.addressof_entrypoint
     header_anomalies = []
-    if entry_rva and not any(s.virtual_address <= entry_rva < s.virtual_address + max(s.virtual_size, s.sizeof_raw_data) for s in binary.sections):
+    if entry_rva and not any(
+        s.virtual_address
+        <= entry_rva
+        < s.virtual_address + max(s.virtual_size, s.sizeof_raw_data)
+        for s in binary.sections
+    ):
         header_anomalies.append("Entry point is outside all sections")
     if binary.optional_header.sizeof_headers > size:
         header_anomalies.append("Declared headers exceed file size")
-    return {"schema_version": "5.0", "file": {"file_name": path.name, "file_path": str(path), "file_size": size,
-            "sha256": digest.hexdigest(), "format": str(binary.format), "machine": str(binary.header.machine),
-            "entry_point": hex(binary.entrypoint), "section_count": len(sections), "sections": sections, "overlay": overlay,
-            "version_info": version_info, "header_anomalies": header_anomalies,
-            "coff_timestamp": binary.header.time_date_stamps, "entry_point_rva": entry_rva,
-            "image_size": binary.optional_header.sizeof_image, "header_size": binary.optional_header.sizeof_headers, "is_dll": binary.header.has_characteristic(lief.PE.Header.CHARACTERISTICS.DLL)},
-            "imports": {"libraries": libraries, "library_count": len(libraries), "function_count": sum(len(lib["functions"]) for lib in libraries)},
-            "strings": strings, "signature": signature, "disassembly": disassembly,
-            "payload_inspection": payload_inspection, "resources": resources, "yara": yara,
-            "suspicious_instructions": {"count": 0, "instructions": [], "scored": False, "supported": disassembly["supported"]},
-            "coverage": {"static_only": True, "limitations": limitations,
-                         "yara": yara["status"], "hash_reputation": "SEPARATE_REPORT_FIELD",
-                         "unpacking": "BOUNDED_ZIP_AND_LITERAL_SCRIPT_DECODING" if payload_inspection else "NOT_PERFORMED",
-                         "control_flow": "NOT_ANALYZED"}}
+    return {
+        "schema_version": "5.0",
+        "file": {
+            "file_name": path.name,
+            "file_path": str(path),
+            "file_size": size,
+            "sha256": digest.hexdigest(),
+            "format": str(binary.format),
+            "machine": str(binary.header.machine),
+            "entry_point": hex(binary.entrypoint),
+            "section_count": len(sections),
+            "sections": sections,
+            "overlay": overlay,
+            "version_info": version_info,
+            "header_anomalies": header_anomalies,
+            "coff_timestamp": binary.header.time_date_stamps,
+            "entry_point_rva": entry_rva,
+            "image_size": binary.optional_header.sizeof_image,
+            "header_size": binary.optional_header.sizeof_headers,
+            "is_dll": binary.header.has_characteristic(
+                lief.PE.Header.CHARACTERISTICS.DLL
+            ),
+        },
+        "imports": {
+            "libraries": libraries,
+            "library_count": len(libraries),
+            "function_count": sum(len(lib["functions"]) for lib in libraries),
+        },
+        "strings": strings,
+        "signature": signature,
+        "disassembly": disassembly,
+        "payload_inspection": payload_inspection,
+        "resources": resources,
+        "yara": yara,
+        "suspicious_instructions": {
+            "count": 0,
+            "instructions": [],
+            "scored": False,
+            "supported": disassembly["supported"],
+        },
+        "coverage": {
+            "static_only": True,
+            "limitations": limitations,
+            "yara": yara["status"],
+            "hash_reputation": "SEPARATE_REPORT_FIELD",
+            "unpacking": "BOUNDED_ZIP_AND_LITERAL_SCRIPT_DECODING"
+            if payload_inspection
+            else "NOT_PERFORMED",
+            "control_flow": "NOT_ANALYZED",
+        },
+    }
 
 
 async def analyze_file(target_file):
