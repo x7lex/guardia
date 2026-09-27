@@ -1,8 +1,9 @@
-"""a"""
 import os
-import lief
-#import json
+import json
+import hashlib
 from pathlib import Path
+
+import lief
 from capstone import Cs, CS_ARCH_X86, CS_MODE_32, CS_MODE_64
 
 SUSPICIOUS_INSTRUCTIONS = {
@@ -17,40 +18,73 @@ SUSPICIOUS_INSTRUCTIONS = {
     "out",
 }
 
-# this will be based on userinput on the web soon
-def get_file(target_file: Path) -> str:
-    return str(target_file)
+# this is example, user input will be needed
+TARGET_FILE = Path("hrisitosense.exe")
+BINARY = lief.parse(str(TARGET_FILE))
 
-BINARY = lief.parse(get_file('hrisitosense.exe'))
+def get_sha256() -> str:
+    sha256 = hashlib.sha256()
 
+    with TARGET_FILE.open("rb") as file:
+        for chunk in iter(lambda: file.read(65536), b""):
+            sha256.update(chunk)
 
-"""a"""
-def get_imports() -> str:
+    return sha256.hexdigest()
+
+def get_imports() -> dict:
+    libraries = []
+    total_functions = 0
+
     for imported_lib in BINARY.imports:
-        print(f'\nLibrary: {imported_lib.name}')
+        functions = []
 
         for entry in imported_lib.entries:
             if entry.name:
-                print(f'Function: {entry.name}')
+                functions.append(entry.name)
             else:
-                # windows uses ordinals
-                print(f'Ordinal {entry.ordinal}' if os.name == 'nt' else '')
+                # winapi uses ordinals too
+                functions.append(f"Ordinal {entry.ordinal}" if os.name == "nt" else "")
 
+        total_functions += len(functions)
 
-def get_info() -> str:
-    print(f"Format:      {BINARY.format}")
-    print(f"Entry Point: {hex(BINARY.entrypoint)}")
-    print(f"Machine:     {BINARY.header.machine}")
+        libraries.append({
+            "name": imported_lib.name,
+            "functions": functions,
+        })
 
-    print("\nSections:")
+    return {
+        "library_count": len(libraries),
+        "function_count": total_functions,
+        "libraries": libraries,
+    }
+
+def get_info() -> dict:
+    sections = []
+
     for section in BINARY.sections:
-        print(
-            f"  {section.name:<10} "
-            f"VA={hex(section.virtual_address):<12} "
-            f"Entropy={section.entropy:.2f}"
-        )
+        sections.append({
+            "name": section.name,
+            "virtual_address": hex(section.virtual_address),
+            "virtual_size": section.virtual_size,
+            "raw_size": section.size,
+            "entropy": round(section.entropy, 2),
+            "executable": section.has_characteristic(
+                lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
+            ),
+        })
 
-def get_signatures() -> None:
+    return {
+        "file_name": TARGET_FILE.name,
+        "file_size": TARGET_FILE.stat().st_size,
+        "sha256": get_sha256(),
+        "format": str(BINARY.format),
+        "machine": str(BINARY.header.machine),
+        "entry_point": hex(BINARY.entrypoint),
+        "section_count": len(BINARY.sections),
+        "sections": sections,
+    }
+
+def get_signatures() -> dict:
     known_issuers = [
         "DigiCert",
         "Sectigo",
@@ -67,50 +101,42 @@ def get_signatures() -> None:
         "Actalis",
         "Buypass",
         "Telia",
-
-        # Major platform/vendor PKI
         "Microsoft",
         "Apple",
         "Google",
     ]
 
     if not BINARY.has_signatures:
-        print("Signature: UNSIGNED")
-        return
+        return {
+            "signed": False,
+            "integrity": "UNSIGNED",
+            "known_ca": False,
+        }
 
-    for i, signature in enumerate(BINARY.signatures, start=1):
-        print(f"\n--- Signature {i} ---")
+    integrity_valid = False
+    known_ca_found = False
 
+    for signature in BINARY.signatures:
         result = signature.check()
 
         if result == lief.PE.Signature.VERIFICATION_FLAGS.OK:
-            print("Integrity: VALID")
-        else:
-            print(f"Integrity: INVALID ({result})")
-
-        known_ca_found = False
+            integrity_valid = True
 
         for cert in signature.certificates:
-            print(f"\nSubject: {cert.subject}")
-            print(f"Issuer:  {cert.issuer}")
-
-            if any(ca.lower() in cert.issuer.lower() for ca in known_issuers):
-                print("Issuer: KNOWN")
+            if any(
+                ca.lower() in cert.issuer.lower()
+                for ca in known_issuers
+            ):
                 known_ca_found = True
-            else:
-                print("Issuer: UNKNOWN")
 
-        # only part that really matters
-        print("\nSummary:")
+    return {
+        "signed": True,
+        "integrity": "VALID" if integrity_valid else "INVALID",
+        "known_ca": known_ca_found,
+    }
 
-        # refer to the point system on google docs
-        # known/unknown 
-        print(f"Integrity: {'VALID' if result == lief.PE.Signature.VERIFICATION_FLAGS.OK else 'INVALID'}")
-
-        # good/bad 
-        print(f"Known CA present: {'YES' if known_ca_found else 'NO'}") 
-
-def get_suspicious_instructions() -> tuple[int, list[str]]:
+# ai generated
+def get_suspicious_instructions() -> dict:
     mode = (
         CS_MODE_64
         if BINARY.header.machine == lief.PE.Header.MACHINE_TYPES.AMD64
@@ -136,6 +162,17 @@ def get_suspicious_instructions() -> tuple[int, list[str]]:
             if instruction.mnemonic in SUSPICIOUS_INSTRUCTIONS:
                 found.append(instruction.mnemonic)
 
-    return len(found), sorted(set(found))
+    return {
+        "count": len(found),
+        "instructions": sorted(set(found)),
+    }
 
-print(get_suspicious_instructions())
+def output() -> dict:
+    report = {
+        "file": get_info(),
+        "imports": get_imports(),
+        "signature": get_signatures(),
+        "suspicious_instructions": get_suspicious_instructions(),
+    }
+
+    return report
