@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 
 from backend.api import app
 from backend.gemini_review import attach_review, SYSTEM_INSTRUCTION
+from backend.plain_text import plain_text_review
 
 REPORT = {
     "analysis": {
@@ -95,6 +96,20 @@ class GeminiReviewTests(unittest.TestCase):
         with patch.dict(os.environ, {"GEMINI_API_KEY": "", "API_TOKEN": ""}):
             result = asyncio.run(attach_review(copy.deepcopy(REPORT)))
             self.assertIn("not configured", result["gemini_review"]["reason"])
+
+    def test_markdown_provider_response_is_returned_as_plain_text(self):
+        markdown = "# Assessment\n\n**Reasonable** score with `risk_assessment.risk.points`.\n\n- *Possible false positive*.\n1. Check [vendor](https://example.org).\n> Keep the score.\n```text\nEvidence remains.\n```"
+        response = self.call(lambda request: httpx.Response(200, json={"candidates": [{
+            "finishReason": "STOP", "content": {"parts": [{"text": markdown}]}}]}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["review"], "Assessment\n\nReasonable score with risk_assessment.risk.points.\n\nPossible false positive.\nCheck vendor (https://example.org).\nKeep the score.\n\nEvidence remains.")
+
+    def test_plain_evidence_and_paragraphs_are_preserved(self):
+        text = "The score is 4.5/10.0. risk_assessment and field_name are field names.\n\nPath: C:\\temp\\_internal_\\sample.exe. 2 * 3 = 6. https://example.org/a_b"
+        self.assertEqual(plain_text_review(text), text)
+        self.assertEqual(plain_text_review("Call `__init__` and inspect `a * b`."), "Call __init__ and inspect a * b.")
+        self.assertEqual(plain_text_review("| Finding | Score |\n| --- | --- |\n| __Unsigned__ | 4.0 |"), "Finding; Score\nUnsigned; 4.0")
+        self.assertEqual(plain_text_review("## Review ##\n- [x] ~~Old~~ finding\n---"), "Review\nOld finding")
 
     def test_quota_and_auth_errors_are_safe_and_actionable(self):
         for status, expected in (
