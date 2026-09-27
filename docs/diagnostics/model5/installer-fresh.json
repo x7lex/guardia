@@ -1,0 +1,3570 @@
+{
+  "analysis": {
+    "schema_version": "5.0",
+    "file": {
+      "file_name": "ChromeSetup.exe",
+      "file_path": "/Users/hadi/Desktop/stuff/ChromeSetup.exe",
+      "file_size": 12411832,
+      "sha256": "7ea51634f8f9ece92eb581b3c8cca5a4dabd73a49e4759739b195c1599605960",
+      "format": "FORMATS.PE",
+      "machine": "MACHINE_TYPES.I386",
+      "entry_point": "0x621c10",
+      "section_count": 9,
+      "sections": [
+        {
+          "name": ".text",
+          "virtual_address": "0x1000",
+          "virtual_size": 3728860,
+          "raw_size": 3728896,
+          "raw_offset": 1024,
+          "entropy": 6.699,
+          "executable": true,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rdata",
+          "virtual_address": "0x390000",
+          "virtual_size": 549384,
+          "raw_size": 549888,
+          "raw_offset": 3729920,
+          "entropy": 6.081,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".data",
+          "virtual_address": "0x417000",
+          "virtual_size": 184468,
+          "raw_size": 21504,
+          "raw_offset": 4279808,
+          "entropy": 3.682,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".fptable",
+          "virtual_address": "0x445000",
+          "virtual_size": 128,
+          "raw_size": 512,
+          "raw_offset": 4301312,
+          "entropy": -0.0,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".tls",
+          "virtual_address": "0x446000",
+          "virtual_size": 437,
+          "raw_size": 512,
+          "raw_offset": 4301824,
+          "entropy": 0.412,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": "CPADinfo",
+          "virtual_address": "0x447000",
+          "virtual_size": 40,
+          "raw_size": 512,
+          "raw_offset": 4302336,
+          "entropy": 0.998,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": "malloc_h",
+          "virtual_address": "0x448000",
+          "virtual_size": 779,
+          "raw_size": 1024,
+          "raw_offset": 4302848,
+          "entropy": 6.018,
+          "executable": true,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rsrc",
+          "virtual_address": "0x449000",
+          "virtual_size": 7974076,
+          "raw_size": 7974400,
+          "raw_offset": 4303872,
+          "entropy": 6.601,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".reloc",
+          "virtual_address": "0xbe4000",
+          "virtual_size": 114180,
+          "raw_size": 114688,
+          "raw_offset": 12278272,
+          "entropy": 6.745,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        }
+      ],
+      "overlay": {
+        "offset": 12392960,
+        "size": 18872,
+        "certificate_bytes": 18872,
+        "certificate_range_valid": true,
+        "payload_bytes": 0,
+        "payload_fraction": 0.0,
+        "payload_ranges": [],
+        "content_analysis": "NOT_PRESENT"
+      },
+      "version_info": {
+        "CompanyName": "Google LLC",
+        "FileDescription": "Google Installer (x86)",
+        "FileVersion": "152.0.7933.0",
+        "InternalName": "Google Installer (x86)",
+        "LegalCopyright": "Copyright 2026 Google LLC. All rights reserved.",
+        "OriginalFilename": "UpdaterSetup.exe",
+        "ProductName": "Google Installer (x86)",
+        "ProductVersion": "152.0.7933.0",
+        "CompanyShortName": "Google",
+        "ProductShortName": "GoogleUpdater",
+        "LastChange": "ec1db830be3d75be28a61c26120ce87e1f2c201e-refs/branch-heads/7933@{#1}",
+        "Official Build": "1"
+      },
+      "header_anomalies": [],
+      "coff_timestamp": 1783260209,
+      "entry_point_rva": 2235408,
+      "image_size": 12582912,
+      "header_size": 1024,
+      "is_dll": false
+    },
+    "imports": {
+      "libraries": [
+        {
+          "name": "ADVAPI32.dll",
+          "kind": "normal",
+          "functions": [
+            "AddAce",
+            "AdjustTokenPrivileges",
+            "BuildTrusteeWithSidW",
+            "ChangeServiceConfig2W",
+            "ChangeServiceConfigW",
+            "CheckTokenMembership",
+            "CloseServiceHandle",
+            "ConvertSecurityDescriptorToStringSecurityDescriptorW",
+            "ConvertSidToStringSidW",
+            "ConvertStringSecurityDescriptorToSecurityDescriptorW",
+            "ConvertStringSidToSidW",
+            "CopySid",
+            "CreateProcessAsUserW",
+            "CreateProcessWithTokenW",
+            "CreateServiceW",
+            "DeleteService",
+            "DuplicateTokenEx",
+            "EqualSid",
+            "GetAce",
+            "GetAclInformation",
+            "GetLengthSid",
+            "GetNamedSecurityInfoW",
+            "GetSecurityDescriptorControl",
+            "GetSecurityDescriptorDacl",
+            "GetSecurityDescriptorGroup",
+            "GetSecurityDescriptorOwner",
+            "GetSecurityDescriptorSacl",
+            "GetSecurityInfo",
+            "GetSidIdentifierAuthority",
+            "GetSidLengthRequired",
+            "GetSidSubAuthority",
+            "GetSidSubAuthorityCount",
+            "GetTokenInformation",
+            "GetTraceEnableFlags",
+            "GetTraceEnableLevel",
+            "GetTraceLoggerHandle",
+            "ImpersonateLoggedOnUser",
+            "InitializeAcl",
+            "InitializeSid",
+            "IsValidAcl",
+            "IsValidSecurityDescriptor",
+            "IsValidSid",
+            "LookupAccountSidW",
+            "LookupPrivilegeValueW",
+            "OpenProcessToken",
+            "OpenSCManagerW",
+            "OpenServiceW",
+            "OpenThreadToken",
+            "QueryServiceConfigW",
+            "RegCloseKey",
+            "RegCreateKeyExW",
+            "RegDeleteKeyExW",
+            "RegDeleteValueW",
+            "RegEnumKeyExW",
+            "RegEnumValueW",
+            "RegOpenKeyExW",
+            "RegQueryInfoKeyW",
+            "RegQueryValueExW",
+            "RegSetValueExW",
+            "RegisterTraceGuidsW",
+            "RevertToSelf",
+            "SetEntriesInAclW",
+            "SetNamedSecurityInfoW",
+            "SetSecurityInfo",
+            "TraceEvent",
+            "UnregisterTraceGuids"
+          ]
+        },
+        {
+          "name": "dbghelp.dll",
+          "kind": "normal",
+          "functions": [
+            "SymCleanup",
+            "SymFromAddr",
+            "SymGetLineFromAddr64",
+            "SymGetModuleInfo64",
+            "SymGetSearchPathW",
+            "SymInitialize",
+            "SymSetOptions",
+            "SymSetSearchPathW"
+          ]
+        },
+        {
+          "name": "GDI32.dll",
+          "kind": "normal",
+          "functions": [
+            "CreateCompatibleDC",
+            "CreateDIBSection",
+            "DeleteDC",
+            "DeleteObject",
+            "GetObjectW",
+            "GetStockObject",
+            "SelectObject",
+            "SetBrushOrgEx",
+            "SetStretchBltMode",
+            "StretchBlt"
+          ]
+        },
+        {
+          "name": "OLEAUT32.dll",
+          "kind": "normal",
+          "functions": [
+            "ordinal:161",
+            "ordinal:23",
+            "ordinal:411",
+            "ordinal:16",
+            "ordinal:17",
+            "ordinal:20",
+            "ordinal:19",
+            "ordinal:77",
+            "ordinal:24",
+            "ordinal:2",
+            "ordinal:150",
+            "ordinal:4",
+            "ordinal:6",
+            "ordinal:184",
+            "ordinal:9"
+          ]
+        },
+        {
+          "name": "SHELL32.dll",
+          "kind": "normal",
+          "functions": [
+            "CommandLineToArgvW",
+            "ordinal:680",
+            "SHGetFolderPathW",
+            "SHGetKnownFolderPath",
+            "ShellExecuteExW"
+          ]
+        },
+        {
+          "name": "USER32.dll",
+          "kind": "normal",
+          "functions": [
+            "AllowSetForegroundWindow",
+            "BeginPaint",
+            "CharUpperW",
+            "CreateWindowExW",
+            "DefWindowProcW",
+            "DestroyIcon",
+            "DestroyWindow",
+            "DispatchMessageW",
+            "EndPaint",
+            "GetActiveWindow",
+            "GetClassInfoExW",
+            "GetClientRect",
+            "GetDesktopWindow",
+            "GetDpiForWindow",
+            "GetGuiResources",
+            "GetMessageW",
+            "GetQueueStatus",
+            "GetShellWindow",
+            "GetSystemMetrics",
+            "GetWindowLongW",
+            "GetWindowRect",
+            "GetWindowThreadProcessId",
+            "InvalidateRect",
+            "IsDialogMessageW",
+            "IsWindow",
+            "KillTimer",
+            "LoadImageW",
+            "LoadStringW",
+            "MessageBoxExW",
+            "MsgWaitForMultipleObjectsEx",
+            "PeekMessageW",
+            "PostMessageW",
+            "PostQuitMessage",
+            "RegisterClassExW",
+            "SendMessageW",
+            "SetForegroundWindow",
+            "SetTimer",
+            "SetWindowLongW",
+            "SetWindowPos",
+            "ShowWindow",
+            "SystemParametersInfoW",
+            "TranslateMessage",
+            "UnregisterClassW",
+            "UpdateWindow"
+          ]
+        },
+        {
+          "name": "KERNEL32.dll",
+          "kind": "normal",
+          "functions": [
+            "AcquireSRWLockExclusive",
+            "AcquireSRWLockShared",
+            "AssignProcessToJobObject",
+            "CancelIoEx",
+            "CloseHandle",
+            "CompareStringW",
+            "ConnectNamedPipe",
+            "CopyFileW",
+            "CreateDirectoryW",
+            "CreateEventW",
+            "CreateFileA",
+            "CreateFileMappingW",
+            "CreateFileW",
+            "CreateIoCompletionPort",
+            "CreateMutexW",
+            "CreateNamedPipeW",
+            "CreatePipe",
+            "CreateProcessW",
+            "CreateThread",
+            "CreateToolhelp32Snapshot",
+            "DecodePointer",
+            "DeleteCriticalSection",
+            "DeleteFileW",
+            "DeleteProcThreadAttributeList",
+            "DeviceIoControl",
+            "DuplicateHandle",
+            "EncodePointer",
+            "EnterCriticalSection",
+            "EnumResourceNamesW",
+            "EnumSystemLocalesW",
+            "ExitProcess",
+            "ExpandEnvironmentStringsW",
+            "FileTimeToLocalFileTime",
+            "FileTimeToSystemTime",
+            "FindClose",
+            "FindFirstFileExW",
+            "FindFirstFileW",
+            "FindNextFileW",
+            "FindResourceW",
+            "FlsAlloc",
+            "FlsFree",
+            "FlsGetValue",
+            "FlsSetValue",
+            "FlushFileBuffers",
+            "FormatMessageW",
+            "FreeEnvironmentStringsW",
+            "FreeLibrary",
+            "GetACP",
+            "GetCPInfo",
+            "GetCommandLineA",
+            "GetCommandLineW",
+            "GetConsoleMode",
+            "GetConsoleOutputCP",
+            "GetCurrentDirectoryW",
+            "GetCurrentProcess",
+            "GetCurrentProcessId",
+            "GetCurrentThread",
+            "GetCurrentThreadId",
+            "GetDateFormatW",
+            "GetDiskFreeSpaceExW",
+            "GetDriveTypeW",
+            "GetEnvironmentStringsW",
+            "GetEnvironmentVariableW",
+            "GetExitCodeProcess",
+            "GetFileAttributesExW",
+            "GetFileAttributesW",
+            "GetFileInformationByHandle",
+            "GetFileInformationByHandleEx",
+            "GetFileSize",
+            "GetFileSizeEx",
+            "GetFileType",
+            "GetFullPathNameW",
+            "GetLastError",
+            "GetLocalTime",
+            "GetLocaleInfoW",
+            "GetLogicalProcessorInformation",
+            "GetLogicalProcessorInformationEx",
+            "GetLongPathNameW",
+            "GetModuleFileNameW",
+            "GetModuleHandleA",
+            "GetModuleHandleExA",
+            "GetModuleHandleExW",
+            "GetModuleHandleW",
+            "GetNamedPipeClientProcessId",
+            "GetNamedPipeServerProcessId",
+            "GetNativeSystemInfo",
+            "GetOEMCP",
+            "GetOverlappedResult",
+            "GetProcAddress",
+            "GetProcessHeap",
+            "GetProcessId",
+            "GetProcessInformation",
+            "GetProcessMitigationPolicy",
+            "GetProcessTimes",
+            "GetProductInfo",
+            "GetQueuedCompletionStatus",
+            "GetStartupInfoW",
+            "GetStdHandle",
+            "GetStringTypeW",
+            "GetSystemDirectoryW",
+            "GetSystemInfo",
+            "GetSystemTimeAsFileTime",
+            "GetSystemTimePreciseAsFileTime",
+            "GetTempPathW",
+            "GetThreadId",
+            "GetThreadPreferredUILanguages",
+            "GetThreadPriority",
+            "GetTickCount",
+            "GetTimeFormatW",
+            "GetTimeZoneInformation",
+            "GetUserDefaultLCID",
+            "GetUserPreferredUILanguages",
+            "GetVersionExW",
+            "GetWindowsDirectoryW",
+            "GlobalAlloc",
+            "GlobalFree",
+            "GlobalMemoryStatusEx",
+            "HeapAlloc",
+            "HeapDestroy",
+            "HeapFree",
+            "HeapReAlloc",
+            "HeapSetInformation",
+            "HeapSize",
+            "InitOnceExecuteOnce",
+            "InitializeConditionVariable",
+            "InitializeCriticalSectionEx",
+            "InitializeProcThreadAttributeList",
+            "InitializeSListHead",
+            "InitializeSRWLock",
+            "InterlockedPushEntrySList",
+            "IsDebuggerPresent",
+            "IsProcessorFeaturePresent",
+            "IsValidCodePage",
+            "IsValidLocale",
+            "IsWow64Process",
+            "K32GetModuleInformation",
+            "K32GetProcessMemoryInfo",
+            "LCMapStringW",
+            "LeaveCriticalSection",
+            "LoadLibraryExA",
+            "LoadLibraryExW",
+            "LoadLibraryW",
+            "LoadResource",
+            "LocalFree",
+            "LockResource",
+            "MapViewOfFile",
+            "MoveFileExW",
+            "MoveFileW",
+            "MulDiv",
+            "MultiByteToWideChar",
+            "OpenProcess",
+            "OutputDebugStringA",
+            "OutputDebugStringW",
+            "PeekNamedPipe",
+            "PostQueuedCompletionStatus",
+            "Process32FirstW",
+            "Process32NextW",
+            "ProcessIdToSessionId",
+            "QueryFullProcessImageNameW",
+            "QueryPerformanceCounter",
+            "QueryPerformanceFrequency",
+            "QueryThreadCycleTime",
+            "RaiseException",
+            "ReadConsoleW",
+            "ReadFile",
+            "ReadProcessMemory",
+            "RegisterWaitForSingleObject",
+            "ReleaseMutex",
+            "ReleaseSRWLockExclusive",
+            "ReleaseSRWLockShared",
+            "RemoveDirectoryW",
+            "ReplaceFileW",
+            "ResetEvent",
+            "RtlCaptureStackBackTrace",
+            "RtlUnwind",
+            "SetCurrentDirectoryW",
+            "SetDefaultDllDirectories",
+            "SetEndOfFile",
+            "SetEnvironmentVariableW",
+            "SetEvent",
+            "SetFileAttributesW",
+            "SetFileInformationByHandle",
+            "SetFilePointer",
+            "SetFilePointerEx",
+            "SetFileTime",
+            "SetHandleInformation",
+            "SetInformationJobObject",
+            "SetLastError",
+            "SetPriorityClass",
+            "SetProcessInformation",
+            "SetProcessWorkingSetSize",
+            "SetStdHandle",
+            "SetThreadInformation",
+            "SetThreadPriority",
+            "SetUnhandledExceptionFilter",
+            "SizeofResource",
+            "Sleep",
+            "SleepConditionVariableSRW",
+            "SwitchToThread",
+            "SystemTimeToFileTime",
+            "SystemTimeToTzSpecificLocalTime",
+            "TerminateProcess",
+            "TlsAlloc",
+            "TlsFree",
+            "TlsGetValue",
+            "TlsSetValue",
+            "TryAcquireSRWLockExclusive",
+            "TzSpecificLocalTimeToSystemTime",
+            "UnhandledExceptionFilter",
+            "UnmapViewOfFile",
+            "UnregisterWaitEx",
+            "UpdateProcThreadAttribute",
+            "VerSetConditionMask",
+            "VerifyVersionInfoW",
+            "VirtualAlloc",
+            "VirtualFree",
+            "VirtualProtect",
+            "VirtualQuery",
+            "WTSGetActiveConsoleSessionId",
+            "WaitForMultipleObjects",
+            "WaitForSingleObject",
+            "WaitNamedPipeW",
+            "WakeAllConditionVariable",
+            "WakeConditionVariable",
+            "WideCharToMultiByte",
+            "WriteConsoleW",
+            "WriteFile",
+            "lstrcmpW",
+            "lstrcmpiW"
+          ]
+        },
+        {
+          "name": "ole32.dll",
+          "kind": "normal",
+          "functions": [
+            "CoAddRefServerProcess",
+            "CoCreateInstance",
+            "CoGetCallContext",
+            "CoInitializeEx",
+            "CoRegisterClassObject",
+            "CoRegisterInitializeSpy",
+            "CoReleaseServerProcess",
+            "CoResumeClassObjects",
+            "CoRevokeClassObject",
+            "CoRevokeInitializeSpy",
+            "CoTaskMemFree",
+            "CoUninitialize",
+            "IIDFromString",
+            "StringFromGUID2"
+          ]
+        },
+        {
+          "name": "ntdll.dll",
+          "kind": "normal",
+          "functions": [
+            "NtDeleteKey",
+            "NtQueryInformationProcess",
+            "NtQueryObject",
+            "RtlGetVersion"
+          ]
+        },
+        {
+          "name": "Secur32.dll",
+          "kind": "normal",
+          "functions": [
+            "GetUserNameExW"
+          ]
+        },
+        {
+          "name": "WTSAPI32.dll",
+          "kind": "normal",
+          "functions": [
+            "WTSEnumerateSessionsW",
+            "WTSFreeMemory",
+            "WTSQuerySessionInformationW"
+          ]
+        },
+        {
+          "name": "USERENV.dll",
+          "kind": "normal",
+          "functions": [
+            "CreateEnvironmentBlock",
+            "DestroyEnvironmentBlock",
+            "EnterCriticalPolicySection",
+            "LeaveCriticalPolicySection"
+          ]
+        },
+        {
+          "name": "WINHTTP.dll",
+          "kind": "normal",
+          "functions": [
+            "WinHttpAddRequestHeaders",
+            "WinHttpCloseHandle",
+            "WinHttpConnect",
+            "WinHttpGetProxyForUrl",
+            "WinHttpOpen",
+            "WinHttpOpenRequest",
+            "WinHttpQueryHeaders",
+            "WinHttpReadData",
+            "WinHttpReceiveResponse",
+            "WinHttpSendRequest",
+            "WinHttpSetOption",
+            "WinHttpSetStatusCallback"
+          ]
+        },
+        {
+          "name": "SHLWAPI.dll",
+          "kind": "normal",
+          "functions": [
+            "ordinal:437",
+            "PathMatchSpecW"
+          ]
+        },
+        {
+          "name": "WINMM.dll",
+          "kind": "normal",
+          "functions": [
+            "timeBeginPeriod",
+            "timeEndPeriod",
+            "timeGetTime"
+          ]
+        },
+        {
+          "name": "api-ms-win-core-synch-l1-2-0.dll",
+          "kind": "normal",
+          "functions": [
+            "WaitOnAddress",
+            "WakeByAddressAll",
+            "WakeByAddressSingle"
+          ]
+        },
+        {
+          "name": "api-ms-win-core-winrt-l1-1-0.dll",
+          "kind": "normal",
+          "functions": [
+            "RoInitialize",
+            "RoUninitialize"
+          ]
+        }
+      ],
+      "library_count": 17,
+      "function_count": 425
+    },
+    "strings": {
+      "matches": {
+        "browser_database": [
+          "CookieS",
+          "cookies"
+        ],
+        "browser_path": [],
+        "autorun": [
+          "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+        ],
+        "startup": [],
+        "scheduled_task": [],
+        "suspicious_shell": [],
+        "download_execute": [],
+        "vm_artifact": [],
+        "installer_terms": [
+          "updater",
+          "install",
+          "update",
+          "Uninstall",
+          "uninstall",
+          "Install",
+          "unInstall",
+          "INSTALL",
+          "UNINSTALL",
+          "UPDATE",
+          "installer",
+          "Update",
+          "installation",
+          "Installer",
+          "Updater",
+          "UPDATER",
+          "Installation"
+        ],
+        "suspicious_executable_path": [],
+        "url": [
+          "https://clients2.google.com/cr/report",
+          "https://dl.google.com/update2/installers/icons/",
+          "https://play.googleapis.com/log",
+          "http://support.google.com/installer/",
+          "https://crashpad.chromium.org/",
+          "https://crashpad.chromium.org/bug/new",
+          "http://dictionaryperceptionrevolutionfoundationpx;height:successfulsupportersmillenniumhis",
+          "http://mathematicsmargin-top:eventually",
+          "http://Descriptionrelatively",
+          "http://applicationslink",
+          "http://navigation",
+          "http://www.years",
+          "http://interested",
+          "http://familiar",
+          "http://whether",
+          "http://interpreted",
+          "http://addEventListenerresponsible",
+          "http://.jpg|right|thumb|.js",
+          "http://according",
+          "http://www.interpretation"
+        ],
+        "ipv4": [
+          "0.0.0.0",
+          "1.3.2.1",
+          "127.0.0.1",
+          "6.0.0.0"
+        ],
+        "domain": [
+          "openssl.org",
+          "update.googleapis.com",
+          "clients2.google.com",
+          "dl.google.com",
+          "play.googleapis.com",
+          "support.google.com",
+          "crashpad.chromium.org",
+          "birthpopuptypesapplyImagebeinguppernoteseveryshowsmeansextramatchtrackknownearlybegansuperpapernorthlearngivennamedendedTermspartsGroupbrandusingwomanfalsereadyaudiotakeswhile.com",
+          "thing.org",
+          "genretrucklooksValueFrame.net",
+          "Log.com",
+          "tos.org",
+          "the.com",
+          "w3.org",
+          "www.w3.org",
+          "cacerts.digicert.com",
+          "crl3.digicert.com",
+          "www.digicert.com",
+          "crl4.digicert.com",
+          "proxy.cN"
+        ]
+      },
+      "match_counts": {
+        "browser_database": 2,
+        "browser_path": 0,
+        "autorun": 2,
+        "startup": 0,
+        "scheduled_task": 0,
+        "suspicious_shell": 0,
+        "download_execute": 0,
+        "vm_artifact": 0,
+        "installer_terms": 990,
+        "suspicious_executable_path": 0,
+        "url": 66,
+        "ipv4": 7,
+        "domain": 62
+      },
+      "limits": {
+        "examples_per_category": 20,
+        "printable_run_characters": 2048
+      },
+      "note": "ASCII and ASCII-range UTF-16LE only; text is untrusted data. URLs/domains/IP-like strings carry no risk by themselves.",
+      "bytes_scanned": 12411832,
+      "truncated": false
+    },
+    "signature": {
+      "signed": true,
+      "integrity": "VALID",
+      "chain_trust": "NOT_EVALUATED",
+      "revocation": "NOT_CHECKED",
+      "publisher_identity": "NOT_TRUST_VALIDATED",
+      "publishers": [
+        {
+          "subject": "JURISDICTION_OF_INCORPORATION_C=US, JURISDICTION_OF_INCORPORATION_SP=Delaware, BUSINESS_CATEGORY=Private Organization, serialNumber=3582691, C=US, ST=California, L=Mountain View, O=Google LLC, CN=Google LLC",
+          "issuer": "C=US, O=DigiCert\\, Inc., CN=DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+          "serial_number": "0b50cf246b263efd85a729315158f3ff"
+        }
+      ],
+      "checks": [
+        {
+          "full_verification": "VERIFICATION_FLAGS.OK",
+          "integrity_without_time": "VERIFICATION_FLAGS.OK",
+          "file_digest": "VERIFICATION_FLAGS.OK"
+        }
+      ],
+      "known_ca": true
+    },
+    "disassembly": {
+      "supported": true,
+      "scored": true,
+      "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+      "bytes_decoded": 4095,
+      "instruction_count": 1582,
+      "mnemonic_counts": {
+        "call": 100,
+        "jmp": 30,
+        "mov": 417,
+        "push": 194,
+        "cmp": 57,
+        "je": 94,
+        "test": 85,
+        "jne": 51,
+        "or": 10,
+        "shl": 3,
+        "not": 1,
+        "pop": 94,
+        "ret": 49,
+        "sub": 43,
+        "lea": 32,
+        "xorps": 1,
+        "movlpd": 1,
+        "xor": 51,
+        "leave": 10,
+        "int3": 103,
+        "add": 42,
+        "sete": 1,
+        "jae": 2,
+        "jb": 5,
+        "cmovne": 1,
+        "inc": 11,
+        "js": 4,
+        "jle": 3,
+        "dec": 3,
+        "imul": 1,
+        "jge": 1,
+        "jns": 1,
+        "ja": 2,
+        "nop": 5,
+        "and": 3,
+        "cld": 4,
+        "sbb": 1,
+        "lock cmpxchg": 1,
+        "jg": 1,
+        "shr": 1,
+        "movzx": 42,
+        "cmovg": 21
+      }
+    },
+    "payload_inspection": null,
+    "resources": {
+      "entries": [
+        {
+          "path": "24/1/1033",
+          "size": 978,
+          "entropy": 5.349,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "16/1/1033",
+          "size": 1188,
+          "entropy": 3.541,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "14/2001/1033",
+          "size": 90,
+          "entropy": 2.867,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/418/1033",
+          "size": 1326,
+          "entropy": 5.526,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/417/1033",
+          "size": 1978,
+          "entropy": 4.425,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/416/1033",
+          "size": 2130,
+          "entropy": 5.532,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/415/1033",
+          "size": 2196,
+          "entropy": 4.551,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/414/1033",
+          "size": 2144,
+          "entropy": 4.394,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/413/1033",
+          "size": 2312,
+          "entropy": 5.483,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/412/1033",
+          "size": 2858,
+          "entropy": 4.697,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/411/1033",
+          "size": 2968,
+          "entropy": 5.412,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/410/1033",
+          "size": 3130,
+          "entropy": 5.057,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/409/1033",
+          "size": 2914,
+          "entropy": 3.839,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/408/1033",
+          "size": 1794,
+          "entropy": 5.306,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/407/1033",
+          "size": 800,
+          "entropy": 4.729,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/406/1033",
+          "size": 922,
+          "entropy": 5.127,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/405/1033",
+          "size": 886,
+          "entropy": 5.294,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/404/1033",
+          "size": 736,
+          "entropy": 3.724,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/403/1033",
+          "size": 802,
+          "entropy": 5.021,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/402/1033",
+          "size": 928,
+          "entropy": 5.02,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/401/1033",
+          "size": 938,
+          "entropy": 4.781,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/400/1033",
+          "size": 858,
+          "entropy": 5.553,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/399/1033",
+          "size": 940,
+          "entropy": 4.013,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/398/1033",
+          "size": 874,
+          "entropy": 4.95,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/397/1033",
+          "size": 824,
+          "entropy": 4.334,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/396/1033",
+          "size": 780,
+          "entropy": 4.21,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/395/1033",
+          "size": 870,
+          "entropy": 4.75,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/394/1033",
+          "size": 844,
+          "entropy": 3.797,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/393/1033",
+          "size": 1608,
+          "entropy": 4.576,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/392/1033",
+          "size": 9478,
+          "entropy": 5.121,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/391/1033",
+          "size": 10634,
+          "entropy": 4.905,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/390/1033",
+          "size": 10144,
+          "entropy": 5.617,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/389/1033",
+          "size": 10804,
+          "entropy": 4.161,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/388/1033",
+          "size": 10578,
+          "entropy": 4.867,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/387/1033",
+          "size": 1958,
+          "entropy": 5.105,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/386/1033",
+          "size": 2272,
+          "entropy": 4.58,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/385/1033",
+          "size": 2048,
+          "entropy": 5.701,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/384/1033",
+          "size": 2338,
+          "entropy": 4.168,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/383/1033",
+          "size": 2404,
+          "entropy": 4.629,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/382/1033",
+          "size": 962,
+          "entropy": 5.144,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/381/1033",
+          "size": 1006,
+          "entropy": 4.519,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/380/1033",
+          "size": 838,
+          "entropy": 5.703,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/379/1033",
+          "size": 928,
+          "entropy": 4.428,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/378/1033",
+          "size": 984,
+          "entropy": 4.33,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/377/1033",
+          "size": 324,
+          "entropy": 5.319,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/376/1033",
+          "size": 220,
+          "entropy": 4.316,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/375/1033",
+          "size": 232,
+          "entropy": 5.097,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/374/1033",
+          "size": 216,
+          "entropy": 4.472,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/373/1033",
+          "size": 210,
+          "entropy": 4.243,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/372/1033",
+          "size": 1108,
+          "entropy": 5.43,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/371/1033",
+          "size": 2030,
+          "entropy": 4.663,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/370/1033",
+          "size": 2004,
+          "entropy": 5.46,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/369/1033",
+          "size": 2168,
+          "entropy": 5.075,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/368/1033",
+          "size": 2130,
+          "entropy": 3.771,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/367/1033",
+          "size": 1752,
+          "entropy": 5.428,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/366/1033",
+          "size": 2138,
+          "entropy": 4.69,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/365/1033",
+          "size": 2088,
+          "entropy": 5.121,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/364/1033",
+          "size": 2110,
+          "entropy": 5.389,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/363/1033",
+          "size": 2286,
+          "entropy": 3.865,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/362/1033",
+          "size": 1580,
+          "entropy": 5.201,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/361/1033",
+          "size": 1936,
+          "entropy": 5.047,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/360/1033",
+          "size": 1872,
+          "entropy": 4.816,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/359/1033",
+          "size": 1908,
+          "entropy": 5.611,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/358/1033",
+          "size": 2024,
+          "entropy": 3.921,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/357/1033",
+          "size": 1726,
+          "entropy": 5.204,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/356/1033",
+          "size": 2912,
+          "entropy": 4.987,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/355/1033",
+          "size": 3142,
+          "entropy": 4.939,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/354/1033",
+          "size": 2568,
+          "entropy": 5.534,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/353/1033",
+          "size": 3190,
+          "entropy": 4.246,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/352/1033",
+          "size": 2832,
+          "entropy": 4.845,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/351/1033",
+          "size": 2690,
+          "entropy": 5.053,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/350/1033",
+          "size": 2932,
+          "entropy": 4.991,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/349/1033",
+          "size": 2546,
+          "entropy": 5.687,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/348/1033",
+          "size": 2882,
+          "entropy": 4.281,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/347/1033",
+          "size": 2726,
+          "entropy": 4.961,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/346/1033",
+          "size": 2588,
+          "entropy": 5.184,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/345/1033",
+          "size": 2954,
+          "entropy": 4.763,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/344/1033",
+          "size": 2590,
+          "entropy": 5.848,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/343/1033",
+          "size": 2874,
+          "entropy": 4.294,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/342/1033",
+          "size": 2758,
+          "entropy": 4.781,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/341/1033",
+          "size": 2642,
+          "entropy": 5.28,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/340/1033",
+          "size": 3228,
+          "entropy": 4.684,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/339/1033",
+          "size": 2872,
+          "entropy": 5.784,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/338/1033",
+          "size": 3034,
+          "entropy": 4.414,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/337/1033",
+          "size": 2974,
+          "entropy": 4.439,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/336/1033",
+          "size": 1168,
+          "entropy": 5.526,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/335/1033",
+          "size": 878,
+          "entropy": 4.363,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/334/1033",
+          "size": 864,
+          "entropy": 5.518,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/333/1033",
+          "size": 892,
+          "entropy": 4.583,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/332/1033",
+          "size": 976,
+          "entropy": 4.135,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/331/1033",
+          "size": 634,
+          "entropy": 5.286,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/330/1033",
+          "size": 686,
+          "entropy": 4.833,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/329/1033",
+          "size": 762,
+          "entropy": 5.422,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/328/1033",
+          "size": 724,
+          "entropy": 5.085,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/327/1033",
+          "size": 658,
+          "entropy": 3.757,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/326/1033",
+          "size": 1098,
+          "entropy": 5.468,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/325/1033",
+          "size": 2102,
+          "entropy": 4.785,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/324/1033",
+          "size": 2042,
+          "entropy": 5.25,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/323/1033",
+          "size": 2114,
+          "entropy": 5.484,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/322/1033",
+          "size": 2186,
+          "entropy": 3.776,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/321/1033",
+          "size": 1424,
+          "entropy": 5.111,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/320/1033",
+          "size": 584,
+          "entropy": 5.167,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/319/1033",
+          "size": 638,
+          "entropy": 4.885,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/318/1033",
+          "size": 554,
+          "entropy": 5.537,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/317/1033",
+          "size": 568,
+          "entropy": 4.113,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/316/1033",
+          "size": 514,
+          "entropy": 5.063,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/315/1033",
+          "size": 678,
+          "entropy": 5.008,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/314/1033",
+          "size": 710,
+          "entropy": 4.881,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/313/1033",
+          "size": 612,
+          "entropy": 5.471,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/312/1033",
+          "size": 690,
+          "entropy": 4.352,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/311/1033",
+          "size": 786,
+          "entropy": 4.917,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/310/1033",
+          "size": 2202,
+          "entropy": 5.121,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/309/1033",
+          "size": 2500,
+          "entropy": 4.891,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/308/1033",
+          "size": 2272,
+          "entropy": 5.671,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/307/1033",
+          "size": 2642,
+          "entropy": 4.18,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/306/1033",
+          "size": 2510,
+          "entropy": 4.825,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/305/1033",
+          "size": 798,
+          "entropy": 5.045,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/304/1033",
+          "size": 920,
+          "entropy": 4.592,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/303/1033",
+          "size": 740,
+          "entropy": 5.748,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/302/1033",
+          "size": 964,
+          "entropy": 4.154,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/301/1033",
+          "size": 882,
+          "entropy": 4.617,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/300/1033",
+          "size": 2874,
+          "entropy": 5.27,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/299/1033",
+          "size": 3768,
+          "entropy": 4.714,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/298/1033",
+          "size": 3456,
+          "entropy": 5.73,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/297/1033",
+          "size": 3578,
+          "entropy": 4.455,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/296/1033",
+          "size": 3578,
+          "entropy": 4.325,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/295/1033",
+          "size": 2544,
+          "entropy": 5.662,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/294/1033",
+          "size": 2914,
+          "entropy": 4.429,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/293/1033",
+          "size": 2778,
+          "entropy": 5.585,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/292/1033",
+          "size": 3026,
+          "entropy": 4.529,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/291/1033",
+          "size": 3082,
+          "entropy": 4.277,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/290/1033",
+          "size": 1096,
+          "entropy": 5.302,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/289/1033",
+          "size": 322,
+          "entropy": 4.373,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/288/1033",
+          "size": 352,
+          "entropy": 5.153,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/287/1033",
+          "size": 276,
+          "entropy": 4.671,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/286/1033",
+          "size": 334,
+          "entropy": 3.557,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/285/1033",
+          "size": 1032,
+          "entropy": 5.276,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/284/1033",
+          "size": 2588,
+          "entropy": 4.703,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/283/1033",
+          "size": 2526,
+          "entropy": 5.18,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/282/1033",
+          "size": 2430,
+          "entropy": 5.448,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/281/1033",
+          "size": 2728,
+          "entropy": 3.79,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/280/1033",
+          "size": 1824,
+          "entropy": 5.015,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/279/1033",
+          "size": 1094,
+          "entropy": 4.467,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/278/1033",
+          "size": 1110,
+          "entropy": 4.416,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/277/1033",
+          "size": 1022,
+          "entropy": 5.057,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/276/1033",
+          "size": 1126,
+          "entropy": 3.723,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/275/1033",
+          "size": 1108,
+          "entropy": 5.014,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/274/1033",
+          "size": 2174,
+          "entropy": 5.01,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/273/1033",
+          "size": 2198,
+          "entropy": 4.922,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/272/1033",
+          "size": 1938,
+          "entropy": 5.495,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/271/1033",
+          "size": 2398,
+          "entropy": 4.163,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/270/1033",
+          "size": 2058,
+          "entropy": 4.78,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/269/1033",
+          "size": 1190,
+          "entropy": 5.118,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/268/1033",
+          "size": 1350,
+          "entropy": 5.025,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/267/1033",
+          "size": 1176,
+          "entropy": 5.707,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/266/1033",
+          "size": 1440,
+          "entropy": 4.279,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/265/1033",
+          "size": 1322,
+          "entropy": 4.871,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/264/1033",
+          "size": 1600,
+          "entropy": 5.229,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/263/1033",
+          "size": 1916,
+          "entropy": 4.762,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/262/1033",
+          "size": 1612,
+          "entropy": 5.84,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/261/1033",
+          "size": 1998,
+          "entropy": 4.287,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/260/1033",
+          "size": 2058,
+          "entropy": 4.669,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/259/1033",
+          "size": 780,
+          "entropy": 4.947,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/258/1033",
+          "size": 872,
+          "entropy": 4.514,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/257/1033",
+          "size": 800,
+          "entropy": 5.388,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/256/1033",
+          "size": 894,
+          "entropy": 4.356,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/255/1033",
+          "size": 848,
+          "entropy": 4.277,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/254/1033",
+          "size": 510,
+          "entropy": 5.285,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/253/1033",
+          "size": 520,
+          "entropy": 4.154,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/252/1033",
+          "size": 514,
+          "entropy": 5.118,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/251/1033",
+          "size": 474,
+          "entropy": 4.369,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/250/1033",
+          "size": 530,
+          "entropy": 4.101,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/249/1033",
+          "size": 1350,
+          "entropy": 5.422,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/248/1033",
+          "size": 2664,
+          "entropy": 4.658,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/247/1033",
+          "size": 2544,
+          "entropy": 5.439,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/246/1033",
+          "size": 2682,
+          "entropy": 5.001,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/245/1033",
+          "size": 2628,
+          "entropy": 3.724,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/244/1033",
+          "size": 1850,
+          "entropy": 5.414,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/243/1033",
+          "size": 1936,
+          "entropy": 4.704,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/242/1033",
+          "size": 1980,
+          "entropy": 5.22,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/241/1033",
+          "size": 1852,
+          "entropy": 5.445,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/240/1033",
+          "size": 2040,
+          "entropy": 3.774,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/239/1033",
+          "size": 1376,
+          "entropy": 5.027,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/238/1033",
+          "size": 618,
+          "entropy": 4.573,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/237/1033",
+          "size": 538,
+          "entropy": 4.399,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/236/1033",
+          "size": 530,
+          "entropy": 5.048,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/235/1033",
+          "size": 678,
+          "entropy": 3.828,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/234/1033",
+          "size": 512,
+          "entropy": 4.736,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/233/1033",
+          "size": 700,
+          "entropy": 5.071,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/232/1033",
+          "size": 738,
+          "entropy": 4.965,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/231/1033",
+          "size": 666,
+          "entropy": 5.462,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/230/1033",
+          "size": 766,
+          "entropy": 4.282,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/229/1033",
+          "size": 676,
+          "entropy": 4.668,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/228/1033",
+          "size": 524,
+          "entropy": 4.931,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/227/1033",
+          "size": 506,
+          "entropy": 4.712,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/226/1033",
+          "size": 556,
+          "entropy": 5.39,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/225/1033",
+          "size": 532,
+          "entropy": 4.334,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/224/1033",
+          "size": 544,
+          "entropy": 4.705,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/223/1033",
+          "size": 2536,
+          "entropy": 5.277,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/222/1033",
+          "size": 2896,
+          "entropy": 4.806,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/221/1033",
+          "size": 2688,
+          "entropy": 5.892,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/220/1033",
+          "size": 3024,
+          "entropy": 4.27,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/219/1033",
+          "size": 3014,
+          "entropy": 4.756,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/218/1033",
+          "size": 466,
+          "entropy": 4.785,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/217/1033",
+          "size": 208,
+          "entropy": 4.423,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/216/1033",
+          "size": 226,
+          "entropy": 5.279,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/215/1033",
+          "size": 206,
+          "entropy": 4.35,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/214/1033",
+          "size": 206,
+          "entropy": 4.324,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/213/1033",
+          "size": 788,
+          "entropy": 5.367,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/212/1033",
+          "size": 1128,
+          "entropy": 4.364,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/211/1033",
+          "size": 1042,
+          "entropy": 5.299,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/210/1033",
+          "size": 1146,
+          "entropy": 4.429,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/209/1033",
+          "size": 1146,
+          "entropy": 4.303,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/208/1033",
+          "size": 850,
+          "entropy": 5.277,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/207/1033",
+          "size": 880,
+          "entropy": 4.534,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/206/1033",
+          "size": 826,
+          "entropy": 5.171,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/205/1033",
+          "size": 838,
+          "entropy": 4.842,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/204/1033",
+          "size": 808,
+          "entropy": 3.86,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/203/1033",
+          "size": 710,
+          "entropy": 5.116,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/202/1033",
+          "size": 714,
+          "entropy": 4.533,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/201/1033",
+          "size": 810,
+          "entropy": 5.049,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/200/1033",
+          "size": 752,
+          "entropy": 5.035,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/199/1033",
+          "size": 742,
+          "entropy": 3.858,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/198/1033",
+          "size": 696,
+          "entropy": 4.991,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/197/1033",
+          "size": 640,
+          "entropy": 4.664,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/196/1033",
+          "size": 666,
+          "entropy": 4.692,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/195/1033",
+          "size": 622,
+          "entropy": 5.225,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/194/1033",
+          "size": 698,
+          "entropy": 3.78,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/193/1033",
+          "size": 632,
+          "entropy": 4.92,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/192/1033",
+          "size": 856,
+          "entropy": 4.566,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/191/1033",
+          "size": 900,
+          "entropy": 4.621,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/190/1033",
+          "size": 786,
+          "entropy": 4.828,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/189/1033",
+          "size": 934,
+          "entropy": 4.053,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/188/1033",
+          "size": 828,
+          "entropy": 4.606,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/187/1033",
+          "size": 696,
+          "entropy": 4.826,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/186/1033",
+          "size": 738,
+          "entropy": 4.793,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/185/1033",
+          "size": 698,
+          "entropy": 5.259,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/184/1033",
+          "size": 728,
+          "entropy": 4.13,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/183/1033",
+          "size": 756,
+          "entropy": 4.85,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/182/1033",
+          "size": 750,
+          "entropy": 5.02,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/181/1033",
+          "size": 806,
+          "entropy": 4.456,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/180/1033",
+          "size": 742,
+          "entropy": 5.36,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/179/1033",
+          "size": 862,
+          "entropy": 4.066,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/178/1033",
+          "size": 844,
+          "entropy": 4.719,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/177/1033",
+          "size": 706,
+          "entropy": 5.051,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/176/1033",
+          "size": 768,
+          "entropy": 4.551,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/175/1033",
+          "size": 752,
+          "entropy": 5.418,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/174/1033",
+          "size": 774,
+          "entropy": 4.298,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/173/1033",
+          "size": 748,
+          "entropy": 4.285,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/172/1033",
+          "size": 352,
+          "entropy": 4.083,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/171/1033",
+          "size": 224,
+          "entropy": 2.261,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/170/1033",
+          "size": 224,
+          "entropy": 2.261,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/169/1033",
+          "size": 224,
+          "entropy": 2.261,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/168/1033",
+          "size": 224,
+          "entropy": 2.261,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/167/1033",
+          "size": 984,
+          "entropy": 5.025,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/166/1033",
+          "size": 1936,
+          "entropy": 4.678,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/165/1033",
+          "size": 1880,
+          "entropy": 5.373,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/164/1033",
+          "size": 1944,
+          "entropy": 5.029,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/163/1033",
+          "size": 1978,
+          "entropy": 3.816,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/162/1033",
+          "size": 1156,
+          "entropy": 5.243,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/161/1033",
+          "size": 584,
+          "entropy": 4.419,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/160/1033",
+          "size": 562,
+          "entropy": 4.587,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/159/1033",
+          "size": 562,
+          "entropy": 4.922,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/158/1033",
+          "size": 618,
+          "entropy": 3.789,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/157/1033",
+          "size": 1204,
+          "entropy": 4.906,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/156/1033",
+          "size": 3392,
+          "entropy": 5.012,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/155/1033",
+          "size": 3266,
+          "entropy": 4.89,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/154/1033",
+          "size": 3082,
+          "entropy": 5.617,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/153/1033",
+          "size": 3352,
+          "entropy": 4.095,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/152/1033",
+          "size": 2696,
+          "entropy": 5.067,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/151/1033",
+          "size": 2390,
+          "entropy": 5.036,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/150/1033",
+          "size": 2494,
+          "entropy": 4.949,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/149/1033",
+          "size": 2308,
+          "entropy": 5.459,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/148/1033",
+          "size": 2546,
+          "entropy": 4.285,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/147/1033",
+          "size": 2404,
+          "entropy": 4.806,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/146/1033",
+          "size": 2980,
+          "entropy": 5.017,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/145/1033",
+          "size": 3108,
+          "entropy": 4.967,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/144/1033",
+          "size": 3076,
+          "entropy": 5.582,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/143/1033",
+          "size": 3260,
+          "entropy": 4.304,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/142/1033",
+          "size": 3164,
+          "entropy": 4.882,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/141/1033",
+          "size": 1172,
+          "entropy": 5.235,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/140/1033",
+          "size": 1402,
+          "entropy": 4.742,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/139/1033",
+          "size": 1288,
+          "entropy": 5.808,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/138/1033",
+          "size": 1394,
+          "entropy": 4.185,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/137/1033",
+          "size": 1340,
+          "entropy": 4.647,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/136/1033",
+          "size": 594,
+          "entropy": 5.124,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/135/1033",
+          "size": 658,
+          "entropy": 4.727,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/134/1033",
+          "size": 614,
+          "entropy": 5.635,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/133/1033",
+          "size": 610,
+          "entropy": 4.366,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/132/1033",
+          "size": 672,
+          "entropy": 4.34,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/131/1033",
+          "size": 504,
+          "entropy": 5.314,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/130/1033",
+          "size": 466,
+          "entropy": 4.343,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/129/1033",
+          "size": 588,
+          "entropy": 5.24,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/128/1033",
+          "size": 540,
+          "entropy": 4.684,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/127/1033",
+          "size": 524,
+          "entropy": 4.207,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/126/1033",
+          "size": 292,
+          "entropy": 5.001,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/125/1033",
+          "size": 232,
+          "entropy": 4.602,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/124/1033",
+          "size": 234,
+          "entropy": 5.086,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/123/1033",
+          "size": 210,
+          "entropy": 4.738,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/122/1033",
+          "size": 204,
+          "entropy": 3.808,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/121/1033",
+          "size": 338,
+          "entropy": 5.05,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/120/1033",
+          "size": 640,
+          "entropy": 4.818,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/119/1033",
+          "size": 686,
+          "entropy": 5.17,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/118/1033",
+          "size": 636,
+          "entropy": 5.34,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/117/1033",
+          "size": 654,
+          "entropy": 3.559,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/116/1033",
+          "size": 538,
+          "entropy": 5.013,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/115/1033",
+          "size": 458,
+          "entropy": 4.864,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/114/1033",
+          "size": 472,
+          "entropy": 4.602,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/113/1033",
+          "size": 496,
+          "entropy": 5.36,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/112/1033",
+          "size": 470,
+          "entropy": 4.064,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/111/1033",
+          "size": 446,
+          "entropy": 4.771,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/110/1033",
+          "size": 686,
+          "entropy": 5.093,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/109/1033",
+          "size": 716,
+          "entropy": 4.986,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/108/1033",
+          "size": 604,
+          "entropy": 5.463,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/107/1033",
+          "size": 676,
+          "entropy": 4.13,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/106/1033",
+          "size": 870,
+          "entropy": 4.774,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/105/1033",
+          "size": 2988,
+          "entropy": 5.128,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/104/1033",
+          "size": 3388,
+          "entropy": 4.948,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/103/1033",
+          "size": 3078,
+          "entropy": 5.643,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/102/1033",
+          "size": 3538,
+          "entropy": 4.259,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "6/101/1033",
+          "size": 3338,
+          "entropy": 4.988,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/6/1033",
+          "size": 3752,
+          "entropy": 4.503,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/5/1033",
+          "size": 1640,
+          "entropy": 3.687,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/4/1033",
+          "size": 2216,
+          "entropy": 4.838,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/3/1033",
+          "size": 744,
+          "entropy": 3.92,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/2/1033",
+          "size": 1384,
+          "entropy": 4.137,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/1/1033",
+          "size": 296,
+          "entropy": 3.766,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "2/2005/1033",
+          "size": 43240,
+          "entropy": 5.67,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "B7/UPDATER.PACKED.7Z/1033",
+          "size": 7401066,
+          "entropy": 6.71,
+          "kind": "7zip",
+          "status": "partial"
+        }
+      ],
+      "inspections": [
+        {
+          "source": "resource::B7/UPDATER.PACKED.7Z/1033",
+          "bytes_inspected": 7401066,
+          "entropy_sample_bytes": 1048576,
+          "entropy": 6.71,
+          "container_candidates": [
+            {
+              "format": "7zip",
+              "offset": 0,
+              "relative_offset": 0
+            },
+            {
+              "format": "7zip",
+              "offset": 32,
+              "relative_offset": 32
+            },
+            {
+              "format": "zip",
+              "offset": 4054464,
+              "relative_offset": 4054464
+            },
+            {
+              "format": "gzip",
+              "offset": 4298734,
+              "relative_offset": 4298734
+            },
+            {
+              "format": "xz",
+              "offset": 5406925,
+              "relative_offset": 5406925
+            }
+          ],
+          "status": "partial",
+          "limitations": [
+            "Archive source inspected statically; native members, bytecode and unsupported dynamic layers remain opaque"
+          ],
+          "limits": {
+            "members_per_archive": 512,
+            "source_bytes": 2097152,
+            "total_decompressed_bytes": 33554432,
+            "nested_archive_depth": 2
+          },
+          "archive": {
+            "source": "resource::B7/UPDATER.PACKED.7Z/1033",
+            "format": "zip",
+            "members": [],
+            "scripts": [],
+            "nested_archives": [],
+            "limitations": [
+              "ZIP end record not found in bounded input"
+            ],
+            "status": "partial"
+          },
+          "decompressed_bytes": 0
+        }
+      ],
+      "total_bytes": 7957724,
+      "opaque_bytes": 7401066,
+      "truncated": false,
+      "limitations": [
+        "Some executable/container resource contents remain opaque; no native or 7z unpacking is performed"
+      ],
+      "limits": {
+        "nodes": 4096,
+        "leaves": 512,
+        "inspection_bytes": 16777216
+      }
+    },
+    "yara": {
+      "status": "disabled",
+      "matches": []
+    },
+    "suspicious_instructions": {
+      "count": 0,
+      "instructions": [],
+      "scored": false,
+      "supported": true
+    },
+    "coverage": {
+      "static_only": true,
+      "limitations": [],
+      "yara": "disabled",
+      "hash_reputation": "SEPARATE_REPORT_FIELD",
+      "unpacking": "NOT_PERFORMED",
+      "control_flow": "NOT_ANALYZED"
+    }
+  },
+  "reputation": {
+    "sha256": "7ea51634f8f9ece92eb581b3c8cca5a4dabd73a49e4759739b195c1599605960",
+    "provider": "none",
+    "status": "disabled",
+    "reason": "Hash reputation is disabled",
+    "checked_at": "2026-09-27T11:53:54.392547+00:00",
+    "hash_only": true,
+    "evidence": {}
+  },
+  "risk_assessment": {
+    "model_version": "5.0",
+    "file_name": "ChromeSetup.exe",
+    "sha256": "7ea51634f8f9ece92eb581b3c8cca5a4dabd73a49e4759739b195c1599605960",
+    "signature_state": "recognized_signed",
+    "heuristic": {
+      "points": 0.4,
+      "level": "Low Risk",
+      "uncapped_score": 0.413
+    },
+    "risk": {
+      "points": 0.4,
+      "score": "0.4/10.0",
+      "level": "Low Risk",
+      "verdict": "Low Risk",
+      "classification": "heuristic_risk",
+      "source": "heuristics",
+      "score_meaning": "Static risk, not probability; known-malicious reputation is a separate override"
+    },
+    "decision": {
+      "source": "heuristics",
+      "override": null,
+      "positive_reputation_discount": 0.0,
+      "unsigned_baseline_credit": 0.0,
+      "weak_evidence_credit": 0.0
+    },
+    "reasons": [
+      {
+        "id": "signature_baseline",
+        "family": "signature",
+        "strength": "baseline",
+        "reason": "Signature state: recognized_signed; unsigned is a review signal, not proof of malware",
+        "nominal_points": 0.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "evidence": {
+          "signed": true,
+          "integrity": "VALID",
+          "chain_trust": "NOT_EVALUATED",
+          "revocation": "NOT_CHECKED",
+          "publisher_identity": "NOT_TRUST_VALIDATED",
+          "publishers": [
+            {
+              "subject": "JURISDICTION_OF_INCORPORATION_C=US, JURISDICTION_OF_INCORPORATION_SP=Delaware, BUSINESS_CATEGORY=Private Organization, serialNumber=3582691, C=US, ST=California, L=Mountain View, O=Google LLC, CN=Google LLC",
+              "issuer": "C=US, O=DigiCert\\, Inc., CN=DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+              "serial_number": "0b50cf246b263efd85a729315158f3ff"
+            }
+          ],
+          "checks": [
+            {
+              "full_verification": "VERIFICATION_FLAGS.OK",
+              "integrity_without_time": "VERIFICATION_FLAGS.OK",
+              "file_digest": "VERIFICATION_FLAGS.OK"
+            }
+          ],
+          "known_ca": true
+        }
+      },
+      {
+        "id": "autorun_write",
+        "family": "persistence",
+        "strength": "weak",
+        "reason": "Autorun location and registry writing coexist; target linkage is unproven",
+        "base_points": 0.75,
+        "contextual": true,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "autorun": [
+              "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+            ],
+            "registry_write": [
+              "regsetvalueexw"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 0.75,
+        "signature_factor": 0.2,
+        "category_factor": 1.25,
+        "points": 0.188,
+        "scoring": "Strongest family finding \u00d7 signature multiplier \u00d7 cross-domain/behavior correlation"
+      },
+      {
+        "id": "service_creation",
+        "family": "persistence",
+        "strength": "informational",
+        "reason": "Service installation capability; expected in installers and system tools",
+        "base_points": 0.0,
+        "contextual": true,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "service_create": [
+              "createservicew"
+            ],
+            "service_manager": [
+              "openscmanagerw"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by the strongest finding in this family"
+      },
+      {
+        "id": "download_launch",
+        "family": "execution",
+        "strength": "weak",
+        "reason": "Network retrieval, file creation/write and process execution coexist",
+        "base_points": 0.5,
+        "contextual": true,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "network_retrieve": [
+              "winhttpreaddata"
+            ],
+            "file_write": [
+              "copyfilew",
+              "writefile"
+            ],
+            "process_execute": [
+              "createprocessasuserw",
+              "createprocessw",
+              "shellexecuteexw"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 0.5,
+        "signature_factor": 0.2,
+        "category_factor": 1.25,
+        "points": 0.125,
+        "scoring": "Strongest family finding \u00d7 signature multiplier \u00d7 cross-domain/behavior correlation"
+      },
+      {
+        "id": "anti_debug_probe",
+        "family": "anti_analysis",
+        "strength": "informational",
+        "reason": "An isolated debugger API is not an evasion chain",
+        "base_points": 0.0,
+        "contextual": false,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "debug_check": [
+              "isdebuggerpresent"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by the strongest finding in this family"
+      },
+      {
+        "id": "dynamic_resolution",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Dynamic API resolution is common in ordinary software",
+        "base_points": 0.0,
+        "evidence": {
+          "imports": [
+            "getprocaddress"
+          ]
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by the strongest finding in this family"
+      },
+      {
+        "id": "import_combination",
+        "family": "import_combination",
+        "strength": "weak",
+        "reason": "Multiple import categories coexist; crypto/credentials with networking and process APIs deserves extra review",
+        "base_points": 0.5,
+        "evidence": {
+          "source": "outer_pe",
+          "categories": {
+            "network": [
+              "winhttpconnect",
+              "winhttpreaddata",
+              "winhttpsendrequest"
+            ],
+            "system_process": [
+              "adjusttokenprivileges",
+              "createprocessasuserw",
+              "createprocessw",
+              "createservicew",
+              "createtoolhelp32snapshot",
+              "duplicatetokenex",
+              "openprocess",
+              "readprocessmemory",
+              "regsetvalueexw",
+              "shellexecuteexw"
+            ]
+          },
+          "category_factor": 1,
+          "limitation": "Imports establish capabilities, not execution or data flow."
+        },
+        "nominal_points": 0.5,
+        "signature_factor": 0.2,
+        "category_factor": 1.0,
+        "points": 0.1,
+        "scoring": "Strongest family finding \u00d7 signature multiplier \u00d7 cross-domain/behavior correlation"
+      },
+      {
+        "id": "cpu_instructions",
+        "family": "cpu",
+        "strength": "weak",
+        "base_points": 0,
+        "reason": "CPU groups contribute at most 0.5; counts, ordinary instructions and int3 padding add nothing",
+        "evidence": {
+          "groups": {},
+          "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph"
+        },
+        "correlation_eligible": false,
+        "nominal_points": 0,
+        "signature_factor": 0.2,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by the strongest finding in this family"
+      }
+    ],
+    "diagnostics": {
+      "uncapped_score": 0.413,
+      "signature_policy": {
+        "unsigned": {
+          "baseline": 4.0,
+          "weak": 1.5,
+          "moderate": 1.75,
+          "strong": 1.5
+        },
+        "invalid": {
+          "baseline": 5.0,
+          "weak": 1.5,
+          "moderate": 1.75,
+          "strong": 1.5
+        },
+        "unknown": {
+          "baseline": 3.0,
+          "weak": 1.0,
+          "moderate": 1.0,
+          "strong": 1.0
+        },
+        "valid_unrecognized": {
+          "baseline": 0.5,
+          "weak": 0.75,
+          "moderate": 1.0,
+          "strong": 1.0
+        },
+        "recognized_signed": {
+          "baseline": 0.0,
+          "weak": 0.2,
+          "moderate": 0.6,
+          "strong": 1.0
+        },
+        "trusted_signed": {
+          "baseline": 0.0,
+          "weak": 0.1,
+          "moderate": 0.5,
+          "strong": 1.0
+        }
+      },
+      "active_domains": [
+        "behavior"
+      ],
+      "cross_domain_factor": 1.0,
+      "behavior_factor": 1.25,
+      "active_behavior_families": [
+        "execution",
+        "persistence"
+      ],
+      "heuristic_formula": "round(clamp(sum(reasons.points), 0, 10), 1)",
+      "final_score_formula": "10 for exact known-malicious reputation; otherwise round(clamp(uncapped heuristic - positive reputation discount, 0, 10), 1)",
+      "limitations": [
+        "Static capabilities do not prove execution; packed and hidden code can be missed.",
+        "Issuer recognition is not OS certificate-chain validation; injection also occurs in cheats and debuggers.",
+        "High heuristic risk is not a confirmed malware diagnosis; absence of reputation records is not safety."
+      ],
+      "unscored_context": {
+        "user_elevation": false,
+        "sensitive_metadata": false
+      }
+    }
+  },
+  "gemini_review": {
+    "status": "complete",
+    "review": "THIS IS PERFECTLY FINE\n\nThe static metadata strongly supports an authentic Google Chrome installer. The binary contains a structurally valid Authenticode digital signature with verified digest and integrity checks issued under DigiCert to Google LLC. The PE headers show no anomalies, and the overlay corresponds strictly to the certificate directory with no trailing payload. Section characteristics, entropy distributions, and structural markers such as CPADinfo and malloc_h match standard Google Chromium build environments.\n\nThe imported libraries and functions are typical for an enterprise installer and updater. While the binary imports capabilities for process creation, token impersonation, service configuration, and autorun registry manipulation, these are weak risk indicators that align entirely with administrative installation workflows. Embedded strings and network targets correspond directly to legitimate Google update, crash-reporting, and logging endpoints.\n\nA key limitation is that the primary application payload, contained within the 7.4 megabyte compressed resource UPDATER.PACKED.7Z, remained uninspected due to static archive bounds. Furthermore, local certificate trust-chain resolution and online revocation checking were not evaluated, while YARA scanning and external hash reputation were unavailable.\n\nAppropriate next steps include validating the certificate chain against the local Windows trust store to confirm the certificate has not expired or been revoked, and verifying the download origin directly against official Google deployment infrastructure before running the installer with administrative privileges.",
+    "model": "gemini-3.8-flash",
+    "verdict": "THIS IS PERFECTLY FINE",
+    "assessment_type": "independent_static"
+  }
+}

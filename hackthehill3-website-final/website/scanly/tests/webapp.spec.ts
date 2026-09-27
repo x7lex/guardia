@@ -140,25 +140,27 @@ test("Gemini depleted-credit errors link to billing", async ({ page }) => {
     await expect(page.getByRole("link", { name: "Manage Gemini billing" })).toHaveAttribute("href", "https://ai.studio/projects")
 })
 
-test("unsigned opaque files retain their signature baseline without a visibility floor", async ({ page }, testInfo) => {
+test("unsigned packed files show heuristic risk and separate reputation", async ({ page }, testInfo) => {
     const packed = Buffer.from(executable)
     packed.write("UPX1\0\0\0\0", 0x178, "binary")
     for (let index = 512; index < 1024; index++) packed[index] = index % 256
     await page.goto("/")
     await page.getByLabel("Choose files", { exact: true }).setInputFiles({ name: "ordinary.exe", mimeType: "application/octet-stream", buffer: packed })
     await page.getByRole("button", { name: "Scan All (1)" }).click()
-    await expect(page.getByText("REVIEW", { exact: true })).toBeVisible()
+    await expect(page.getByText("HIGH RISK", { exact: true })).toBeVisible()
     await page.getByText("ordinary.exe", { exact: true }).click()
     const dialog = page.getByRole("dialog", { name: "Report for ordinary.exe" })
-    await expect(dialog.getByText("Deterministic risk score", { exact: true })).toBeVisible()
-    await expect(dialog.getByText("Signature: unsigned. Score:", { exact: false })).toBeVisible()
+    await expect(dialog.getByText("Deterministic analysis", { exact: true })).toBeVisible()
+    await expect(dialog.getByText("Signature: unsigned.", { exact: false })).toBeVisible()
     await expect(dialog.getByText("Visibility review floor", { exact: true })).toHaveCount(0)
+    await expect(dialog.getByText("Hash reputation", { exact: true })).toBeVisible()
+    await expect(dialog.getByText("Provider: none. Status: disabled.", { exact: true })).toBeVisible()
     await page.screenshot({ path: testInfo.outputPath("conservative-report.png") })
     await page.getByRole("button", { name: "Close report" }).click()
     await page.getByRole("button", { name: "Expand filters sidebar" }).click()
     await page.getByLabel("Filter by risk").selectOption("safe")
     await expect(page.getByText("No files match these filters.")).toBeVisible()
-    await page.getByLabel("Filter by risk").selectOption("review")
+    await page.getByLabel("Filter by risk").selectOption("unsafe")
     await expect(page.getByText("ordinary.exe", { exact: true })).toBeVisible()
 })
 
@@ -168,7 +170,7 @@ test("automatically attached Gemini review is shown without a second request", a
     await page.route("**/api/scan?*", async route => {
         const response = await route.fetch()
         const body = await response.json()
-        body.report.gemini_review = { status: "complete", model: "test-reviewer", review: "The unsigned baseline is reasonable. Static evidence is limited." }
+        body.report.gemini_review = { status: "complete", model: "test-reviewer", assessment_type: "independent_static", verdict: "I CANNOT CONFIDENTLY SAY THAT", review: "I CANNOT CONFIDENTLY SAY THAT\n\nStatic evidence is limited." }
         await route.fulfill({ response, json: body })
     })
     await page.route("**/api/review", async route => { reviewCalls++; await route.abort() })
@@ -176,6 +178,28 @@ test("automatically attached Gemini review is shown without a second request", a
     await page.getByLabel("Choose files", { exact: true }).setInputFiles(upload)
     await page.getByRole("button", { name: "Scan All (1)" }).click()
     await page.getByText("demo.exe", { exact: true }).click()
-    await expect(page.getByText("The unsigned baseline is reasonable.", { exact: false })).toBeVisible()
+    await expect(page.getByText("I CANNOT CONFIDENTLY SAY THAT", { exact: false })).toBeVisible()
     expect(reviewCalls).toBe(0)
+})
+
+
+test("reputation override shows separately from the local heuristic score", async ({ page }) => {
+    await page.route("**/api/scan?*", async route => {
+        const response = await route.fetch()
+        const body = await response.json()
+        const report = body.report
+        report.reputation = { status: "known_malicious", provider: "malwarebazaar", reason: "Exact SHA-256 malware collection match", sha256: report.analysis.file.sha256 }
+        report.risk_assessment.risk.points = 10
+        report.risk_assessment.risk.level = "Dangerous"
+        report.risk_assessment.risk.verdict = "Dangerous"
+        report.risk_assessment.decision = { source: "reputation_override", positive_reputation_discount: 0, override: { type: "known_malicious_sha256", provider: "malwarebazaar", reason: report.reputation.reason, sha256: report.reputation.sha256 } }
+        await route.fulfill({ response, json: body })
+    })
+    await page.goto("/")
+    await page.getByLabel("Choose files", { exact: true }).setInputFiles(upload)
+    await page.getByRole("button", { name: "Scan All (1)" }).click()
+    await page.getByText("demo.exe", { exact: true }).click()
+    await expect(page.getByText("Local heuristic score: 4/10.", { exact: true })).toBeVisible()
+    await expect(page.getByText("Final engine score: 10/10.", { exact: true })).toBeVisible()
+    await expect(page.getByText("Known-malicious SHA-256 match overrides", { exact: false })).toBeVisible()
 })

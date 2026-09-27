@@ -1,95 +1,222 @@
-# Conservative deterministic scoring (model 4)
+# Evidence, reputation and independent Gemini analysis (model 5)
 
-The score is the rounded sum of explained contributions, clamped to 0.0–10.0.
-It is a static risk assessment, not a probability or proof of malware. Model 4
-replaces the former role/confidence/visibility-floor scoring architecture. Existing
-extraction and recovered-script evidence are retained. Old reports remain readable.
+Model 5 keeps three distinct mechanisms in each report: `reputation`,
+`risk_assessment`, and `gemini_review`. It replaces the model 4 policy; historical
+reports under `docs/diagnostics/model4` are retained as comparisons.
 
-## Signature policy
+## What was wrong with model 4
 
-| Signature state | Baseline | Weak/moderate multiplier | Strong-chain multiplier |
-| --- | ---: | ---: | ---: |
-| Unsigned | 4.0 | 1.5 | 1.5 |
-| Invalid/broken integrity | 5.0 | 1.5 | 1.5 |
-| Unknown verification | 3.0 | 1.0 | 1.0 |
-| Valid, unrecognized issuer | 0.5 | 0.8 | 1.0 |
-| Valid, recognized issuer | 0.0 | 0.1 | 1.0 |
+1. The hash was calculated but never checked. A known malware sample could receive
+   a low score if its visible loader exposed few behavioral clues.
+2. Packing, writable executable sections and concealed script imports were
+   effectively free. The obfuscated malware fixture scored 4.5 almost entirely
+   because it was unsigned, even though concealment evidence was present.
+3. Conversely, broad crypto/network/process API combinations had too much weight.
+   They describe ordinary installers, browsers and security software too.
+4. The full injection capability chain carried six nominal points, implicitly
+   over-equating injection with malicious intent. Cheats and debugging tools are
+   a difficult counterexample; static imports do not prove intent or execution.
+5. Issuer-name recognition was labeled trusted signing despite no OS trust-store
+   validation. Model 5 explicitly distinguishes recognition from verified chains.
+6. The old cross-family multiplier could amplify overlapping observations of the
+   same behavior. Model 5 deduplicates families and groups correlated structures.
+7. Gemini was asked whether the score was reasonable. That made it a score reviewer,
+   not an independent assessment of the underlying evidence.
 
-The analyzer previously emitted `known_ca: false` unconditionally. It now uses an
-explicit code-signing issuer CN list in `src/backend/signatures.py`. The scorer
-reuses `known_ca` and can recognize issuer fields in archived reports. A publisher
-subject such as Google LLC does not qualify by itself. Invalid or unknown integrity
-never receives the trusted discount. This recognition is a deterministic scoring
-policy, not a claim of OS trust-store chain validation or checked revocation.
+## A. Reputation: an explicit decision after local scoring
 
-## Contributions
+Configuration defaults to `REPUTATION_PROVIDER=disabled`. Choose `malwarebazaar`
+with `MALWAREBAZAAR_API_KEY`, or `virustotal` with `VIRUSTOTAL_API_KEY`. Credentials
+remain on the backend. Both adapters have a 15-second overall timeout and do not
+follow redirects. They send only SHA-256. There is no binary-upload or download
+implementation, even for unknown hashes.
 
-- Isolated suspicious imports add no points. Co-occurring crypto/credential,
-  networking, and system/process categories contribute 1.5 for two categories or
-  3.0 for all three. JSON includes the matching API names and category evidence.
-- Existing stronger behavior rules remain: full process injection requires process
-  access, remote allocation, write and execution (6.0); browser credential access
-  requires browser profile/storage, reading and decryption (6.0); outbound submission
-  with that credential chain adds exfiltration (4.0). WinHttpSendRequest is included.
-  These strong rules retain their weight even with trusted signing.
-- The strongest adjusted finding per behavioral family contributes; repeated and
-  equivalent findings across recovered layers cannot inflate the same family.
-- Two active behavioral families multiply their contributions by 1.25; three or
-  more use 1.5. Signature baseline and CPU points are excluded from this multiplier.
-- CPU groups (discovery/timing, system transition, privileged instructions) add
-  0.25 each, capped at 0.75 before signing discounts. Repetition adds nothing;
-  ordinary mov/add/xor and compiler padding int3 add nothing. CPU alone cannot
-  elevate an unsigned baseline to High Risk.
-- Packing, opaque bytes and extraction limits stay informational. They do not
-  create hidden score floors or automatic verdict overrides.
+MalwareBazaar uses its authenticated `get_info` hash query. A successful response
+must contain the exact requested SHA-256 in its malware collection. A not-found
+response means unknown, not clean. This follows the provider's
+[hash-query API](https://bazaar.abuse.ch/api/), whose submission policy is for
+confirmed malware.
 
-Each `reasons` entry gives evidence, nominal points, signature factor, category
-factor and final contribution. Deduplicated and informational entries explicitly
-contribute zero. `diagnostics.uncapped_score` and the final formula make the score
-reconstructable. Thresholds are Low Risk below 3 (happy face), Suspicious below 5 (neutral face), High Risk
-below 8, and Dangerous at 8 or above (both frowny face). Decimal scores follow
-the same boundaries: 2.9 is happy, 3.0–4.9 neutral, and 5.0+ frowny. Saved browser
-reports are grouped by their numeric score so older labels do not retain old bands.
+VirusTotal retrieves the existing [file object by hash](https://docs.virustotal.com/reference/files).
+The following thresholds are our conservative policy, not guarantees made by
+VirusTotal:
 
-Examples: unsigned crypto + network + process imports score 8.5; the same broad
-capabilities with trusted signing score 0.3. A complete injection chain remains at
-least 6.0 with trusted signing. Credential access plus submission can reach 10.0
-regardless of signing. This distinguishes common capability overlap from stronger
-combinations without making signing an absolute exemption.
+- Known malicious: at least 10 malicious engine verdicts and at least 25% of
+  completed verdicts are malicious. Sparse detections do not activate an override.
+  A provider summary category/label identifying hacktool, riskware, PUA/PUP, adware
+  or cheat also prevents this override; dual-use reputation remains separately visible.
+- Reputable: at least 20 completed verdicts, no malicious or suspicious verdicts,
+  community reputation at least 100, at least 10 harmless community votes, and
+  no malicious community votes. This is corroborated positive reputation, not
+  certified cleanliness. Non-detection alone is unknown.
+- Otherwise: unknown. Provider identity/hash mismatches and malformed responses
+  are unavailable. Authentication errors, outages, disabled service and rate limits
+  remain explicit states and never discard the static report.
 
-## Gemini second opinion
+A normalized exact known-malicious match sets the final engine score to 10.0 and
+`risk.classification=known_malicious`, with `decision.source=reputation_override`.
+The original `heuristic.points` and all local contributions remain visible. The
+signature does not participate in this decision. This is not an additive bonus.
 
-API scans, CLI scans/rescores and the comparison script send raw analysis plus
-its deterministic assessment to Gemini after scoring. The prompt requests plain
-text paragraphs addressing score reasonableness, likely false positives and false
-negatives, and concise reasoning. Embedded evidence is explicitly untrusted.
-The response is saved separately in `gemini_review`; it never overwrites the score.
-Provider failures, absent credentials and the 4 MiB size limit produce an explicit
-unavailable review while preserving the complete deterministic report. Reviews
-are not silently truncated. The existing manual endpoint allows retry.
+Positive reputation halves weak-finding contributions and credits 2.0 points
+against an unsigned baseline, after local scoring and before clamping. An otherwise
+ordinary reputable unsigned file can therefore score 2.0. It cannot reduce an
+invalid signature baseline, moderate or strong evidence, or any known-malicious override. It cannot create an unconditional
+safe verdict. Reputation evidence and the explicit deduction are shown separately.
 
-## Fixture results and limits
+Reputation is external intelligence, not infallible ground truth. Provider errors,
+false-positive engine consensus and outdated records remain possible. The report
+retains the provider, lookup time, exact hash and decision evidence for review.
 
-All three available original executables were parsed statically, never executed.
-Both saved analysis and fresh scans received live Gemini reviews. Reports are in
-`docs/diagnostics/model4` alongside the comparison JSON.
+## B. Deterministic analysis
 
-| Fixture | Fresh score | Interpretation |
+The local score is the sum of explained contributions, clamped to 0–10 and rounded
+to one decimal. It is neither a probability nor a confirmed malware diagnosis.
+Unsigned alone remains 4.0: a review signal. Multiple suspicious characteristics
+escalate much faster for unsigned files than for signed software.
+
+### Signature baseline and evidence multipliers
+
+| Signature state | Baseline | Weak | Moderate | Strong |
+| --- | ---: | ---: | ---: | ---: |
+| Unsigned | 4.0 | 1.5 | 1.75 | 1.5 |
+| Invalid or revoked | 5.0 | 1.5 | 1.75 | 1.5 |
+| Unknown verification | 3.0 | 1.0 | 1.0 | 1.0 |
+| Valid integrity, unrecognized issuer | 0.5 | 0.75 | 1.0 | 1.0 |
+| Valid integrity, recognized issuer | 0.0 | 0.2 | 0.6 | 1.0 |
+| Valid integrity, verified trusted chain | 0.0 | 0.1 | 0.5 | 1.0 |
+
+The current cross-platform analyzer verifies embedded signature integrity and
+recognizes explicit issuer CNs. It does not validate against an OS root store or
+check revocation online. Thus Chrome is `recognized_signed`, not falsely reported
+as fully chain-verified. A supplied explicit trusted-chain result receives the
+stronger weak-signal discount. Revoked/invalid evidence takes precedence.
+
+### Nominal findings (before multipliers)
+
+| Evidence | Points | Strength / rationale |
 | --- | ---: | --- |
-| ChromeSetup.exe | 0.6 | Valid recognized DigiCert signature heavily discounts common installer capabilities. |
-| hrisitosense.exe (cheat) | 4.0 | Unsigned baseline; UPX obscures most imports. Packing alone is not proof of malicious behavior. |
-| pip/distlib t64.exe launcher | 4.0 | Benign unsigned software still receives the conservative review baseline. |
-| legacy_malware.exe | 4.5 | Unsigned baseline plus 0.5 CPU points; the obfuscated payload remains only partially recovered. |
+| Isolated suspicious API, URLs/domains/cookie words, debugger API | 0 | Generic capability or unlinked text |
+| Two / three crypto-network-process import categories | 0.5 / 1.0 | Weak; breadth is common in legitimate software |
+| Full process-access/allocation/write/execution chain | 3.0 | Specific but dual-use; signature multiplier fixed at 1.0 |
+| Browser profile + credential store + file read + decrypt | 5.0 | Strong correlated credential-access evidence |
+| Credential chain + outbound submission | 8.0 | Strong; supersedes the credential-access finding |
+| Autorun or startup target plus writing | 0.75 | Weak; target linkage is not proven |
+| Service persistence / scheduled execution / concealed shell command | 2.0 | Moderate |
+| Download, file-write and launch capability | 0.5 | Weak; expected in installers |
+| Explicit script download-and-evaluate execution sink | 4.0 | Strong |
+| Multiple anti-analysis checks / VM discovery chain | 0.5 / 0.25 | Weak |
+| Encoded script execution or concealed runtime import resolution | 1.25 | Moderate; also occurs in protectors |
+| Packer sections / high-entropy executable section alone | 1.0 / 0.25 | Weak; strongest concealment finding only |
+| Majority opaque appended payload | 0.75 | Weak; only if incompletely inspected |
+| Writable executable section | 0.35 | Weak; also used by JITs/unpackers |
+| Out-of-bounds sections or inconsistent entry/header ranges | 1.0 | Moderate structural inconsistency |
+| CPU discovery/timing / system transition / privileged group | 0.1 / 0.1 / 0.25 | Weak; capped at 0.5 nominal |
+| Generic local YARA match | 0.5 | Weak, not automatically malware |
+| Explicit high-confidence malware YARA rule | 8.0 | Strong; no signature discount |
 
-The known malware is an acknowledged false negative for High Risk classification:
-its extracted evidence does not expose the required malicious combinations. Gemini
-also identified this limitation. Its ground-truth label is not fed into scoring,
-and the scorer does not manufacture behavior from filenames, packing, or labels.
-Expanding payload recovery is separate from this scoring redesign. The simple
-unsigned baseline ensures this file is still flagged Suspicious, not Low Risk.
+CPU repetition never increases weight. Common mov/add/xor and int3 padding are
+not scored. COFF timestamp and PE header values are retained as raw metadata;
+a zero or unusual timestamp by itself is not evidence of malware.
 
-Regression tests cover isolated APIs, pair/triple combinations, trusted versus
-unrecognized signing, invalid signatures, strong-chain overrides, issuer spoof
-names, family amplification/deduplication, CPU repetition/caps, identity invariance,
-score reconstruction, and Gemini failure/score preservation. Browser tests verify
-new score presentation, attached reviews and manual retries on isolated ports.
+YARA inspection is optional (`yara-python` is already in `requirements.txt`).
+Set `YARA_RULES_PATH` to a
+local UTF-8 rule file. Include directives are disabled and matching has a five-second
+timeout. No rules are fetched. For strong weight, a reviewed local rule must have
+`malware = true` and `confidence = "high"` metadata; otherwise the match is weak.
+Reports retain the rule-file SHA-256 and matching rule metadata. Configuring a bad
+rule can cause false positives; metadata is the operator's explicit specificity
+claim, not a claim inferred from a rule name. Missing dependencies, invalid rules
+and timeouts remain nonfatal. The optional API usage follows the
+[YARA Python documentation](https://yara.readthedocs.io/en/latest/yarapython.html).
+
+### Deduplication and correlations
+
+Only the strongest adjusted finding in each family contributes, including across
+recovered script layers. Credential exfiltration and credential access share one
+family. Packer layout, entropy, opaque payloads and script concealment share another.
+Informational and superseded findings remain in JSON with zero contribution.
+
+Cross-domain amplification uses distinct behavior, structure/concealment, CPU,
+and specific-YARA domains. Import combinations and behavioral chains count as one
+behavior domain; packing and RWX do not pretend to be independent domains.
+The injection chain uses a signature multiplier of 1.0 for all signature states:
+the unsigned baseline already differentiates it, and injection alone stays below
+Dangerous (7.0 unsigned, 3.0 recognized-signed). Additional independent evidence
+can still amplify it. A single common CPU group does not activate correlation; two groups or a privileged
+group can. A generic YARA match also cannot activate correlation.
+
+- Unsigned/invalid: two domains multiply contributing findings by 1.25; three or
+  more multiply them by 1.5.
+- Other signature states: the equivalent factors are 1.1 and 1.2.
+- Two or more independent behavioral families additionally multiply behavioral
+  findings by 1.25. Generic import categories are not a second behavioral family.
+- The signature baseline is never amplified.
+
+Every scored row includes nominal points, signature multiplier, correlation
+multiplier, final points, and concrete evidence. There is no confidence index,
+visibility floor, installer-name exemption, or filename/hash-specific heuristic.
+
+UI faces retain the requested cutoffs: below 3 happy, 3–4.9 neutral, 5+ frowny.
+High Risk begins at 5 and Dangerous at 8. Neither heuristic label asserts known
+malware; that designation comes from the explicit reputation override.
+
+## C. Independent Gemini analysis
+
+The provider receives exactly `analysis` (all raw evidence) and `reputation`.
+The whitelist deliberately excludes `risk_assessment`, weighted reasons, local
+verdicts and previous Gemini output. Legacy scoring weights inside recovered script findings
+are also removed; their capabilities, strings, sources and other evidence remain. The raw analysis contains signatures/issuers,
+PE headers, imports/functions, sections, entropy, instructions/counts, strings,
+YARA, resources and recovered scripts. It is not truncated to a summary.
+Oversized requests return an explicit unavailable state rather than silently
+omitting evidence. Embedded sample text is treated as untrusted input.
+
+The prompt requests independent reasoning from this evidence, permits disagreement,
+and prohibits treating unsigned as malicious or signing as safety. The first line
+must be exactly one of:
+
+```
+THIS IS PERFECTLY FINE
+I CANNOT CONFIDENTLY SAY THAT
+USE AT YOUR OWN RISK
+```
+
+A plain-text explanation must follow. Formatting cleanup remains, but the backend
+never manufactures a verdict: an invalid prefix, multiple verdict phrases or an
+absent explanation is rejected. Gemini's opinion never modifies either engine score.
+A positive Gemini statement is an opinion on available evidence, not a guarantee.
+Old cached score-aware reviews are labeled legacy in the UI.
+
+## Calibration and verification
+
+All executables are parsed statically, never run. `docs/diagnostics/model5` contains
+full saved-report rescoring, fresh scans and independent Gemini outputs.
+The comparison JSON's `old_risk` is the original historical fixture score;
+the table below compares against the later model 4 diagnostic reports.
+
+| Fixture | Model 4 | Model 5 local score | Why |
+| --- | ---: | ---: | --- |
+| ChromeSetup.exe | 0.6 | 0.4 | Valid recognized signature and generic installer capability overlap; no specific malicious chain |
+| hrisitosense.exe (cheat) | 4.0 | 6.0 | Unsigned, UPX layout and writable executable sections; not classified as confirmed malware |
+| legacy_malware.exe | 4.5 | 7.1 | Unsigned, concealed runtime imports and multiple CPU groups correlate; payload remains incompletely understood |
+
+No reputation key is configured in this environment, so these real fixture scores
+have reputation disabled. We do not claim a live known-malicious hash hit. Mocked
+MalwareBazaar/VirusTotal responses verify the exact-hash override, including a
+trusted-signed input with heuristic score zero producing final score ten.
+The known malware is now high risk locally, but its harmful payload is still not
+fully recovered. Improved triage does not resolve that extraction limitation.
+
+Gemini independently judged Chrome positively and the opaque malware/cheat
+ambiguous in successful live evaluations; the full explanations and any transient
+provider failures are saved. It was not shown the scores or sample ground-truth
+labels. Names only select fixtures; the scorer never consults calibration labels.
+
+Tests cover correlations, common-instruction bounds, Chrome with added generic
+capabilities, signed dual-use injection, strong YARA, signature states, exact hash
+identity, provider outages/disabled/quota/no record, positive reputation limits,
+score reconstruction and unchanged raw Gemini request bodies under opposite local
+scores. A synthetic rule was also checked against the real local YARA engine.
+Browser tests cover independent-review display and separate heuristic/reputation
+scores. See README for reproduction commands and optional configuration.

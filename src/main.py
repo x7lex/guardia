@@ -8,8 +8,7 @@ from logging import getLogger
 from pathlib import Path
 
 from backend.analyzer import UnsupportedFileError, output
-from backend.risk_score import calculate_risk
-from backend.gemini_review import attach_review
+from backend.assessment import build_report
 from dotenv import load_dotenv
 
 from logger import start_logger
@@ -49,8 +48,8 @@ def save_report(report, report_directory=None, timestamp=None):
 async def scan_file(target_file, report_directory=None, timestamp=None):
     try:
         analysis = await output(target_file)
-        risk = calculate_risk(analysis)
-        report = await attach_review({"analysis": analysis, "risk_assessment": risk})
+        report = await build_report(analysis)
+        risk = report["risk_assessment"]
         report_path = save_report(report, report_directory, timestamp)
         print(f"[+] Scanned: {target_file.name}\n    Risk: {risk['risk']['score']} ({risk['risk']['verdict']})\n    Report: {report_path}")
         return {"file": target_file.name, "status": "scanned", "report": str(report_path)}
@@ -114,9 +113,8 @@ async def main():
     try:
         if args.rescore_report:
             report = json.loads(args.rescore_report.read_text(encoding="utf-8"))
-            risk = calculate_risk(report["analysis"])
-            report["risk_assessment"] = risk
-            await attach_review(report)
+            report = await build_report(report["analysis"])
+            risk = report["risk_assessment"]
             path = save_report(report)
             print(
                 f"{risk['risk']['score']} ({risk['risk']['verdict']})\nReport: {path}"
