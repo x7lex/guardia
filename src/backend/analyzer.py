@@ -10,6 +10,7 @@ import lief
 
 from backend.features import STRING_PATTERNS
 from backend.payloads import inspect_payload
+from backend.pe_metadata import overlay_layout, resource_facts
 
 MAX_STRING_BYTES = 32 * 1024 * 1024
 MAX_FILE_BYTES = 512 * 1024 * 1024
@@ -148,42 +149,46 @@ def _analyze(target_file):
         section.pointerto_raw_data + section.sizeof_raw_data
         for section in binary.sections if section.sizeof_raw_data
     ])
-    overlay_size = max(0, size - section_end)
     certificate = binary.data_directory(lief.PE.DataDirectory.TYPES.CERTIFICATE_TABLE)
-    certificate_bytes = 0
-    if certificate and certificate.size:
-        # Unlike other data directories, this address is a file offset.
-        certificate_bytes = max(0, min(size, certificate.rva + certificate.size) - max(section_end, certificate.rva))
-    payload_bytes = max(0, overlay_size - certificate_bytes)
-    overlay = {"offset": section_end, "size": overlay_size,
-               "certificate_bytes": certificate_bytes, "payload_bytes": payload_bytes,
-               "payload_fraction": payload_bytes / size if size else 0,
-               "content_analysis": "NOT_PRESENT"}
+    overlay = overlay_layout(size, section_end, certificate.rva if certificate else 0, certificate.size if certificate else 0)
     payload_inspection = None
-    if payload_bytes:
-        # Exclude the Authenticode certificate table from container inspection.
-        payload_end = certificate.rva if certificate and section_end <= certificate.rva < size else size
-        inspected_end = min(payload_end, section_end + MAX_STRING_BYTES)
-        if inspected_end <= len(sample):
-            payload_data = bytes(sample[section_end:inspected_end])
+    if overlay["payload_bytes"]:
+        inspections = []
+        remaining = MAX_STRING_BYTES
+        with path.open("rb") as source:
+            for region in overlay["payload_ranges"]:
+                source.seek(region["offset"])
+                data = source.read(min(region["size"], remaining))
+                remaining -= len(data)
+                item = inspect_payload(data, region["offset"], source=f"overlay@{region['offset']}")
+                item["truncated"] = len(data) < region["size"]
+                if item["truncated"]:
+                    item["status"] = "partial"
+                    item["limitations"].append("Some appended bytes lie outside the inspected range")
+                inspections.append(item)
+        if len(inspections) == 1:
+            payload_inspection = inspections[0]
         else:
-            with path.open("rb") as source:
-                source.seek(section_end)
-                payload_data = source.read(max(0, inspected_end - section_end))
-        payload_inspection = inspect_payload(payload_data, section_end)
+            payload_inspection = {"regions": inspections, "bytes_inspected": sum(i["bytes_inspected"] for i in inspections),
+                "status": "inspected" if all(i["status"] == "inspected" for i in inspections) else "partial",
+                "truncated": any(i["truncated"] for i in inspections),
+                "container_candidates": [c for i in inspections for c in i["container_candidates"]],
+                "limitations": [reason for i in inspections for reason in i["limitations"]]}
         overlay["content_analysis"] = "BOUNDED_STATIC_CONTAINER_INSPECTION"
-        if len(payload_data) < payload_bytes:
-            payload_inspection["limitations"].append("Some appended bytes lie outside the inspected range")
         limitations.extend(payload_inspection["limitations"])
+    if overlay["certificate_range_valid"] is False:
+        limitations.append("Certificate table range is invalid; its claimed bytes were not excluded from payload inspection")
+    version_info, resources = resource_facts(binary)
     if signature["integrity"] == "UNKNOWN":
         limitations.append("Authenticode verification inconclusive; see signature checks.")
     disassembly = disassembly_facts(binary)
-    return {"schema_version": "2.2", "file": {"file_name": path.name, "file_path": str(path), "file_size": size,
+    return {"schema_version": "3.0", "file": {"file_name": path.name, "file_path": str(path), "file_size": size,
             "sha256": digest.hexdigest(), "format": str(binary.format), "machine": str(binary.header.machine),
-            "entry_point": hex(binary.entrypoint), "section_count": len(sections), "sections": sections, "overlay": overlay},
+            "entry_point": hex(binary.entrypoint), "section_count": len(sections), "sections": sections, "overlay": overlay,
+            "version_info": version_info, "is_dll": binary.header.has_characteristic(lief.PE.Header.CHARACTERISTICS.DLL)},
             "imports": {"libraries": libraries, "library_count": len(libraries), "function_count": sum(len(lib["functions"]) for lib in libraries)},
             "strings": strings, "signature": signature, "disassembly": disassembly,
-            "payload_inspection": payload_inspection,
+            "payload_inspection": payload_inspection, "resources": resources,
             "suspicious_instructions": {"count": 0, "instructions": [], "scored": False, "supported": disassembly["supported"]},
             "coverage": {"static_only": True, "limitations": limitations,
                          "yara": "NOT_CONFIGURED", "hash_reputation": "NOT_CONFIGURED",

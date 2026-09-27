@@ -6,3 +6,4 @@ python-magic
 fastapi
 httpx
 uvicorn
+python-dotenv
