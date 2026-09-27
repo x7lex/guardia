@@ -9,7 +9,8 @@ def _get_env_var(var: str) -> str:
 
 
 API_TOKEN: str = _get_env_var("API_TOKEN")
-WEBSOCKET_HOST: str = _get_env_var("WEBSOCKET_HOST")
-WEBSOCKET_PORT: int = int(_get_env_var("WEBSOCKET_PORT"))
-TIMEOUT = 5
+BACKEND_WEBSOCKET_HOST: str = _get_env_var("BACKEND_WEBSOCKET_HOST")
+BACKEND_WEBSOCKET_PORT: int = int(_get_env_var("BACKEND_WEBSOCKET_PORT"))
+FRONTEND_WEBSOCKET_HOST: str = _get_env_var("FRONTEND_WEBSOCKET_HOST")
+FRONTEND_WEBSOCKET_PORT: int = int(_get_env_var("FRONTEND_WEBSOCKET_PORT"))
 CHUNK_SIZE = 1024
