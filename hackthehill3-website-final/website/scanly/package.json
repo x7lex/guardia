@@ -11,7 +11,10 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:e2e": "playwright test",
     "electron": "electron electron/main.mjs",
-    "postinstall": "node node_modules/electron/install.js"
+    "postinstall": "node node_modules/electron/install.js",
+    "desktop:prepare": "node electron/build-resources.mjs",
+    "dist:win": "npm run desktop:prepare && electron-builder --config electron-builder.json --win nsis --x64 --publish never",
+    "test:desktop": "node electron/smoke.mjs"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
@@ -26,9 +29,13 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "main": "electron/main.mjs",
+  "description": "Guardia static PE scanner desktop app",
+  "author": "Guardia contributors"
 }
