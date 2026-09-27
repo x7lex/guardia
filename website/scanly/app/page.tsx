@@ -9,6 +9,7 @@ import RetroIcon from "@/components/retro-icon"
 import Banner from "@/components/banner"
 import Form from "@/components/Form"
 import FolderPicker from "@/components/FolderPicker"
+import DragBox from "@/components/dragbox"
 import ReportMarker, { Report, riskAppearance } from "@/components/report-marker"
 import ReportDetailModal from "@/components/report-detail-modal"
 import { Body, Size, Zone, keepInside, zoneCenter, zoneScale, separate } from "@/lib/marker-physics"
@@ -527,6 +528,7 @@ export default function Home() {
             <Form>
               <div className="col-span-full space-y-4">
                 <p className="text-xs text-[#805775]">Enter the full path to each folder on the scanner’s computer. Use Browse in the desktop app to select folders.</p>
+                <DragBox onDrop={setScanPath} disabled={scanning} />
                 <FolderPicker path={scanPath} onPathChange={setScanPath} onFoldersSelected={chooseFolders} disabled={scanning} />
                 {folderQueue.map((path, index) => (
                   <div key={index} className="flex items-end gap-2">
