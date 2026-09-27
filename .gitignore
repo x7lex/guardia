@@ -4,5 +4,9 @@ __pycache__/
 .direnv/
 .ruff_cache/
 *.exe
-.DS_STORE
+.DS_Store
 .env
+.env.*
+!.env.example
+node_modules/
+src/reports/

@@ -1,0 +1,321 @@
+{
+    "analysis": {
+        "schema_version": "2.2",
+        "file": {
+            "file_name": "hrisitosense.exe",
+            "file_path": "/Users/hadi/Desktop/stuff/hrisitosense.exe",
+            "file_size": 13454848,
+            "sha256": "f12316bceefbabe45f8279bd5a9d6e8e815a9f76114097991548ca7e259f6472",
+            "format": "FORMATS.PE",
+            "machine": "MACHINE_TYPES.I386",
+            "entry_point": "0x17745d0",
+            "section_count": 3,
+            "sections": [
+                {
+                    "name": "UPX0",
+                    "virtual_address": "0x1000",
+                    "virtual_size": 6946816,
+                    "raw_size": 0,
+                    "raw_offset": 1024,
+                    "entropy": 0.0,
+                    "executable": true,
+                    "writable": true,
+                    "raw_out_of_bounds": false
+                },
+                {
+                    "name": "UPX1",
+                    "virtual_address": "0x6a1000",
+                    "virtual_size": 13455360,
+                    "raw_size": 13452288,
+                    "raw_offset": 1024,
+                    "entropy": 7.744,
+                    "executable": true,
+                    "writable": true,
+                    "raw_out_of_bounds": false
+                },
+                {
+                    "name": ".rsrc",
+                    "virtual_address": "0x1376000",
+                    "virtual_size": 4096,
+                    "raw_size": 1536,
+                    "raw_offset": 13453312,
+                    "entropy": 3.934,
+                    "executable": false,
+                    "writable": true,
+                    "raw_out_of_bounds": false
+                }
+            ],
+            "overlay": {
+                "offset": 13454848,
+                "size": 0,
+                "certificate_bytes": 0,
+                "payload_bytes": 0,
+                "payload_fraction": 0.0,
+                "content_analysis": "NOT_PRESENT"
+            }
+        },
+        "imports": {
+            "libraries": [
+                {
+                    "name": "ADVAPI32.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "RegCloseKey"
+                    ]
+                },
+                {
+                    "name": "d3d9.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "Direct3DCreate9"
+                    ]
+                },
+                {
+                    "name": "d3dx9_43.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "D3DXCreateTextureFromFileInMemory"
+                    ]
+                },
+                {
+                    "name": "GDI32.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "GetDeviceCaps"
+                    ]
+                },
+                {
+                    "name": "IMM32.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "ImmGetContext"
+                    ]
+                },
+                {
+                    "name": "KERNEL32.DLL",
+                    "kind": "normal",
+                    "functions": [
+                        "LoadLibraryA",
+                        "ExitProcess",
+                        "GetProcAddress",
+                        "VirtualProtect"
+                    ]
+                },
+                {
+                    "name": "SHELL32.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "ShellExecuteA"
+                    ]
+                },
+                {
+                    "name": "USER32.dll",
+                    "kind": "normal",
+                    "functions": [
+                        "GetDC"
+                    ]
+                }
+            ],
+            "library_count": 8,
+            "function_count": 11
+        },
+        "strings": {
+            "matches": {
+                "browser_database": [],
+                "browser_path": [],
+                "autorun": [],
+                "startup": [],
+                "scheduled_task": [],
+                "suspicious_shell": [],
+                "download_execute": [],
+                "vm_artifact": [],
+                "url": [],
+                "ipv4": [],
+                "domain": [
+                    "t.NET"
+                ]
+            },
+            "match_counts": {
+                "browser_database": 0,
+                "browser_path": 0,
+                "autorun": 0,
+                "startup": 0,
+                "scheduled_task": 0,
+                "suspicious_shell": 0,
+                "download_execute": 0,
+                "vm_artifact": 0,
+                "url": 0,
+                "ipv4": 0,
+                "domain": 1
+            },
+            "limits": {
+                "examples_per_category": 20,
+                "printable_run_characters": 2048
+            },
+            "note": "ASCII and ASCII-range UTF-16LE only; text is untrusted data. URLs/domains/IP-like strings carry no risk by themselves.",
+            "bytes_scanned": 13454848,
+            "truncated": false
+        },
+        "signature": {
+            "signed": false,
+            "integrity": "UNSIGNED",
+            "chain_trust": "NOT_EVALUATED",
+            "revocation": "NOT_CHECKED",
+            "publisher_identity": "NOT_TRUST_VALIDATED",
+            "publishers": [],
+            "checks": [],
+            "known_ca": false
+        },
+        "disassembly": {
+            "supported": true,
+            "scored": false,
+            "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+            "bytes_decoded": 3632,
+            "instruction_count": 1769,
+            "mnemonic_counts": {
+                "pushal": 1,
+                "mov": 42,
+                "lea": 11,
+                "push": 25,
+                "jmp": 12,
+                "nop": 2,
+                "inc": 11,
+                "add": 1541,
+                "jne": 13,
+                "sub": 15,
+                "adc": 14,
+                "jb": 5,
+                "jae": 3,
+                "dec": 5,
+                "xor": 4,
+                "shl": 2,
+                "je": 6,
+                "sar": 1,
+                "cmp": 6,
+                "jbe": 2,
+                "ja": 5,
+                "pop": 8,
+                "shr": 1,
+                "rol": 3,
+                "xchg": 4,
+                "loop": 2,
+                "or": 5,
+                "call": 7,
+                "repne scasb": 1,
+                "and": 3,
+                "stosb": 1,
+                "popal": 1,
+                "cld": 1,
+                "lodsd": 1,
+                "test": 3,
+                "ret": 1,
+                "clc": 1
+            }
+        },
+        "payload_inspection": null,
+        "suspicious_instructions": {
+            "count": 0,
+            "instructions": [],
+            "scored": false,
+            "supported": true
+        },
+        "coverage": {
+            "static_only": true,
+            "limitations": [],
+            "yara": "NOT_CONFIGURED",
+            "hash_reputation": "NOT_CONFIGURED",
+            "unpacking": "NOT_PERFORMED",
+            "control_flow": "NOT_ANALYZED"
+        }
+    },
+    "risk_assessment": {
+        "model_version": "2.2",
+        "file_name": "hrisitosense.exe",
+        "sha256": "f12316bceefbabe45f8279bd5a9d6e8e815a9f76114097991548ca7e259f6472",
+        "risk": {
+            "points": 2.0,
+            "score": "2.0/10.0",
+            "level": "Use at your own risk",
+            "coverage_limited": true
+        },
+        "reasons": [
+            {
+                "id": "rwx_sections",
+                "family": "packing",
+                "strength": "weak",
+                "reason": "Writable executable sections",
+                "evidence": {
+                    "sections": [
+                        "UPX0",
+                        "UPX1"
+                    ]
+                },
+                "nominal_points": 0.5,
+                "points": 0.0,
+                "scoring": "Informational or covered by stronger finding in family"
+            },
+            {
+                "id": "packed_layout",
+                "family": "packing",
+                "strength": "moderate",
+                "reason": "Packer-like section layout limits visibility into code",
+                "evidence": {
+                    "packer_sections": [
+                        "UPX0",
+                        "UPX1"
+                    ],
+                    "high_entropy_code": [
+                        "UPX1"
+                    ],
+                    "rwx": [
+                        "UPX0",
+                        "UPX1"
+                    ],
+                    "sparse_imports": true
+                },
+                "nominal_points": 2.0,
+                "points": 2.0,
+                "scoring": "Strongest finding in family"
+            },
+            {
+                "id": "dynamic_resolution",
+                "family": "packing",
+                "strength": "informational",
+                "reason": "Dynamic import resolution capability; common in legitimate software",
+                "evidence": {
+                    "imports": [
+                        "getprocaddress",
+                        "loadlibrarya"
+                    ]
+                },
+                "nominal_points": 0.0,
+                "points": 0.0,
+                "scoring": "Informational or covered by stronger finding in family"
+            }
+        ],
+        "diagnostics": {
+            "uncapped_score": 2.0,
+            "family_policy": "Maximum per family; packing and anti-analysis together capped at 2.5",
+            "signature_context": {
+                "signed": false,
+                "integrity": "UNSIGNED",
+                "chain_trust": "NOT_EVALUATED",
+                "revocation": "NOT_CHECKED",
+                "publisher_identity": "NOT_TRUST_VALIDATED",
+                "publishers": [],
+                "checks": [],
+                "known_ca": false
+            },
+            "signature_policy": "Valid integrity is legitimacy context; no deduction masks behavioral evidence. Chain trust is not inferred from issuer names.",
+            "unscored_context": {
+                "user_elevation": false,
+                "sensitive_metadata": false
+            },
+            "limitations": [
+                "Static capabilities are not observed behavior; absence of findings is not proof of safety.",
+                "Likely packed native code remains opaque; no native unpacking or target execution was performed."
+            ],
+            "assessment": "limited_visibility"
+        }
+    }
+}
