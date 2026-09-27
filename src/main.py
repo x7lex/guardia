@@ -9,10 +9,8 @@ from backend.analyzer import output
 from backend.risk_score import calculate_risk
 from logger import start_logger
 
-
 start_logger()
 logger: Logger = getLogger(name="Main")
-
 
 def get_reports_directory() -> Path:
     reports_dir = Path(__file__).resolve().parent / "reports"
@@ -23,7 +21,6 @@ def get_reports_directory() -> Path:
     )
 
     return reports_dir
-
 
 def get_target() -> Path:
     target = input(
@@ -41,7 +38,6 @@ def get_target() -> Path:
         )
 
     return path
-
 
 def save_report(
     report: dict,
@@ -81,7 +77,6 @@ def save_report(
     )
 
     return report_path
-
 
 async def scan_file(
     target_file: Path,
@@ -136,7 +131,6 @@ async def scan_file(
             f" -> {error}"
         )
 
-
 async def scan_directory(directory: Path) -> None:
     files = [
         path
@@ -179,7 +173,6 @@ async def scan_directory(directory: Path) -> None:
         ]
     )
 
-
 async def main() -> None:
     try:
         target = get_target()
@@ -195,7 +188,6 @@ async def main() -> None:
 
     except Exception:
         logger.exception("error")
-
 
 if __name__ == "__main__":
     asyncio.run(main())
