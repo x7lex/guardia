@@ -1,6 +1,10 @@
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  if (process.env.GUARDIA_DESKTOP_TOKEN &&
+      request.headers.get("x-guardia-token") !== process.env.GUARDIA_DESKTOP_TOKEN) {
+    return Response.json({ detail: "Unauthorized" }, { status: 401 });
+  }
   try {
     const backend = new URL(
       "/review",
@@ -8,7 +12,12 @@ export async function POST(request: Request) {
     );
     const options: RequestInit & { duplex: "half" } = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(process.env.GUARDIA_DESKTOP_TOKEN
+          ? { "x-guardia-token": process.env.GUARDIA_DESKTOP_TOKEN }
+          : {}),
+      },
       body: request.body,
       duplex: "half",
       signal: request.signal,

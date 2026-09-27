@@ -1,6 +1,10 @@
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  if (process.env.GUARDIA_DESKTOP_TOKEN &&
+      request.headers.get("x-guardia-token") !== process.env.GUARDIA_DESKTOP_TOKEN) {
+    return Response.json({ detail: "Unauthorized" }, { status: 401 });
+  }
   const name = new URL(request.url).searchParams.get("name");
   if (!name)
     return Response.json({ detail: "Choose a file to scan" }, { status: 400 });
@@ -14,6 +18,8 @@ export async function POST(request: Request) {
       request.headers.get("content-type") || "application/octet-stream",
   });
   const length = request.headers.get("content-length");
+  if (process.env.GUARDIA_DESKTOP_TOKEN)
+    headers.set("x-guardia-token", process.env.GUARDIA_DESKTOP_TOKEN);
   if (length) headers.set("Content-Length", length);
   try {
     // Stream uploads to Python instead of buffering executable files in Node.
