@@ -1,27 +1,18 @@
-"""Auditable triage with independent evidence, visibility, trust and role models."""
+"""Deterministic signature baseline plus amplified capability combinations."""
+from backend.features import detect_features, import_names, native_capabilities
+from backend.signatures import signature_state
 
-from backend.context import assess_context, assess_trust
-from backend.features import detect_features
-from backend.visibility import assess_visibility
-
-MODEL_VERSION = "3.0"
-# These apply only to archived script findings which predate base_points.
-LEGACY_SCRIPT_WEIGHTS = {
-    "encoded_script_execution": 1.0,
-    "concealed_script_execution": 1.0,
-    "obfuscated_runtime_resolution": 0.0,
-    "script_browser_credentials": 6.0,
-    "credential_exfiltration": 4.0,
+MODEL_VERSION = "4.0"
+# baseline, weak finding multiplier, strong finding multiplier
+SIGNATURE_POLICY = {
+    "unsigned": (4.0, 1.5, 1.5),
+    "invalid": (5.0, 1.5, 1.5),
+    "unknown": (3.0, 1.0, 1.0),
+    "valid_unrecognized": (0.5, 0.8, 1.0),
+    "trusted_signed": (0.0, 0.1, 1.0),
 }
-FAMILY_CAPS = {
-    "injection": 6.0,
-    "credentials": 6.0,
-    "exfiltration": 4.0,
-    "execution": 4.0,
-    "persistence": 2.5,
-    "anti_analysis": 1.0,
-    "integrity": 3.0,
-}
+LEGACY_SCRIPT_WEIGHTS = {"encoded_script_execution": 1.0, "concealed_script_execution": 1.0,
+                         "script_browser_credentials": 6.0, "credential_exfiltration": 4.0}
 
 
 def get_risk_level(points):
@@ -31,112 +22,92 @@ def get_risk_level(points):
     return "Dangerous"
 
 
+def import_combination(report):
+    apis = import_names(report)
+    facts = native_capabilities(report)
+    categories = {
+        "crypto_credentials": sorted(apis & {
+            "cryptunprotectdata", "cryptprotectdata", "cryptdecrypt", "cryptencrypt",
+            "cryptacquirecontexta", "cryptacquirecontextw", "bcryptencrypt", "bcryptdecrypt",
+            "bcryptgenrandom", "ncryptunprotectsecret", "credreada", "credreadw",
+            "credenumeratea", "credenumeratew"}),
+        "network": sorted(apis & {"connect", "wsaconnect", "send", "wsasend", "recv",
+            "internetconnecta", "internetconnectw", "internetopenurla", "internetopenurlw",
+            "httpsendrequesta", "httpsendrequestw", "winhttpconnect", "winhttpsendrequest",
+            "winhttpwritedata", "winhttpreaddata", "internetreadfile",
+            "urldownloadtofilea", "urldownloadtofilew"}),
+        "system_process": sorted(set(facts["process_access"] + facts["remote_write"] +
+            facts["remote_execute"] + facts["process_execute"] + facts["registry_write"] +
+            facts["service_create"]) | (apis & {"adjusttokenprivileges", "duplicatetokenex",
+            "readprocessmemory", "ntreadvirtualmemory", "createtoolhelp32snapshot"})),
+    }
+    present = {key: value for key, value in categories.items() if value}
+    if len(present) < 2:
+        return []
+    # Three categories amplify the pair weight, independently of signature.
+    return [{"id": "import_combination", "family": "import_combination", "strength": "moderate",
+             "reason": "Multiple import categories coexist; crypto/credentials with networking and process APIs deserves extra review",
+             "base_points": 1.5 if len(present) == 2 else 3.0,
+             "evidence": {"source": "outer_pe", "categories": present,
+                          "category_factor": len(present) - 1,
+                          "limitation": "Imports establish capabilities, not execution or data flow."}}]
+
+
 def calculate_risk(report, user_elevation=False, sensitive_metadata=False):
-    trust = assess_trust(report)
-    context = assess_context(report, trust)
-    visibility = assess_visibility(report)
-    features = detect_features(report)
-    reasons = []
+    state = signature_state(report.get("signature", {}))
+    baseline, weak_factor, strong_factor = SIGNATURE_POLICY[state]
+    reasons = [{"id": "signature_baseline", "family": "signature", "strength": "baseline",
+                "reason": f"Signature state: {state}", "nominal_points": baseline,
+                "signature_factor": 1.0, "category_factor": 1.0, "points": baseline,
+                "evidence": report.get("signature", {})}]
+    features = [f for f in detect_features(report) if f["id"] != "signature_integrity"]
+    features += import_combination(report)
+    # Keep one strongest finding per family, including across recovered source layers.
+    winners = {}
     for feature in features:
         base = feature.get("base_points", LEGACY_SCRIPT_WEIGHTS.get(feature["id"], 0.0))
-        # The old packing family is now exclusively visibility, except explicit sinks.
-        factor = 1.0
-        if (
-            feature.get("contextual")
-            and context["installer_adjustment_eligible"]
-            and feature.get("evidence", {}).get("source") == "outer_pe"
-        ):
-            factor = 0.25 if trust["signature_integrity"] == "VALID" else 0.5
-        reasons.append(
-            {
-                **feature,
-                "nominal_points": base,
-                "context_factor": factor,
-                "adjusted_points": round(base * factor, 3),
-                "points": 0.0,
-                "context_reason": "Expected installer capability; target linkage is unproven"
-                if factor < 1
-                else "No role adjustment",
-                "scoring": "Informational; no threat points",
-            }
-        )
-    # Per-family max deduplicates source layers and equivalent native/script chains.
-    # Visibility is assessed separately and never collapses into this maximum.
-    family_scores = {}
-    for family, cap in FAMILY_CAPS.items():
-        candidates = [
-            reason
-            for reason in reasons
-            if reason["family"] == family and reason["adjusted_points"] > 0
-        ]
-        if not candidates:
-            continue
-        winner = max(candidates, key=lambda r: r["adjusted_points"])
-        winner["points"] = min(cap, winner["adjusted_points"])
-        winner["scoring"] = "Strongest behavior in family, subject to family cap"
-        for other in candidates:
-            if other is not winner:
-                other["scoring"] = (
-                    "Covered by stronger/equivalent behavior in the same family"
-                )
-        family_scores[family] = winner["points"]
-    uncapped = sum(family_scores.values())
-    threat = round(min(10.0, uncapped), 1)
-    # A bounded triage floor prompts review; uncertainty can never establish High Risk.
-    floor = (
-        round(min(3.5, 4.0 * (1.0 - visibility["score"])), 1)
-        if visibility["requires_review"]
-        else 0.0
-    )
-    points = max(threat, floor)
+        strong = feature.get("strength") == "strong"
+        factor = strong_factor if strong else weak_factor
+        adjusted = round(base * factor, 3)
+        reason = {**feature, "nominal_points": base, "signature_factor": factor,
+                  "category_factor": 1.0, "points": 0.0,
+                  "scoring": "Informational or covered by a stronger finding in this family"}
+        reasons.append(reason)
+        family = feature["family"]
+        if adjusted > winners.get(family, (0, None))[0]:
+            winners[family] = (adjusted, reason)
+    # Independent behavioral families amplify each other; packing and CPU do not.
+    families = sorted(winners)
+    amplification = 1.0 + 0.25 * min(2, max(0, len(families) - 1))
+    for adjusted, reason in winners.values():
+        reason.update(points=round(adjusted * amplification, 3), category_factor=amplification,
+                      scoring="Strongest finding in family × signature factor × multiple-family factor")
+    counts = report.get("disassembly", {}).get("mnemonic_counts", {})
+    cpu_groups = {"discovery_timing": {"cpuid", "rdtsc", "rdtscp"},
+                  "system_transition": {"syscall", "sysenter", "int"},
+                  "privileged": {"in", "out", "rdmsr", "wrmsr", "cli", "sti", "hlt"}}
+    observed = {group: {k: counts[k] for k in sorted(names) if counts.get(k, 0) > 0}
+                for group, names in cpu_groups.items()}
+    observed = {group: hits for group, hits in observed.items() if hits}
+    cpu_base = min(0.75, 0.25 * len(observed))
+    reasons.append({"id": "cpu_instructions", "family": "cpu", "strength": "weak",
+                    "reason": "0.25 per instruction group, capped at 0.75; repetition and ordinary instructions add nothing",
+                    "nominal_points": cpu_base, "signature_factor": min(1.0, weak_factor),
+                    "category_factor": 1.0, "points": round(cpu_base * min(1.0, weak_factor), 3),
+                    "evidence": {"groups": observed, "scope": report.get("disassembly", {}).get("scope")}})
+    total = round(sum(r["points"] for r in reasons), 3)
+    points = round(min(10.0, max(0.0, total)), 1)
     level = get_risk_level(points)
-    verdict = "Inconclusive" if visibility["requires_review"] and threat < 6 else level
-    limitations = list(
-        dict.fromkeys(
-            [r["reason"] for r in visibility["reasons"]]
-            + [
-                "Static capabilities are not observed behavior; absence of findings is not proof of safety.",
-                "Co-occurring imports/strings do not establish argument linkage, call order or reachability.",
-            ]
-        )
-    )
-    return {
-        "model_version": MODEL_VERSION,
-        "file_name": report.get("file", {}).get("file_name"),
-        "sha256": report.get("file", {}).get("sha256"),
-        "risk": {
-            "points": points,
-            "score": f"{points:.1f}/10.0",
-            "level": level,
-            "verdict": verdict,
-            "confidence": visibility["score"],
-            "coverage_limited": visibility["requires_review"],
-            "threat_points": threat,
-            "uncertainty_floor": floor,
-            "uncertainty_contribution": round(points - threat, 1),
-            "score_meaning": "Triage priority, not malware probability; max(threat evidence, bounded visibility floor)",
-            "confidence_meaning": "Static visibility index; not calibrated confidence in the verdict",
-        },
-        "visibility": visibility,
-        "trust": trust,
-        "context": context,
-        "behaviors": [r for r in reasons if r["family"] in FAMILY_CAPS],
-        "reasons": reasons,
-        "diagnostics": {
-            "uncapped_threat_score": uncapped,
-            "family_scores": family_scores,
-            "family_caps": FAMILY_CAPS,
-            "family_policy": "Strongest correlated behavior per family; sum families and cap threat at 10. Visibility does not add threat points.",
-            "final_score_formula": "max(round(min(10, sum(family_scores)), 1), round(min(3.5, 4*(1-visibility)), 1) if visibility<0.75 else 0)",
-            "verdict_policy": "Visibility below 0.75 with threat below 6 is Inconclusive. Strong threat evidence overrides the uncertainty verdict, never its coverage disclosure.",
-            "signature_policy": trust["policy"],
-            "unscored_context": {
-                "user_elevation": user_elevation,
-                "sensitive_metadata": sensitive_metadata,
-            },
-            "limitations": limitations,
-            "assessment": "limited_visibility"
-            if visibility["requires_review"]
-            else "static_triage",
-        },
-    }
+    return {"model_version": MODEL_VERSION, "file_name": report.get("file", {}).get("file_name"),
+            "sha256": report.get("file", {}).get("sha256"),
+            "risk": {"points": points, "score": f"{points:.1f}/10.0", "level": level, "verdict": level,
+                     "score_meaning": "Conservative static risk score, not malware probability"},
+            "signature_state": state, "reasons": reasons,
+            "diagnostics": {"uncapped_score": total, "signature_policy": {key: dict(zip(("baseline", "weak_multiplier", "strong_multiplier"), values))
+                                                 for key, values in SIGNATURE_POLICY.items()},
+                            "active_families": families, "category_factor": amplification,
+                            "final_score_formula": "round(min(10, max(0, sum(reasons.points))), 1)",
+                            "limitations": ["Static capabilities do not prove execution; hidden code can be missed.",
+                                "Recognized issuer is a scoring policy, not OS chain or revocation validation.",
+                                "Packing and extraction limitations are informational, not scored."],
+                            "unscored_context": {"user_elevation": user_elevation, "sensitive_metadata": sensitive_metadata}}}

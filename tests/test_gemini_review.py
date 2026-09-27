@@ -1,4 +1,6 @@
 import json
+import asyncio
+import copy
 import os
 import sys
 import unittest
@@ -10,6 +12,7 @@ import httpx
 from fastapi.testclient import TestClient
 
 from backend.api import app
+from backend.gemini_review import attach_review, SYSTEM_INSTRUCTION
 
 REPORT = {
     "analysis": {
@@ -66,6 +69,32 @@ class GeminiReviewTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["review"], "Assessment: needs review.")
         self.assertNotIn("test-secret", response.text)
+
+    def test_automatic_review_preserves_score_and_sends_only_raw_evidence(self):
+        report = copy.deepcopy(REPORT)
+        report["gemini_review"] = {"review": "stale opinion"}
+        def handler(request):
+            body = json.loads(request.content)
+            self.assertEqual(json.loads(body["contents"][0]["parts"][0]["text"]), REPORT)
+            return httpx.Response(200, json={"candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": "The score seems too low."}]}}]})
+        client = AsyncClient(transport=httpx.MockTransport(handler))
+        with patch("backend.gemini_review.httpx.AsyncClient", return_value=client):
+            result = asyncio.run(attach_review(report))
+        self.assertEqual(result["risk_assessment"], REPORT["risk_assessment"])
+        self.assertEqual(result["gemini_review"]["status"], "complete")
+        self.assertIn("no Markdown", SYSTEM_INSTRUCTION)
+        self.assertIn("false positives", SYSTEM_INSTRUCTION)
+        self.assertIn("false negatives", SYSTEM_INSTRUCTION)
+
+    def test_automatic_review_failure_keeps_deterministic_report(self):
+        client = AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(429)))
+        with patch("backend.gemini_review.httpx.AsyncClient", return_value=client):
+            result = asyncio.run(attach_review(copy.deepcopy(REPORT)))
+        self.assertEqual(result["risk_assessment"], REPORT["risk_assessment"])
+        self.assertEqual(result["gemini_review"]["status"], "unavailable")
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "", "API_TOKEN": ""}):
+            result = asyncio.run(attach_review(copy.deepcopy(REPORT)))
+            self.assertIn("not configured", result["gemini_review"]["reason"])
 
     def test_quota_and_auth_errors_are_safe_and_actionable(self):
         for status, expected in (

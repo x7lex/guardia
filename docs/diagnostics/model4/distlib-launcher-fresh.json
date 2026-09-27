@@ -1,0 +1,548 @@
+{
+  "analysis": {
+    "schema_version": "4.0",
+    "file": {
+      "file_name": "t64.exe",
+      "file_path": "/Users/hadi/Desktop/hackthehill3/.venv/lib/python3.13/site-packages/pip/_vendor/distlib/t64.exe",
+      "file_size": 108032,
+      "sha256": "81a618f21cb87db9076134e70388b6e9cb7c2106739011b6a51772d22cae06b7",
+      "format": "FORMATS.PE",
+      "machine": "MACHINE_TYPES.AMD64",
+      "entry_point": "0x14000427c",
+      "section_count": 6,
+      "sections": [
+        {
+          "name": ".text",
+          "virtual_address": "0x1000",
+          "virtual_size": 60961,
+          "raw_size": 61440,
+          "raw_offset": 1024,
+          "entropy": 6.412,
+          "executable": true,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rdata",
+          "virtual_address": "0x10000",
+          "virtual_size": 14404,
+          "raw_size": 14848,
+          "raw_offset": 62464,
+          "entropy": 4.954,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".data",
+          "virtual_address": "0x14000",
+          "virtual_size": 16708,
+          "raw_size": 5120,
+          "raw_offset": 77312,
+          "entropy": 1.981,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".pdata",
+          "virtual_address": "0x19000",
+          "virtual_size": 2880,
+          "raw_size": 3072,
+          "raw_offset": 82432,
+          "entropy": 4.846,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rsrc",
+          "virtual_address": "0x1a000",
+          "virtual_size": 21492,
+          "raw_size": 21504,
+          "raw_offset": 85504,
+          "entropy": 5.482,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".reloc",
+          "virtual_address": "0x20000",
+          "virtual_size": 852,
+          "raw_size": 1024,
+          "raw_offset": 107008,
+          "entropy": 2.935,
+          "executable": false,
+          "writable": false,
+          "raw_out_of_bounds": false
+        }
+      ],
+      "overlay": {
+        "offset": 108032,
+        "size": 0,
+        "certificate_bytes": 0,
+        "certificate_range_valid": null,
+        "payload_bytes": 0,
+        "payload_fraction": 0.0,
+        "payload_ranges": [],
+        "content_analysis": "NOT_PRESENT"
+      },
+      "version_info": {
+        "CompanyName": "Simple Launcher User",
+        "FileDescription": "Simple Launcher Executable",
+        "FileVersion": "1.1.0.14",
+        "InternalName": "t64.exe",
+        "LegalCopyright": "Copyright (C) Simple Launcher User",
+        "OriginalFilename": "t64.exe",
+        "ProductName": "Simple Launcher",
+        "ProductVersion": "1.1.0.14"
+      },
+      "is_dll": false
+    },
+    "imports": {
+      "libraries": [
+        {
+          "name": "KERNEL32.dll",
+          "kind": "normal",
+          "functions": [
+            "ExitProcess",
+            "GetCommandLineW",
+            "SearchPathW",
+            "SetInformationJobObject",
+            "CreateProcessW",
+            "SetHandleInformation",
+            "WaitForSingleObjectEx",
+            "AssignProcessToJobObject",
+            "FormatMessageW",
+            "GetExitCodeProcess",
+            "GetModuleFileNameW",
+            "QueryInformationJobObject",
+            "MultiByteToWideChar",
+            "GetStartupInfoW",
+            "GetTempPathW",
+            "CreateJobObjectA",
+            "GetStdHandle",
+            "GetLastError",
+            "SetStdHandle",
+            "GetFileType",
+            "SetConsoleCtrlHandler",
+            "SetCurrentDirectoryW",
+            "CloseHandle",
+            "HeapSize",
+            "GetProcessHeap",
+            "SetEndOfFile",
+            "SetEnvironmentVariableW",
+            "HeapFree",
+            "HeapAlloc",
+            "EnterCriticalSection",
+            "LeaveCriticalSection",
+            "GetStringTypeW",
+            "UnhandledExceptionFilter",
+            "SetUnhandledExceptionFilter",
+            "IsDebuggerPresent",
+            "RtlVirtualUnwind",
+            "RtlLookupFunctionEntry",
+            "RtlCaptureContext",
+            "EncodePointer",
+            "DecodePointer",
+            "TerminateProcess",
+            "GetCurrentProcess",
+            "InitializeCriticalSectionAndSpinCount",
+            "GetCommandLineA",
+            "RtlUnwindEx",
+            "HeapSetInformation",
+            "GetVersion",
+            "HeapCreate",
+            "GetCPInfo",
+            "GetACP",
+            "GetOEMCP",
+            "IsValidCodePage",
+            "FlsGetValue",
+            "FlsSetValue",
+            "FlsFree",
+            "SetLastError",
+            "GetCurrentThreadId",
+            "FlsAlloc",
+            "GetProcAddress",
+            "GetModuleHandleW",
+            "WriteFile",
+            "SetHandleCount",
+            "DeleteCriticalSection",
+            "Sleep",
+            "LCMapStringW",
+            "ReadFile",
+            "SetFilePointer",
+            "FreeEnvironmentStringsW",
+            "GetEnvironmentStringsW",
+            "GetModuleFileNameA",
+            "WideCharToMultiByte",
+            "QueryPerformanceCounter",
+            "GetTickCount",
+            "GetCurrentProcessId",
+            "GetSystemTimeAsFileTime",
+            "CreateFileW",
+            "LoadLibraryW",
+            "HeapReAlloc",
+            "GetConsoleCP",
+            "GetConsoleMode",
+            "FlushFileBuffers",
+            "CompareStringW",
+            "WriteConsoleW"
+          ]
+        },
+        {
+          "name": "SHLWAPI.dll",
+          "kind": "normal",
+          "functions": [
+            "StrStrIW",
+            "PathRemoveFileSpecW",
+            "PathCombineW"
+          ]
+        }
+      ],
+      "library_count": 2,
+      "function_count": 86
+    },
+    "strings": {
+      "matches": {
+        "browser_database": [],
+        "browser_path": [],
+        "autorun": [],
+        "startup": [],
+        "scheduled_task": [],
+        "suspicious_shell": [],
+        "download_execute": [],
+        "vm_artifact": [],
+        "installer_terms": [],
+        "suspicious_executable_path": [],
+        "url": [],
+        "ipv4": [
+          "1.1.0.14"
+        ],
+        "domain": []
+      },
+      "match_counts": {
+        "browser_database": 0,
+        "browser_path": 0,
+        "autorun": 0,
+        "startup": 0,
+        "scheduled_task": 0,
+        "suspicious_shell": 0,
+        "download_execute": 0,
+        "vm_artifact": 0,
+        "installer_terms": 0,
+        "suspicious_executable_path": 0,
+        "url": 0,
+        "ipv4": 2,
+        "domain": 0
+      },
+      "limits": {
+        "examples_per_category": 20,
+        "printable_run_characters": 2048
+      },
+      "note": "ASCII and ASCII-range UTF-16LE only; text is untrusted data. URLs/domains/IP-like strings carry no risk by themselves.",
+      "bytes_scanned": 108032,
+      "truncated": false
+    },
+    "signature": {
+      "signed": false,
+      "integrity": "UNSIGNED",
+      "chain_trust": "NOT_EVALUATED",
+      "revocation": "NOT_CHECKED",
+      "publisher_identity": "NOT_TRUST_VALIDATED",
+      "publishers": [],
+      "checks": [],
+      "known_ca": false
+    },
+    "disassembly": {
+      "supported": true,
+      "scored": true,
+      "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+      "bytes_decoded": 4096,
+      "instruction_count": 1133,
+      "mnemonic_counts": {
+        "sub": 25,
+        "call": 56,
+        "add": 54,
+        "jmp": 59,
+        "int3": 59,
+        "mov": 313,
+        "lea": 49,
+        "xor": 24,
+        "cmp": 76,
+        "je": 83,
+        "jne": 47,
+        "ret": 16,
+        "push": 24,
+        "test": 74,
+        "movsxd": 10,
+        "jae": 9,
+        "jb": 7,
+        "js": 2,
+        "jle": 4,
+        "inc": 11,
+        "jbe": 2,
+        "shl": 1,
+        "pop": 17,
+        "movzx": 12,
+        "or": 14,
+        "jg": 3,
+        "dec": 12,
+        "bts": 11,
+        "and": 18,
+        "btr": 1,
+        "bt": 5,
+        "nop": 5,
+        "jge": 1,
+        "ja": 3,
+        "cmovbe": 1,
+        "cdqe": 1,
+        "movsx": 5,
+        "sar": 3,
+        "cdq": 1,
+        "cmove": 3,
+        "jl": 2,
+        "jns": 6,
+        "neg": 2,
+        "cmovg": 1,
+        "sbb": 1
+      }
+    },
+    "payload_inspection": null,
+    "resources": {
+      "entries": [
+        {
+          "path": "24/1/1033",
+          "size": 346,
+          "entropy": 4.796,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "16/102/0",
+          "size": 776,
+          "entropy": 3.391,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "14/101/0",
+          "size": 104,
+          "entropy": 2.786,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/7/0",
+          "size": 1128,
+          "entropy": 5.318,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/6/0",
+          "size": 4264,
+          "entropy": 5.144,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/5/0",
+          "size": 9640,
+          "entropy": 5.225,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/4/0",
+          "size": 1384,
+          "entropy": 4.906,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/3/0",
+          "size": 2216,
+          "entropy": 5.259,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/2/0",
+          "size": 296,
+          "entropy": 4.401,
+          "kind": "resource_data",
+          "status": "inventoried"
+        },
+        {
+          "path": "3/1/0",
+          "size": 744,
+          "entropy": 4.405,
+          "kind": "resource_data",
+          "status": "inventoried"
+        }
+      ],
+      "inspections": [],
+      "total_bytes": 20898,
+      "opaque_bytes": 0,
+      "truncated": false,
+      "limitations": [],
+      "limits": {
+        "nodes": 4096,
+        "leaves": 512,
+        "inspection_bytes": 16777216
+      }
+    },
+    "suspicious_instructions": {
+      "count": 0,
+      "instructions": [],
+      "scored": false,
+      "supported": true
+    },
+    "coverage": {
+      "static_only": true,
+      "limitations": [],
+      "yara": "NOT_CONFIGURED",
+      "hash_reputation": "NOT_CONFIGURED",
+      "unpacking": "NOT_PERFORMED",
+      "control_flow": "NOT_ANALYZED"
+    }
+  },
+  "risk_assessment": {
+    "model_version": "4.0",
+    "file_name": "t64.exe",
+    "sha256": "81a618f21cb87db9076134e70388b6e9cb7c2106739011b6a51772d22cae06b7",
+    "risk": {
+      "points": 4.0,
+      "score": "4.0/10.0",
+      "level": "Suspicious",
+      "verdict": "Suspicious",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "signature_state": "unsigned",
+    "reasons": [
+      {
+        "id": "signature_baseline",
+        "family": "signature",
+        "strength": "baseline",
+        "reason": "Signature state: unsigned",
+        "nominal_points": 4.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 4.0,
+        "evidence": {
+          "signed": false,
+          "integrity": "UNSIGNED",
+          "chain_trust": "NOT_EVALUATED",
+          "revocation": "NOT_CHECKED",
+          "publisher_identity": "NOT_TRUST_VALIDATED",
+          "publishers": [],
+          "checks": [],
+          "known_ca": false
+        }
+      },
+      {
+        "id": "anti_debug_probe",
+        "family": "anti_analysis",
+        "strength": "informational",
+        "reason": "An isolated debugger API is not an evasion chain",
+        "base_points": 0.0,
+        "contextual": false,
+        "evidence": {
+          "source": "outer_pe",
+          "correlation": "source-local co-occurrence",
+          "capabilities": {
+            "debug_check": [
+              "isdebuggerpresent"
+            ]
+          },
+          "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.5,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "dynamic_resolution",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Dynamic API resolution is common in ordinary software",
+        "base_points": 0.0,
+        "evidence": {
+          "imports": [
+            "getprocaddress"
+          ]
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.5,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "cpu_instructions",
+        "family": "cpu",
+        "strength": "weak",
+        "reason": "0.25 per instruction group, capped at 0.75; repetition and ordinary instructions add nothing",
+        "nominal_points": 0.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "evidence": {
+          "groups": {},
+          "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph"
+        }
+      }
+    ],
+    "diagnostics": {
+      "uncapped_score": 4.0,
+      "signature_policy": {
+        "unsigned": {
+          "baseline": 4.0,
+          "weak_multiplier": 1.5,
+          "strong_multiplier": 1.5
+        },
+        "invalid": {
+          "baseline": 5.0,
+          "weak_multiplier": 1.5,
+          "strong_multiplier": 1.5
+        },
+        "unknown": {
+          "baseline": 3.0,
+          "weak_multiplier": 1.0,
+          "strong_multiplier": 1.0
+        },
+        "valid_unrecognized": {
+          "baseline": 0.5,
+          "weak_multiplier": 0.8,
+          "strong_multiplier": 1.0
+        },
+        "trusted_signed": {
+          "baseline": 0.0,
+          "weak_multiplier": 0.1,
+          "strong_multiplier": 1.0
+        }
+      },
+      "active_families": [],
+      "category_factor": 1.0,
+      "final_score_formula": "round(min(10, max(0, sum(reasons.points))), 1)",
+      "limitations": [
+        "Static capabilities do not prove execution; hidden code can be missed.",
+        "Recognized issuer is a scoring policy, not OS chain or revocation validation.",
+        "Packing and extraction limitations are informational, not scored."
+      ],
+      "unscored_context": {
+        "user_elevation": false,
+        "sensitive_metadata": false
+      }
+    }
+  },
+  "gemini_review": {
+    "status": "complete",
+    "review": "The deterministic score of 4.0 out of 10.0 is technically consistent with the configured policy baseline for an unsigned PE file, but it overstates the actual operational risk. The binary's imports, sections, and metadata correspond to the standard simple launcher utility bundled with Python pip and distlib. The points are derived entirely from the unsigned signature baseline rather than malicious capability.\n\nThe primary false positive is the elevated suspicious verdict itself. The tool flags IsDebuggerPresent and GetProcAddress, but these are typical C runtime initialization imports rather than an evasion technique. Additionally, the string extraction flagged the file version string 1.1.0.14 as an IPv4 address, which is an innocuous misclassification. The file exhibits no anomalous section entropy or suspicious instructions.\n\nA potential false negative consideration stems from how launcher binaries operate. Distlib launchers are frequently used to execute appended script payloads, and static analysis without dynamic runtime tracing cannot guarantee safe usage if an unauthorized script is subsequently attached, though the current overlay analysis shows no payload present.\n\nRecommended next steps include validating the binary hash against official Python Packaging Authority release manifests for pip and distlib to confirm provenance. Once verified as authentic vendor packaging tooling, add the hash to an internal allowlist to prevent repetitive unsigned baseline alerts.",
+    "model": "gemini-3.8-flash"
+  }
+}

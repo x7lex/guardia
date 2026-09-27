@@ -1,0 +1,391 @@
+{
+  "analysis": {
+    "schema_version": "2.2",
+    "file": {
+      "file_name": "hrisitosense.exe",
+      "file_path": "/Users/hadi/Desktop/stuff/hrisitosense.exe",
+      "file_size": 13454848,
+      "sha256": "f12316bceefbabe45f8279bd5a9d6e8e815a9f76114097991548ca7e259f6472",
+      "format": "FORMATS.PE",
+      "machine": "MACHINE_TYPES.I386",
+      "entry_point": "0x17745d0",
+      "section_count": 3,
+      "sections": [
+        {
+          "name": "UPX0",
+          "virtual_address": "0x1000",
+          "virtual_size": 6946816,
+          "raw_size": 0,
+          "raw_offset": 1024,
+          "entropy": 0.0,
+          "executable": true,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": "UPX1",
+          "virtual_address": "0x6a1000",
+          "virtual_size": 13455360,
+          "raw_size": 13452288,
+          "raw_offset": 1024,
+          "entropy": 7.744,
+          "executable": true,
+          "writable": true,
+          "raw_out_of_bounds": false
+        },
+        {
+          "name": ".rsrc",
+          "virtual_address": "0x1376000",
+          "virtual_size": 4096,
+          "raw_size": 1536,
+          "raw_offset": 13453312,
+          "entropy": 3.934,
+          "executable": false,
+          "writable": true,
+          "raw_out_of_bounds": false
+        }
+      ],
+      "overlay": {
+        "offset": 13454848,
+        "size": 0,
+        "certificate_bytes": 0,
+        "payload_bytes": 0,
+        "payload_fraction": 0.0,
+        "content_analysis": "NOT_PRESENT"
+      }
+    },
+    "imports": {
+      "libraries": [
+        {
+          "name": "ADVAPI32.dll",
+          "kind": "normal",
+          "functions": [
+            "RegCloseKey"
+          ]
+        },
+        {
+          "name": "d3d9.dll",
+          "kind": "normal",
+          "functions": [
+            "Direct3DCreate9"
+          ]
+        },
+        {
+          "name": "d3dx9_43.dll",
+          "kind": "normal",
+          "functions": [
+            "D3DXCreateTextureFromFileInMemory"
+          ]
+        },
+        {
+          "name": "GDI32.dll",
+          "kind": "normal",
+          "functions": [
+            "GetDeviceCaps"
+          ]
+        },
+        {
+          "name": "IMM32.dll",
+          "kind": "normal",
+          "functions": [
+            "ImmGetContext"
+          ]
+        },
+        {
+          "name": "KERNEL32.DLL",
+          "kind": "normal",
+          "functions": [
+            "LoadLibraryA",
+            "ExitProcess",
+            "GetProcAddress",
+            "VirtualProtect"
+          ]
+        },
+        {
+          "name": "SHELL32.dll",
+          "kind": "normal",
+          "functions": [
+            "ShellExecuteA"
+          ]
+        },
+        {
+          "name": "USER32.dll",
+          "kind": "normal",
+          "functions": [
+            "GetDC"
+          ]
+        }
+      ],
+      "library_count": 8,
+      "function_count": 11
+    },
+    "strings": {
+      "matches": {
+        "browser_database": [],
+        "browser_path": [],
+        "autorun": [],
+        "startup": [],
+        "scheduled_task": [],
+        "suspicious_shell": [],
+        "download_execute": [],
+        "vm_artifact": [],
+        "url": [],
+        "ipv4": [],
+        "domain": [
+          "t.NET"
+        ]
+      },
+      "match_counts": {
+        "browser_database": 0,
+        "browser_path": 0,
+        "autorun": 0,
+        "startup": 0,
+        "scheduled_task": 0,
+        "suspicious_shell": 0,
+        "download_execute": 0,
+        "vm_artifact": 0,
+        "url": 0,
+        "ipv4": 0,
+        "domain": 1
+      },
+      "limits": {
+        "examples_per_category": 20,
+        "printable_run_characters": 2048
+      },
+      "note": "ASCII and ASCII-range UTF-16LE only; text is untrusted data. URLs/domains/IP-like strings carry no risk by themselves.",
+      "bytes_scanned": 13454848,
+      "truncated": false
+    },
+    "signature": {
+      "signed": false,
+      "integrity": "UNSIGNED",
+      "chain_trust": "NOT_EVALUATED",
+      "revocation": "NOT_CHECKED",
+      "publisher_identity": "NOT_TRUST_VALIDATED",
+      "publishers": [],
+      "checks": [],
+      "known_ca": false
+    },
+    "disassembly": {
+      "supported": true,
+      "scored": false,
+      "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph",
+      "bytes_decoded": 3632,
+      "instruction_count": 1769,
+      "mnemonic_counts": {
+        "pushal": 1,
+        "mov": 42,
+        "lea": 11,
+        "push": 25,
+        "jmp": 12,
+        "nop": 2,
+        "inc": 11,
+        "add": 1541,
+        "jne": 13,
+        "sub": 15,
+        "adc": 14,
+        "jb": 5,
+        "jae": 3,
+        "dec": 5,
+        "xor": 4,
+        "shl": 2,
+        "je": 6,
+        "sar": 1,
+        "cmp": 6,
+        "jbe": 2,
+        "ja": 5,
+        "pop": 8,
+        "shr": 1,
+        "rol": 3,
+        "xchg": 4,
+        "loop": 2,
+        "or": 5,
+        "call": 7,
+        "repne scasb": 1,
+        "and": 3,
+        "stosb": 1,
+        "popal": 1,
+        "cld": 1,
+        "lodsd": 1,
+        "test": 3,
+        "ret": 1,
+        "clc": 1
+      }
+    },
+    "payload_inspection": null,
+    "suspicious_instructions": {
+      "count": 0,
+      "instructions": [],
+      "scored": false,
+      "supported": true
+    },
+    "coverage": {
+      "static_only": true,
+      "limitations": [],
+      "yara": "NOT_CONFIGURED",
+      "hash_reputation": "NOT_CONFIGURED",
+      "unpacking": "NOT_PERFORMED",
+      "control_flow": "NOT_ANALYZED"
+    }
+  },
+  "risk_assessment": {
+    "model_version": "4.0",
+    "file_name": "hrisitosense.exe",
+    "sha256": "f12316bceefbabe45f8279bd5a9d6e8e815a9f76114097991548ca7e259f6472",
+    "risk": {
+      "points": 4.0,
+      "score": "4.0/10.0",
+      "level": "Suspicious",
+      "verdict": "Suspicious",
+      "score_meaning": "Conservative static risk score, not malware probability"
+    },
+    "signature_state": "unsigned",
+    "reasons": [
+      {
+        "id": "signature_baseline",
+        "family": "signature",
+        "strength": "baseline",
+        "reason": "Signature state: unsigned",
+        "nominal_points": 4.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 4.0,
+        "evidence": {
+          "signed": false,
+          "integrity": "UNSIGNED",
+          "chain_trust": "NOT_EVALUATED",
+          "revocation": "NOT_CHECKED",
+          "publisher_identity": "NOT_TRUST_VALIDATED",
+          "publishers": [],
+          "checks": [],
+          "known_ca": false
+        }
+      },
+      {
+        "id": "rwx_sections",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Writable executable sections; permissions alone do not establish malware",
+        "base_points": 0.0,
+        "evidence": {
+          "sections": [
+            "UPX0",
+            "UPX1"
+          ]
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.5,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "packed_layout",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Packing conceals native capabilities; unpacking was not performed",
+        "base_points": 0.0,
+        "evidence": {
+          "packer_sections": [
+            "UPX0",
+            "UPX1"
+          ],
+          "high_entropy_code": [
+            "UPX1"
+          ],
+          "rwx": [
+            "UPX0",
+            "UPX1"
+          ],
+          "sparse_imports": true,
+          "dynamic_resolution": [
+            "getprocaddress"
+          ]
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.5,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "dynamic_resolution",
+        "family": "visibility",
+        "strength": "informational",
+        "reason": "Dynamic API resolution is common in ordinary software",
+        "base_points": 0.0,
+        "evidence": {
+          "imports": [
+            "getprocaddress"
+          ]
+        },
+        "nominal_points": 0.0,
+        "signature_factor": 1.5,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "scoring": "Informational or covered by a stronger finding in this family"
+      },
+      {
+        "id": "cpu_instructions",
+        "family": "cpu",
+        "strength": "weak",
+        "reason": "0.25 per instruction group, capped at 0.75; repetition and ordinary instructions add nothing",
+        "nominal_points": 0.0,
+        "signature_factor": 1.0,
+        "category_factor": 1.0,
+        "points": 0.0,
+        "evidence": {
+          "groups": {},
+          "scope": "At most 4096 raw bytes at the entry point; linear decoding is not a control-flow graph"
+        }
+      }
+    ],
+    "diagnostics": {
+      "uncapped_score": 4.0,
+      "signature_policy": {
+        "unsigned": {
+          "baseline": 4.0,
+          "weak_multiplier": 1.5,
+          "strong_multiplier": 1.5
+        },
+        "invalid": {
+          "baseline": 5.0,
+          "weak_multiplier": 1.5,
+          "strong_multiplier": 1.5
+        },
+        "unknown": {
+          "baseline": 3.0,
+          "weak_multiplier": 1.0,
+          "strong_multiplier": 1.0
+        },
+        "valid_unrecognized": {
+          "baseline": 0.5,
+          "weak_multiplier": 0.8,
+          "strong_multiplier": 1.0
+        },
+        "trusted_signed": {
+          "baseline": 0.0,
+          "weak_multiplier": 0.1,
+          "strong_multiplier": 1.0
+        }
+      },
+      "active_families": [],
+      "category_factor": 1.0,
+      "final_score_formula": "round(min(10, max(0, sum(reasons.points))), 1)",
+      "limitations": [
+        "Static capabilities do not prove execution; hidden code can be missed.",
+        "Recognized issuer is a scoring policy, not OS chain or revocation validation.",
+        "Packing and extraction limitations are informational, not scored."
+      ],
+      "unscored_context": {
+        "user_elevation": false,
+        "sensitive_metadata": false
+      }
+    }
+  },
+  "gemini_review": {
+    "status": "complete",
+    "review": "The assigned risk score of 4.0 out of 10.0 is mechanically consistent with the model baseline for an unsigned binary, but the resulting Suspicious label is somewhat elevated relative to the direct malicious evidence present. The entirety of the points originates from the unsigned status alone, while the structural indicators like UPX packing, writable executable sections, and dynamic resolution were left unscored as informational. Given the presence of DirectX 9 imports, graphical subsystems, and standard UPX compression commonly seen in indie games or hobbyist software, the score reflects signature policy rather than demonstrated malicious capability.\n\nA false positive is plausible here if the file is an benign unsigned utility, game, or graphics software compressed with standard UPX. The imports for Direct3D9, GDI32, and IMM32 strongly suggest interactive multimedia or gaming software rather than purposeful malware. Labeling it Suspicious purely due to being unsigned overlooks the prevalence of unsigned code in niche desktop software ecosystems.\n\nConversely, a false negative is also a distinct risk due to extraction limits. Because unpacking was not performed and section UPX1 exhibits high entropy with writable-executable flags, the vast majority of the actual payload code and import table remains concealed from static analysis. The visible imports only represent the unpacker stub and a small initial import table; any true malicious functionality could easily be hidden until runtime unpacking completes.\n\nRecommended next steps include unpacking the UPX layer to expose the underlying binary for complete static analysis, inspecting the unpacked import table and strings, and executing the sample within an instrumented sandbox to observe child processes, network connections, or persistence mechanisms.",
+    "model": "gemini-3.8-flash"
+  }
+}
