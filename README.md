@@ -4,10 +4,17 @@ Guardia is a free and open source project that conducts static analysis on appli
 
 Because of a point-based system, Guardia has taken a different design philosophy, instead of classifying whether something is malware or not we have divided it into four groups:
 
-- 0-30% Risk: **Safe**
-- 31-60% Risk: **Risky**
-- 61-80% Risk: **Unsafe**
-- 81%+ Risk: **Dangerous**
+The static risk score is divided into four classifications:
+
+- 0–<3 — Low Risk: Little to no significant suspicious behavior detected.
+
+- 3–<5 — Suspicious: Suspicious characteristics are present and warrant further review.
+
+- 5–<8 — High Risk: Multiple or significant indicators of potentially malicious behavior have been identified.
+
+- 8–10 — Dangerous: Strong indicators of malicious or highly dangerous behavior have been detected.
+
+The browser interface further simplifies these classifications into three broader zones: Safe, Review, and Unsafe.
 
 As technology continues to evolve with the rise of AI, malware has became increasingly more sophisticated overtime, this is an eternal game of cat & mouse as most antimalware/antivirus services run on legacy means of detection.
 
