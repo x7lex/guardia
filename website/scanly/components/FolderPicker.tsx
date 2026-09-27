@@ -4,7 +4,10 @@ import { useId, useState } from "react"
 
 declare global {
     interface Window {
-        electronAPI?: { selectFolders: () => Promise<string[]> }
+        electronAPI?: {
+            selectFolders: () => Promise<string[]>
+            getPathForFile: (file: File) => string
+        }
     }
 }
 
