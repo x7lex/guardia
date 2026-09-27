@@ -2,7 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Run `npm run dev` here to start both the website and Python scanner. The launcher
+uses the repository's `.venv` and waits for the scanner before starting Next.js.
+For the desktop app, use `npm run desktop:dev`. See [setup instructions](GEMINI_SETUP.md)
+for dependencies, Gemini credentials, and custom backend addresses.
+
+Run the development server:
 
 ```bash
 npm run dev

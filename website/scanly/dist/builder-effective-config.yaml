@@ -1,0 +1,12 @@
+directories:
+  output: dist
+  buildResources: build
+productName: Guardia
+asar: false
+files:
+  - filter:
+      - electron/**/*
+      - .next/**/*
+      - '!.next/cache/**/*'
+      - public/**/*
+electronVersion: 44.4.5
