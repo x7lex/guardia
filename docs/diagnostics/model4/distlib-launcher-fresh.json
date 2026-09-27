@@ -194,11 +194,7 @@
         {
           "name": "SHLWAPI.dll",
           "kind": "normal",
-          "functions": [
-            "StrStrIW",
-            "PathRemoveFileSpecW",
-            "PathCombineW"
-          ]
+          "functions": ["StrStrIW", "PathRemoveFileSpecW", "PathCombineW"]
         }
       ],
       "library_count": 2,
@@ -217,9 +213,7 @@
         "installer_terms": [],
         "suspicious_executable_path": [],
         "url": [],
-        "ipv4": [
-          "1.1.0.14"
-        ],
+        "ipv4": ["1.1.0.14"],
         "domain": []
       },
       "match_counts": {
@@ -453,9 +447,7 @@
           "source": "outer_pe",
           "correlation": "source-local co-occurrence",
           "capabilities": {
-            "debug_check": [
-              "isdebuggerpresent"
-            ]
+            "debug_check": ["isdebuggerpresent"]
           },
           "limitation": "Static evidence does not prove call order, common handles, reachability or observed behavior."
         },
@@ -472,9 +464,7 @@
         "reason": "Dynamic API resolution is common in ordinary software",
         "base_points": 0.0,
         "evidence": {
-          "imports": [
-            "getprocaddress"
-          ]
+          "imports": ["getprocaddress"]
         },
         "nominal_points": 0.0,
         "signature_factor": 1.5,

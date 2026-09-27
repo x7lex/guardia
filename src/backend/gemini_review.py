@@ -16,7 +16,11 @@ logger = logging.getLogger(__name__)
 RETRYABLE_STATUSES = {500, 502, 503, 504}
 MAX_ATTEMPTS = 3
 
-VERDICTS = ("THIS IS PERFECTLY FINE", "I CANNOT CONFIDENTLY SAY THAT", "USE AT YOUR OWN RISK")
+VERDICTS = (
+    "THIS IS PERFECTLY FINE",
+    "I CANNOT CONFIDENTLY SAY THAT",
+    "USE AT YOUR OWN RISK",
+)
 
 SYSTEM_INSTRUCTION = """You are Guardia's independent static-analysis assessor.
 Evaluate all supplied raw analysis and reputation evidence independently. No
@@ -53,20 +57,34 @@ backticks, emphasis, code fences, tables or Markdown links. Keep under 300 words
 def independent_evidence(report):
     # Whitelist raw namespaces. Recovered script findings in older analysis
     # objects also carry scoring weights: remove those, retaining their evidence.
-    weights = {"base_points", "nominal_points", "points", "adjusted_points",
-               "signature_factor", "category_factor", "context_factor", "scoring"}
+    weights = {
+        "base_points",
+        "nominal_points",
+        "points",
+        "adjusted_points",
+        "signature_factor",
+        "category_factor",
+        "context_factor",
+        "scoring",
+    }
 
     def raw(value):
         if isinstance(value, dict):
             excluded = weights if "id" in value and "family" in value else set()
-            return {key: raw(item) for key, item in value.items() if key not in excluded}
+            return {
+                key: raw(item) for key, item in value.items() if key not in excluded
+            }
         if isinstance(value, list):
             return [raw(item) for item in value]
         return value
 
-    return {"analysis": raw(report["analysis"]), "reputation": report.get("reputation", {
-        "status": "disabled", "reason": "No reputation evidence supplied"})}
-
+    return {
+        "analysis": raw(report["analysis"]),
+        "reputation": report.get(
+            "reputation",
+            {"status": "disabled", "reason": "No reputation evidence supplied"},
+        ),
+    }
 
 
 async def review_report(report: dict) -> dict:
@@ -82,7 +100,13 @@ async def review_report(report: dict) -> dict:
         "contents": [
             {
                 "role": "user",
-                "parts": [{"text": json.dumps(independent_evidence(report), ensure_ascii=False)}],
+                "parts": [
+                    {
+                        "text": json.dumps(
+                            independent_evidence(report), ensure_ascii=False
+                        )
+                    }
+                ],
             }
         ],
         "generationConfig": {"maxOutputTokens": 8192},
@@ -96,12 +120,19 @@ async def review_report(report: dict) -> dict:
                     headers={"x-goog-api-key": key},
                     json=payload,
                 )
-                if response.status_code not in RETRYABLE_STATUSES or attempt == MAX_ATTEMPTS - 1:
+                if (
+                    response.status_code not in RETRYABLE_STATUSES
+                    or attempt == MAX_ATTEMPTS - 1
+                ):
                     break
                 # Never log credentials, provider bodies, or uploaded evidence.
-                logger.warning("Gemini returned HTTP %s; retrying (%s/%s)",
-                               response.status_code, attempt + 2, MAX_ATTEMPTS)
-                await asyncio.sleep(2 ** attempt + random.uniform(0, 0.5))
+                logger.warning(
+                    "Gemini returned HTTP %s; retrying (%s/%s)",
+                    response.status_code,
+                    attempt + 2,
+                    MAX_ATTEMPTS,
+                )
+                await asyncio.sleep(2**attempt + random.uniform(0, 0.5))
     except (httpx.TimeoutException, TimeoutError):
         raise HTTPException(
             504, "Gemini took too long to respond. Please try again."
@@ -151,23 +182,44 @@ async def review_report(report: dict) -> dict:
         ) from None
     text = plain_text_review(text)
     first, _, explanation = text.partition("\n")
-    if first not in VERDICTS or not explanation.strip() or any(v in explanation for v in VERDICTS):
-        raise HTTPException(502, "Gemini did not return the required independent verdict and explanation. Please retry.")
-    return {"review": text, "model": model, "verdict": first, "assessment_type": "independent_static"}
+    if (
+        first not in VERDICTS
+        or not explanation.strip()
+        or any(v in explanation for v in VERDICTS)
+    ):
+        raise HTTPException(
+            502,
+            "Gemini did not return the required independent verdict and explanation. Please retry.",
+        )
+    return {
+        "review": text,
+        "model": model,
+        "verdict": first,
+        "assessment_type": "independent_static",
+    }
 
 
 async def attach_review(report):
     """Review generated reports without changing or losing deterministic results."""
     if not (getenv("GEMINI_API_KEY") or getenv("API_TOKEN")):
-        report["gemini_review"] = {"status": "unavailable", "reason": "Gemini is not configured"}
+        report["gemini_review"] = {
+            "status": "unavailable",
+            "reason": "Gemini is not configured",
+        }
         return report
     # A rescore must not send an old opinion back as evidence.
     evidence = independent_evidence(report)
     if len(json.dumps(evidence, ensure_ascii=False).encode("utf-8")) > 4 * 1024 * 1024:
-        report["gemini_review"] = {"status": "unavailable", "reason": "Report exceeds the 4 MiB review limit"}
+        report["gemini_review"] = {
+            "status": "unavailable",
+            "reason": "Report exceeds the 4 MiB review limit",
+        }
         return report
     try:
-        report["gemini_review"] = {"status": "complete", **await review_report(evidence)}
+        report["gemini_review"] = {
+            "status": "complete",
+            **await review_report(evidence),
+        }
     except HTTPException as error:
         report["gemini_review"] = {"status": "unavailable", "reason": error.detail}
     return report

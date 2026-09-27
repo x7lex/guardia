@@ -74,7 +74,9 @@ async def scan(request: Request, name: str):
                 return {"status": "skipped", "file": name, "reason": "File is empty"}
             try:
                 analysis = await output(target)
-                analysis["file"].update(file_name=PurePosixPath(name).name, file_path=name)
+                analysis["file"].update(
+                    file_name=PurePosixPath(name).name, file_path=name
+                )
                 report = await build_report(analysis)
                 return {"status": "scanned", "file": name, "report": report}
             except UnsupportedFileError as error:

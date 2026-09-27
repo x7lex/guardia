@@ -507,36 +507,88 @@ export default function ReportDetailModal({
               </ul>
             </Section>
           )}
-                {report.risk_assessment.trust && (
-                    <Section title="Signature and publisher context">
-                        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 break-words text-sm">
-                            <dt>Signature integrity</dt><dd>{report.risk_assessment.trust.signature_integrity}</dd>
-                            <dt>Publisher in certificate</dt><dd>{report.risk_assessment.trust.publisher ?? "None"}</dd>
-                            <dt>Publisher verified</dt><dd>{report.risk_assessment.trust.publisher_verified ? "Yes" : "No"}</dd>
-                            <dt>Certificate chain</dt><dd>{report.risk_assessment.trust.chain_trust.replaceAll("_", " ")}</dd>
-                            <dt>Revocation</dt><dd>{report.risk_assessment.trust.revocation.replaceAll("_", " ")}</dd>
-                        </dl>
-                    </Section>
-                )}
+          {report.risk_assessment.trust && (
+            <Section title="Signature and publisher context">
+              <dl className="grid grid-cols-2 gap-x-3 gap-y-2 break-words text-sm">
+                <dt>Signature integrity</dt>
+                <dd>{report.risk_assessment.trust.signature_integrity}</dd>
+                <dt>Publisher in certificate</dt>
+                <dd>{report.risk_assessment.trust.publisher ?? "None"}</dd>
+                <dt>Publisher verified</dt>
+                <dd>
+                  {report.risk_assessment.trust.publisher_verified
+                    ? "Yes"
+                    : "No"}
+                </dd>
+                <dt>Certificate chain</dt>
+                <dd>
+                  {report.risk_assessment.trust.chain_trust.replaceAll(
+                    "_",
+                    " ",
+                  )}
+                </dd>
+                <dt>Revocation</dt>
+                <dd>
+                  {report.risk_assessment.trust.revocation.replaceAll("_", " ")}
+                </dd>
+              </dl>
+            </Section>
+          )}
           {report.risk_assessment.signature_state && (
             <Section title="Deterministic analysis">
-              <p>Signature: {report.risk_assessment.signature_state.replaceAll("_", " ")}.</p>
-              <p>Local heuristic score: {report.risk_assessment.heuristic?.points ?? risk.points}/10.</p>
+              <p>
+                Signature:{" "}
+                {report.risk_assessment.signature_state.replaceAll("_", " ")}.
+              </p>
+              <p>
+                Local heuristic score:{" "}
+                {report.risk_assessment.heuristic?.points ?? risk.points}/10.
+              </p>
               <p>Final engine score: {risk.points}/10.</p>
-              {report.risk_assessment.decision?.override && <p className="mt-2 font-bold">Known-malicious SHA-256 match overrides the local heuristic score. Source: {report.risk_assessment.decision.override.provider}.</p>}
-              {!!report.risk_assessment.decision?.positive_reputation_discount && <p>Positive reputation discount: {report.risk_assessment.decision.positive_reputation_discount} points from unsigned status and weak evidence only.</p>}
-              <p className="mt-2 text-xs">Local findings combine signatures, behavior, structure and instructions. A high heuristic score signals risk, not confirmed malware. Recognized issuers and verified certificate chains receive different discounts.</p>
+              {report.risk_assessment.decision?.override && (
+                <p className="mt-2 font-bold">
+                  Known-malicious SHA-256 match overrides the local heuristic
+                  score. Source:{" "}
+                  {report.risk_assessment.decision.override.provider}.
+                </p>
+              )}
+              {!!report.risk_assessment.decision
+                ?.positive_reputation_discount && (
+                <p>
+                  Positive reputation discount:{" "}
+                  {report.risk_assessment.decision.positive_reputation_discount}{" "}
+                  points from unsigned status and weak evidence only.
+                </p>
+              )}
+              <p className="mt-2 text-xs">
+                Local findings combine signatures, behavior, structure and
+                instructions. A high heuristic score signals risk, not confirmed
+                malware. Recognized issuers and verified certificate chains
+                receive different discounts.
+              </p>
             </Section>
           )}
           {report.reputation && (
             <Section title="Hash reputation">
-              <p>Provider: {report.reputation.provider}. Status: {report.reputation.status.replaceAll("_", " ")}.</p>
+              <p>
+                Provider: {report.reputation.provider}. Status:{" "}
+                {report.reputation.status.replaceAll("_", " ")}.
+              </p>
               <p>{report.reputation.reason}</p>
-              <p className="mt-2 text-xs">Hash lookup sends only SHA-256. No binary is uploaded. Unknown or unavailable reputation does not establish safety.</p>
+              <p className="mt-2 text-xs">
+                Hash lookup sends only SHA-256. No binary is uploaded. Unknown
+                or unavailable reputation does not establish safety.
+              </p>
             </Section>
           )}
-                {!report.risk_assessment.visibility && !report.risk_assessment.signature_state && <p className="text-xs text-[#805775]">Saved with an older scoring model. Rescan the file to see separate threat evidence, visibility and trust.</p>}
-                <GeminiReview report={report} />
+          {!report.risk_assessment.visibility &&
+            !report.risk_assessment.signature_state && (
+              <p className="text-xs text-[#805775]">
+                Saved with an older scoring model. Rescan the file to see
+                separate threat evidence, visibility and trust.
+              </p>
+            )}
+          <GeminiReview report={report} />
 
           <button
             type="button"

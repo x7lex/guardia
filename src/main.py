@@ -7,10 +7,10 @@ from datetime import datetime, timezone
 from logging import getLogger
 from pathlib import Path
 
-from backend.analyzer import UnsupportedFileError, output
-from backend.assessment import build_report
 from dotenv import load_dotenv
 
+from backend.analyzer import UnsupportedFileError, output
+from backend.assessment import build_report
 from logger import start_logger
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
@@ -51,8 +51,14 @@ async def scan_file(target_file, report_directory=None, timestamp=None):
         report = await build_report(analysis)
         risk = report["risk_assessment"]
         report_path = save_report(report, report_directory, timestamp)
-        print(f"[+] Scanned: {target_file.name}\n    Risk: {risk['risk']['score']} ({risk['risk']['verdict']})\n    Report: {report_path}")
-        return {"file": target_file.name, "status": "scanned", "report": str(report_path)}
+        print(
+            f"[+] Scanned: {target_file.name}\n    Risk: {risk['risk']['score']} ({risk['risk']['verdict']})\n    Report: {report_path}"
+        )
+        return {
+            "file": target_file.name,
+            "status": "scanned",
+            "report": str(report_path),
+        }
     except UnsupportedFileError as error:
         print(f"[~] Skipped: {target_file.name} -> {error}")
         return {"file": target_file.name, "status": "skipped", "reason": str(error)}
