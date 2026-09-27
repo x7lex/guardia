@@ -73,7 +73,11 @@ The prompt prohibits Markdown conventions, and the backend removes common Markdo
 presentation syntax before saving or displaying reviews.
 Missing credentials, oversized reports, or provider failures leave the deterministic
 report intact with an explicit review-unavailable reason. The panel supports retry.
-Configured reviews can add up to 90 seconds to each scan.
+Configured reviews can add up to 90 seconds to each scan. Temporary provider
+500/502/503/504 errors receive up to three attempts with exponential backoff and
+jitter within that total deadline. Persistent Gemini overload returns HTTP 503
+with a clear provider-unavailable message; key, billing and quota errors are not
+automatically retried.
 
 Set `API_TOKEN` (or `GEMINI_API_KEY`) in the root `.env`. The default model is
 `gemini-3.8-flash`; override with `GEMINI_MODEL`. Restart Python after changing these
