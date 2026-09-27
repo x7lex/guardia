@@ -10,6 +10,7 @@ import re
 import tokenize
 import zlib
 from backend.script_symbols import recover_symbols
+from backend.deobfuscator import analyze_python_source
 from backend.behaviors import correlate_capabilities
 
 MAX_SOURCE = 2 * 1024 * 1024
@@ -43,6 +44,11 @@ def inspect_python(data, source, layer=0, budget=None):
         return result
     budget["bytes"] -= len(data)
     budget["layers"] -= 1
+    result["deobfuscation"] = analyze_python_source(data)
+    deobfuscation = result["deobfuscation"]
+    result["limitations"].extend(
+        "Static deobfuscation limit: " + name
+        for name in deobfuscation["coverage"]["limits_hit"])
     try:
         encoding, _ = tokenize.detect_encoding(io.BytesIO(data).readline)
         tree = ast.parse(data.decode(encoding))
@@ -117,14 +123,18 @@ def inspect_python(data, source, layer=0, budget=None):
         return value, chain
 
     calls = [node for node in nodes if isinstance(node, ast.Call)]
-    call_names = sorted({name(node.func) for node in calls})
+    call_names = sorted({name(node.func) for node in calls}
+                        | set(deobfuscation["resolved_calls"]))
     result["calls"] = call_names[:100]
     result["call_count"] = len(calls)
-    result["imports"] = sorted(set(aliases.values()))[:80]
+    result["imports"] = sorted(set(aliases.values())
+                               | {item["name"] for item in deobfuscation["imports"]})[:80]
     result["recovered_symbols"] = recovered_symbols
     literals = [node.value for node in nodes if isinstance(node, ast.Constant) and isinstance(node.value, str)]
     recovered_text = sorted({value for value in resolved_literals.values() if isinstance(value, str)})
     literals.extend(recovered_text)
+    literals.extend(item["value"] for item in deobfuscation["decoded_strings"]
+                    if not item["truncated"])
     result["recovered_literals"] = [value[:500] for value in recovered_text[:80]]
     result["literal_recovery_limits"] = {"text_bytes": 8192, "operations": 200000, "scope": "Lexical blocks with conservative invalidation; no arbitrary function evaluation"}
 
@@ -132,9 +142,12 @@ def inspect_python(data, source, layer=0, budget=None):
         result["findings"].append({"id": identifier, "family": family, "strength": strength,
                                    "reason": reason, "evidence": {"source": source, "layer": layer, **evidence}})
 
+    resolved_import_sites = {(site["line"], site["column"])
+                             for site in deobfuscation["resolved_import_sites"]}
     dynamic_imports = [node.lineno for node in calls
                        if name(node.func).removeprefix("builtins.") == "__import__"
-                       and node.args and not isinstance(resolved_literals.get(id(node.args[0])), str)]
+                       and node.args and not isinstance(resolved_literals.get(id(node.args[0])), str)
+                       and (node.lineno, node.col_offset) not in resolved_import_sites]
     result["unresolved_dynamic_imports"] = dynamic_imports[:80]
     if dynamic_imports:
         finding("obfuscated_runtime_resolution", "packing", "weak",

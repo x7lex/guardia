@@ -133,3 +133,9 @@ transformations, including encoded names; it never imports or runs the bundled
 application. Native archive members, bytecode, UPX code, unsupported 7z resources
 and unresolved script layers remain explicit coverage limitations. No new
 third-party dependency was added for the risk redesign.
+
+Recovered Python also receives a bounded AST deobfuscation report with decoded
+strings, symbolic imports and attributes, behavior hints, transformation examples
+and resolution coverage. These facts enrich the existing source-local behavior
+rules without assigning risk points. See [Python deobfuscation](docs/python-deobfuscation.md)
+for supported patterns, safety limits and a synthetic demo.
