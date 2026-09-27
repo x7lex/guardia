@@ -34,11 +34,11 @@
         default = pkgs.mkShell {
           packages = [
             (pkgs.python3.withPackages (ps: [
-              ps.discordpy
+              ps.capstone
+              ps.lief
               ps.fastapi
-              ps.uvicorn
               ps.httpx
-              ps.cachetools
+              ps.uvicorn
             ]))
           ];
         };
