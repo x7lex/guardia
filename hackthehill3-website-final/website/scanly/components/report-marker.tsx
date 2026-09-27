@@ -113,8 +113,8 @@ interface ReportMarkerProps {
   onOpen: (rect: DOMRect) => void;
 }
 
-export function riskAppearance(level: string) {
-  const zone = riskZone(level);
+export function riskAppearance(level: string, points?: number) {
+  const zone = riskZone(level, points);
   if (zone === "safe") {
     return {
       color: "#287044",
@@ -142,8 +142,8 @@ export function riskAppearance(level: string) {
   };
 }
 
-export function riskColor(level: string) {
-  return riskAppearance(level).color;
+export function riskColor(level: string, points?: number) {
+  return riskAppearance(level, points).color;
 }
 
 export const MARKER_HALF_SIZE = {
@@ -288,7 +288,7 @@ export default function ReportMarker({
 
   const { file, signature, suspicious_instructions } = report.analysis;
 
-  const appearance = riskAppearance(risk.verdict ?? risk.level);
+  const appearance = riskAppearance(risk.verdict ?? risk.level, risk.points);
   const safe = appearance.label === "FEW INDICATORS";
   const color = appearance.color;
   const statusText = appearance.label;
